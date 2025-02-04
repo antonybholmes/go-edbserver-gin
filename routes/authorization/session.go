@@ -16,7 +16,7 @@ func SessionUpdateUserRoute(c *gin.Context) {
 
 	authUser := sessionData.AuthUser
 
-	return authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().Success(func(validator *authenticationroutes.Validator) error {
+	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().Success(func(validator *authenticationroutes.Validator) {
 
 		err = userdbcache.SetUserInfo(authUser, validator.LoginBodyReq.Username, validator.LoginBodyReq.FirstName, validator.LoginBodyReq.LastName, false)
 
@@ -25,6 +25,6 @@ func SessionUpdateUserRoute(c *gin.Context) {
 			return
 		}
 
-		return SendUserInfoUpdatedEmail(c, authUser)
+		SendUserInfoUpdatedEmail(c, authUser)
 	})
 }

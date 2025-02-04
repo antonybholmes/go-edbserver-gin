@@ -127,7 +127,8 @@ func PasswordlessSignInRoute(c *gin.Context) {
 	NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
 
 		if validator.Claims.Type != auth.PASSWORDLESS_TOKEN {
-			return routes.WrongTokentTypeReq()
+			routes.WrongTokentTypeReq(c)
+			return
 		}
 
 		authUser := validator.AuthUser
@@ -135,19 +136,22 @@ func PasswordlessSignInRoute(c *gin.Context) {
 		roles, err := userdbcache.UserRoleList(authUser)
 
 		if err != nil {
-			return routes.AuthErrorReq("could not get user roles")
+			routes.AuthErrorReq(c, "could not get user roles")
+			return
 		}
 
 		roleClaim := auth.MakeClaim(roles)
 
 		if !auth.CanSignin(roleClaim) {
-			return routes.UserNotAllowedToSignIn()
+			routes.UserNotAllowedToSignIn(c)
+			return
 		}
 
 		t, err := tokengen.RefreshToken(c, authUser) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
-			return routes.TokenErrorReq()
+			routes.TokenErrorReq(c)
+			return
 		}
 
 		routes.MakeDataResp(c, "", &routes.RefreshTokenResp{RefreshToken: t})

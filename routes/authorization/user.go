@@ -21,7 +21,7 @@ func UserUpdatedResp(c *gin.Context) {
 
 func UpdateUserRoute(c *gin.Context) {
 
-	return authenticationroutes.NewValidator(c).ParseLoginRequestBody().LoadTokenClaims().Success(func(validator *authenticationroutes.Validator) error {
+	authenticationroutes.NewValidator(c).ParseLoginRequestBody().LoadTokenClaims().Success(func(validator *authenticationroutes.Validator) {
 
 		//db, err := userdbcache.AutoConn(nil) //not clear on what is needed for the user and password
 
@@ -67,14 +67,14 @@ func UpdateUserRoute(c *gin.Context) {
 }
 
 func UserRoute(c *gin.Context) {
-	return authenticationroutes.NewValidator(c).
+	authenticationroutes.NewValidator(c).
 		LoadAuthUserFromToken().
-		Success(func(validator *authenticationroutes.Validator) error {
+		Success(func(validator *authenticationroutes.Validator) {
 			routes.MakeDataResp(c, "", validator.AuthUser)
 		})
 }
 
-func SendUserInfoUpdatedEmail(c *gin.Context, authUser *auth.AuthUser) error {
+func SendUserInfoUpdatedEmail(c *gin.Context, authUser *auth.AuthUser) {
 
 	file := "templates/email/account/updated.html"
 
@@ -89,6 +89,6 @@ func SendUserInfoUpdatedEmail(c *gin.Context, authUser *auth.AuthUser) error {
 	//	return routes.ErrorReq(err)
 	//}
 
-	return UserUpdatedResp(c)
+	UserUpdatedResp(c)
 
 }

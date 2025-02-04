@@ -78,7 +78,7 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 		err := userdbcache.SetIsVerified(authUser.Uuid)
 
 		if err != nil {
-			return routes.MakeSuccessResp(c, "unable to verify user", false)
+			routes.MakeSuccessResp(c, "unable to verify user", false)
 		}
 
 		// file := "templates/email/verify/verified.html"

@@ -1,8 +1,6 @@
 package bedroutes
 
 import (
-	"fmt"
-
 	"github.com/antonybholmes/go-beds"
 	"github.com/antonybholmes/go-dna"
 	"github.com/antonybholmes/go-edb-server-gin/routes"
@@ -68,7 +66,7 @@ func SearchBedsRoute(c *gin.Context) {
 	genome := c.Param("assembly")
 
 	if genome == "" {
-		routes.ErrorResp(c,"must supply a genome"))
+		routes.ErrorResp(c, "must supply a genome")
 	}
 
 	query := c.Query("search")
@@ -93,7 +91,7 @@ func BedRegionsRoute(c *gin.Context) {
 	}
 
 	if len(params.Beds) == 0 {
-		routes.ErrorResp(c,"at least 1 bed id must be supplied"))
+		routes.ErrorResp(c, "at least 1 bed id must be supplied")
 	}
 
 	ret := make([][]*beds.BedRegion, 0, len(params.Beds))

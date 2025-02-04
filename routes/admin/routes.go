@@ -70,7 +70,7 @@ func RolesRoute(c *gin.Context) {
 
 func UpdateUserRoute(c *gin.Context) {
 
-	return authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().LoadAuthUserFromUuid().Success(func(validator *authenticationroutes.Validator) error {
+	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().LoadAuthUserFromUuid().Success(func(validator *authenticationroutes.Validator) {
 
 		//db, err := userdbcache.NewConn()
 
@@ -125,7 +125,7 @@ func UpdateUserRoute(c *gin.Context) {
 
 func AddUserRoute(c *gin.Context) {
 
-	return authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().Success(func(validator *authenticationroutes.Validator) error {
+	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().Success(func(validator *authenticationroutes.Validator) {
 
 		// assume email is not verified
 		authUser, err := userdbcache.Instance().CreateUser(validator.LoginBodyReq.Username,

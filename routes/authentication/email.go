@@ -41,8 +41,7 @@ func SendEmailWithToken(subject string,
 	address, err := mail.ParseAddress(authUser.Email)
 
 	if err != nil {
-		c.Error(err)
-		return
+		return err
 	}
 
 	return BaseSendEmailWithToken(subject, authUser, address, file, token, callbackUrl, vistUrl)
@@ -232,7 +231,7 @@ func UpdateEmailRoute(c *gin.Context) {
 	})
 }
 
-func SendEmailChangedEmail(c *gin.Context, authUser *auth.AuthUser) error {
+func SendEmailChangedEmail(c *gin.Context, authUser *auth.AuthUser) {
 
 	file := "templates/email/email/updated.html"
 
@@ -247,6 +246,6 @@ func SendEmailChangedEmail(c *gin.Context, authUser *auth.AuthUser) error {
 	//	return routes.ErrorReq(err)
 	//}
 
-	return EmailUpdatedResp(c)
+	EmailUpdatedResp(c)
 
 }

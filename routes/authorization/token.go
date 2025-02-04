@@ -74,13 +74,13 @@ func TokenInfoRoute(c *gin.Context) {
 }
 
 func NewAccessTokenRoute(c *gin.Context) {
-	return authenticationroutes.NewValidator(c).CheckIsValidRefreshToken().Success(func(validator *authenticationroutes.Validator) error {
+	authenticationroutes.NewValidator(c).CheckIsValidRefreshToken().Success(func(validator *authenticationroutes.Validator) {
 
 		// Generate encoded token and send it as response.
 		accessToken, err := tokengen.AccessToken(c, validator.Claims.Uuid, validator.Claims.Roles)
 
 		if err != nil {
-			return routes.ErrorResp("error creating access token")
+			routes.ErrorResp(c, "error creating access token")
 		}
 
 		routes.MakeDataResp(c, "", &routes.AccessTokenResp{AccessToken: accessToken})

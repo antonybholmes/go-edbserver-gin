@@ -192,7 +192,7 @@ type PileupResp struct {
 }
 
 func PileupRoute(c *gin.Context) {
-	return authenticationroutes.NewValidator(c).Success(func(validator *authenticationroutes.Validator) error {
+	authenticationroutes.NewValidator(c).Success(func(validator *authenticationroutes.Validator) {
 
 		assembly := c.Param("assembly")
 
