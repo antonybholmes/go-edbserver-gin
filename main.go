@@ -147,7 +147,7 @@ func main() {
 	rdfMiddlware := RDFMiddleware()
 
 	r := gin.Default()
-	r.Use(ErrorHandler())
+
 	//r.Use(gin.Recovery())
 
 	r.Use(cors.New(cors.Config{
@@ -157,11 +157,15 @@ func main() {
 			"https://edb.rdf-lab.org",
 			"https://dev.edb-app-astro.pages.dev",
 			"https://edb-client-astro.pages.dev"},
-		//AllowMethods: []string{http.MethodGet, http.MethodPost},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
 		//AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, "Set-Cookie"},
 		// for sharing session cookie for validating logins etc
-		AllowCredentials: true,
+		AllowCredentials: true,      // Allow credentials (cookies, HTTP authentication)
+		MaxAge:           12 * 3600, // Cache preflight response for 12 hours
 	}))
+
+	r.Use(ErrorHandler())
 
 	store = cookie.NewStore([]byte(consts.SESSION_KEY), []byte(consts.SESSION_ENCRYPTION_KEY))
 	r.Use(sessions.Sessions(consts.SESSION_NAME, store))
@@ -186,7 +190,8 @@ func main() {
 	// Routes
 	//
 
-	adminGroup := r.Group("/admin", JwtMiddleware(),
+	adminGroup := r.Group("/admin",
+		JwtMiddleware(),
 		JwtIsAccessTokenMiddleware(),
 		JwtHasAdminPermissionMiddleware())
 
@@ -209,7 +214,7 @@ func main() {
 
 	authGroup := r.Group("/auth")
 	auth0Group := authGroup.Group("/auth0")
-	auth0Group.POST("/validate", auth0routes.ValidateAuth0TokenRoute, JwtAuth0Middleware())
+	auth0Group.POST("/validate", JwtAuth0Middleware(), auth0routes.ValidateAuth0TokenRoute)
 
 	authGroup.POST("/signin", authenticationroutes.UsernamePasswordSignInRoute)
 
@@ -220,9 +225,9 @@ func main() {
 		JwtMiddleware())
 
 	// with the correct token, performs the update
-	emailGroup.POST("/reset", authenticationroutes.SendResetEmailEmailRoute, JwtMiddleware())
+	emailGroup.POST("/reset", JwtMiddleware(), authenticationroutes.SendResetEmailEmailRoute)
 	// with the correct token, performs the update
-	emailGroup.POST("/update", authenticationroutes.UpdateEmailRoute, JwtMiddleware())
+	emailGroup.POST("/update", JwtMiddleware(), authenticationroutes.UpdateEmailRoute)
 
 	passwordGroup := authGroup.Group("/passwords")
 
@@ -230,7 +235,7 @@ func main() {
 	passwordGroup.POST("/reset", authenticationroutes.SendResetPasswordFromUsernameEmailRoute)
 
 	// with the correct token, updates a password
-	passwordGroup.POST("/update", authenticationroutes.UpdatePasswordRoute, JwtMiddleware())
+	passwordGroup.POST("/update", JwtMiddleware(), authenticationroutes.UpdatePasswordRoute)
 
 	passwordlessGroup := authGroup.Group("/passwordless")
 
@@ -242,13 +247,11 @@ func main() {
 		authenticationroutes.PasswordlessSignInRoute,
 		JwtMiddleware())
 
-	tokenGroup := authGroup.Group("/tokens")
-	tokenGroup.Use(JwtMiddleware())
+	tokenGroup := authGroup.Group("/tokens", JwtMiddleware())
 	tokenGroup.POST("/info", authorization.TokenInfoRoute)
 	tokenGroup.POST("/access", authorization.NewAccessTokenRoute)
 
-	usersGroup := authGroup.Group("/users")
-	usersGroup.Use(JwtMiddleware(),
+	usersGroup := authGroup.Group("/users", JwtMiddleware(),
 		JwtIsAccessTokenMiddleware())
 
 	usersGroup.POST("", authorization.UserRoute)
@@ -266,11 +269,11 @@ func main() {
 	//sessionAuthGroup := sessionGroup.Group("/auth")
 
 	sessionGroup.POST("/signin", sessionRoutes.SessionUsernamePasswordSignInRoute)
-	sessionGroup.POST("/auth0/signin", sessionRoutes.SessionSignInUsingAuth0Route, JwtAuth0Middleware())
+	sessionGroup.POST("/auth0/signin", JwtAuth0Middleware(), sessionRoutes.SessionSignInUsingAuth0Route)
 
 	sessionGroup.POST("/passwordless/signin",
-		sessionRoutes.SessionPasswordlessValidateSignInRoute,
-		JwtMiddleware())
+		JwtMiddleware(),
+		sessionRoutes.SessionPasswordlessValidateSignInRoute)
 
 	sessionGroup.POST("/api/keys/signin", sessionRoutes.SessionApiKeySignInRoute)
 
@@ -284,15 +287,14 @@ func main() {
 	//sessionGroup.POST("/password/reset", authentication.SessionSendResetPasswordEmailRoute)
 
 	sessionGroup.POST("/tokens/access",
-		authenticationroutes.NewAccessTokenFromSessionRoute,
-		SessionIsValidMiddleware())
+		SessionIsValidMiddleware(),
+		authenticationroutes.NewAccessTokenFromSessionRoute)
 
 	sessionGroup.POST("/refresh",
-		sessionRoutes.SessionRenewRoute,
-		SessionIsValidMiddleware())
+		SessionIsValidMiddleware(),
+		sessionRoutes.SessionRenewRoute)
 
-	sessionUserGroup := sessionGroup.Group("/user")
-	sessionUserGroup.Use(SessionIsValidMiddleware())
+	sessionUserGroup := sessionGroup.Group("/user", SessionIsValidMiddleware())
 
 	sessionUserGroup.GET("", authenticationroutes.UserFromSessionRoute)
 
@@ -348,19 +350,22 @@ func main() {
 	mutationsGroup.POST("/maf/:assembly", mutationroutes.PileupRoute)
 
 	mutationsGroup.POST("/pileup/:assembly",
-		mutationroutes.PileupRoute,
 		JwtMiddleware(),
 		JwtIsAccessTokenMiddleware(),
-		rdfMiddlware)
+		rdfMiddlware,
+		mutationroutes.PileupRoute,
+	)
 
 	gexGroup := moduleGroup.Group("/gex")
 	gexGroup.GET("/platforms", gexroutes.PlaformsRoute)
 	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
 	gexGroup.POST("/datasets", gexroutes.GexDatasetsRoute)
-	gexGroup.POST("/exp", gexroutes.GexGeneExpRoute,
+	gexGroup.POST("/exp",
 		JwtMiddleware(),
 		JwtIsAccessTokenMiddleware(),
-		rdfMiddlware)
+		rdfMiddlware,
+		gexroutes.GexGeneExpRoute,
+	)
 
 	geneConvGroup := moduleGroup.Group("/geneconv")
 
@@ -423,6 +428,6 @@ func main() {
 		})
 	})
 
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r.Run("localhost:8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 
 }

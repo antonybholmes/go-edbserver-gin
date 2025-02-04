@@ -15,7 +15,6 @@ import (
 	"github.com/antonybholmes/go-edb-server-gin/routes"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/rs/zerolog/log"
 )
@@ -224,12 +223,16 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
 	user, ok := c.Get("user")
 
+	for key := range c.Keys {
+		log.Debug().Msgf("key %s", key)
+	}
+
 	if !ok {
 		routes.TokenErrorReq(c)
 		return
 	}
 
-	tokenClaims := user.(*jwt.Token).Claims.(*auth.Auth0TokenClaims)
+	tokenClaims := user.(*auth.Auth0TokenClaims)
 
 	//myClaims := user.Claims.(*auth.TokenClaims) //hmm.Claims.(*TokenClaims)
 

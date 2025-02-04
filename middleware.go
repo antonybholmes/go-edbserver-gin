@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/rsa"
 	"fmt"
 	"net/http"
 	"strings"
@@ -11,6 +10,7 @@ import (
 	"github.com/antonybholmes/go-edb-server-gin/routes"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -59,49 +59,51 @@ func ErrorHandler() gin.HandlerFunc {
 	}
 }
 
-func parseToken(c *gin.Context, key *rsa.PublicKey) error {
+func parseToken(c *gin.Context) (string, error) {
 	// Get the token from the "Authorization" header
 	authHeader := c.GetHeader("Authorization")
+
 	if authHeader == "" {
-		c.Error(fmt.Errorf("Authorization header missing"))
-		c.Abort()
-		return fmt.Errorf("Authorization header missing")
+		return "", fmt.Errorf("authorization header missing")
 	}
 
 	// Split the token (format: "Bearer <token>")
 	tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+
 	if tokenString == authHeader {
-		c.Error(fmt.Errorf("Malformed token"))
-
-		return fmt.Errorf("Malformed token")
+		return "", fmt.Errorf("malformed token")
 	}
 
-	// Parse the JWT
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		// Return the secret key for verifying the token
-		return key, nil
-	})
-
-	if err != nil {
-
-		c.Error(err)
-		return err
-	}
-
-	c.Set("user", *token)
-
-	return nil
+	return tokenString, nil
 }
 
 func JwtMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		err := parseToken(c, consts.JWT_RSA_PUBLIC_KEY)
+		tokenString, err := parseToken(c)
 
 		if err != nil {
+			c.Error(err)
 			c.Abort()
 			return
 		}
+
+		claims := auth.TokenClaims{}
+
+		// Parse the JWT
+		_, err = jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
+			// Return the secret key for verifying the token
+			return consts.JWT_RSA_PUBLIC_KEY, nil
+		})
+
+		if err != nil {
+			c.Error(err)
+			c.Abort()
+			return
+		}
+
+		// use pointer to token
+		c.Set("user", &claims)
 
 		// Continue processing the request
 		c.Next()
@@ -112,12 +114,38 @@ func JwtMiddleware() gin.HandlerFunc {
 func JwtAuth0Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		err := parseToken(c, consts.JWT_AUTH0_RSA_PUBLIC_KEY)
+		tokenString, err := parseToken(c)
 
 		if err != nil {
+			c.Error(err)
 			c.Abort()
 			return
 		}
+
+		claims := auth.Auth0TokenClaims{}
+
+		log.Debug().Msgf("tok %s", tokenString)
+
+		// Parse the JWT
+		_, err = jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
+			// Return the secret key for verifying the token
+			return consts.JWT_AUTH0_RSA_PUBLIC_KEY, nil
+		})
+
+		log.Debug().Msgf("err %s", err)
+
+		log.Debug().Msgf("v %v", claims)
+
+		if err != nil {
+			c.Error(err)
+			c.Abort()
+			return
+		}
+
+		// use pointer to token
+		c.Set("user", &claims)
+
+		log.Debug().Msgf("aha %v", claims)
 
 		// Continue processing the request
 		c.Next()
@@ -127,8 +155,15 @@ func JwtAuth0Middleware() gin.HandlerFunc {
 
 func JwtIsRefreshTokenMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		user := c.MustGet("user").(*jwt.Token)
-		claims := user.Claims.(*auth.TokenClaims)
+		user, ok := c.Get("user")
+
+		if !ok {
+			routes.AuthErrorReq(c, "no user")
+			c.Abort()
+			return
+		}
+
+		claims := user.(*auth.TokenClaims)
 
 		if claims.Type != auth.REFRESH_TOKEN {
 			routes.AuthErrorReq(c, "not a refresh token")
@@ -150,8 +185,7 @@ func JwtIsAccessTokenMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		authUser := user.(*jwt.Token)
-		claims := authUser.Claims.(*auth.TokenClaims)
+		claims := user.(*auth.TokenClaims)
 
 		if claims.Type != auth.ACCESS_TOKEN {
 			routes.AuthErrorReq(c, "not an access token")
@@ -173,8 +207,7 @@ func JwtHasAdminPermissionMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		authUser := user.(*jwt.Token)
-		claims := authUser.Claims.(*auth.TokenClaims)
+		claims := user.(*auth.TokenClaims)
 
 		if !auth.IsAdmin((claims.Roles)) {
 			routes.AuthErrorReq(c, "user is not an admin")
@@ -196,8 +229,7 @@ func JwtHasLoginPermissionMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		authUser := user.(*jwt.Token)
-		claims := authUser.Claims.(*auth.TokenClaims)
+		claims := user.(*auth.TokenClaims)
 
 		if !auth.CanSignin((claims.Roles)) {
 			routes.AuthErrorReq(c, "user is not allowed to login")
@@ -268,13 +300,19 @@ func JwtRoleMiddleware(validRoles ...string) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 
-		user := c.MustGet("user").(*jwt.Token)
+		user, ok := c.Get("user")
+
+		if !ok {
+			routes.AuthErrorReq(c, "no user")
+			c.Abort()
+			return
+		}
 
 		// if user == nil {
 		// 	return routes.AuthErrorReq("no jwt available")
 		// }
 
-		claims := user.Claims.(*auth.TokenClaims)
+		claims := user.(*auth.TokenClaims)
 
 		// shortcut for admin, as we allow this for everything
 		if !auth.IsAdmin(claims.Roles) {

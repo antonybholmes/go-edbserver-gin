@@ -8,7 +8,6 @@ import (
 	"github.com/antonybholmes/go-auth/userdbcache"
 	"github.com/antonybholmes/go-edb-server-gin/routes"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 //
@@ -223,7 +222,7 @@ func (validator *Validator) LoadTokenClaims() *Validator {
 		user, ok := validator.c.Get("user")
 
 		if ok {
-			validator.Claims = user.(*jwt.Token).Claims.(*auth.TokenClaims)
+			validator.Claims = user.(*auth.TokenClaims)
 		}
 	}
 
