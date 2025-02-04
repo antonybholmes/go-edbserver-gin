@@ -124,7 +124,7 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	authUser, err := userdbcache.FindUserByUsername(user)
 
 	if err != nil {
-		routes.UserDoesNotExistReq(c)
+		routes.UserDoesNotExistResp(c)
 	}
 
 	if authUser.EmailVerifiedAt == auth.EMAIL_NOT_VERIFIED_TIME_S {
@@ -184,7 +184,7 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	authUser, err := userdbcache.FindUserByApiKey(validator.LoginBodyReq.ApiKey)
 
 	if err != nil {
-		routes.UserDoesNotExistReq(c)
+		routes.UserDoesNotExistResp(c)
 	}
 
 	if authUser.EmailVerifiedAt == auth.EMAIL_NOT_VERIFIED_TIME_S {

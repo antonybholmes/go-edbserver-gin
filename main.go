@@ -2,7 +2,6 @@ package main
 
 import (
 	"net/http"
-	"os"
 	"runtime"
 
 	"github.com/gin-contrib/cors"
@@ -41,9 +40,6 @@ import (
 	"github.com/antonybholmes/go-pathway/pathwaydbcache"
 	"github.com/antonybholmes/go-seqs/seqsdbcache"
 	"github.com/antonybholmes/go-sys/env"
-	"github.com/labstack/echo-contrib/session"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -59,22 +55,22 @@ type InfoResp struct {
 	Arch   string `json:"arch"`
 }
 
-// var store *sqlitestore.SqliteStore
+// var store *sqlitestorr.SqliteStore
 var store cookie.Store
 
 func init() {
 
 	env.Ls()
-	// store = sys.Must(sqlitestore.NewSqliteStore("data/users.db",
+	// store = sys.Must(sqlitestorr.NewSqliteStore("data/users.db",
 	// 	"sessions",
 	// 	"/",
 	// 	auth.MAX_AGE_7_DAYS_SECS,
 	// 	[]byte(consts.SESSION_SECRET)))
 
-	// follow https://github.com/gorilla/sessions/blob/main/store.go#L55
+	// follow https://github.com/gorilla/sessions/blob/main/storr.go#L55
 	// SESSION_KEY should be 64 bytes/chars and SESSION_ENCRYPTION_KEY should be 32 bytes/chars
 
-	// store.Options = &sessions.Options{
+	// storr.Options = &sessions.Options{
 	// 	Path:     "/",
 	// 	MaxAge:   auth.MAX_AGE_7_DAYS_SECS,
 	// 	HttpOnly: false,
@@ -147,6 +143,9 @@ func main() {
 	// 	logger = zerolog.New(io.MultiWriter(zerolog.ConsoleWriter{Out: os.Stderr}, fileLogger)).With().Timestamp().Logger()
 	// }
 
+	sessionRoutes := authenticationroutes.NewSessionRoutes()
+	rdfMiddlware := RDFMiddleware()
+
 	r := gin.Default()
 	r.Use(ErrorHandler())
 	//r.Use(gin.Recovery())
@@ -183,49 +182,13 @@ func main() {
 	toolsGroup.GET("/passwords/hash", toolsroutes.HashedPasswordRoute)
 	toolsGroup.GET("/key", toolsroutes.RandomKeyRoute)
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
-
-	return
-
-	//
-	// end logging setup
-	//
-
-	e := echo.New()
-
-	e.Use(middleware.BodyLimit("2M"))
-
-	//e.Use(middleware.Logger())
-
-	e.Use(session.Middleware(store))
-
-	// write to both stdout and log file
-	// f := env.GetStr("LOG_FILE", fmt.Sprintf("logs/%s.log", consts.APP_NAME))
-
-	// logFile, err := os.OpenFile(f, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
-
-	// if err != nil {
-	// 	//return nil, err
-	// }
-
-	// // to prevent file closing before program exits
-	// defer logFile.Close()
-
-	rdfMiddlware := RDFMiddleware()
-
 	//
 	// Routes
 	//
 
-	adminGroup := e.Group("/admin")
-	adminGroup.Use(validateJwtMiddleware,
-		JwtIsAccessTokenMiddleware,
-		JwtHasAdminPermissionMiddleware)
+	adminGroup := r.Group("/admin", JwtMiddleware(),
+		JwtIsAccessTokenMiddleware(),
+		JwtHasAdminPermissionMiddleware())
 
 	adminGroup.GET("/roles", adminroutes.RolesRoute)
 
@@ -238,15 +201,15 @@ func main() {
 	adminUsersGroup.DELETE("/delete/:uuid", adminroutes.DeleteUserRoute)
 
 	// Allow users to sign up for an account
-	e.POST("/signup", authenticationroutes.SignupRoute)
+	r.POST("/signup", authenticationroutes.SignupRoute)
 
 	//
 	// user groups: start
 	//
 
-	authGroup := e.Group("/auth")
+	authGroup := r.Group("/auth")
 	auth0Group := authGroup.Group("/auth0")
-	auth0Group.POST("/validate", auth0routes.ValidateAuth0TokenRoute, validateAuth0JwtMiddleware)
+	auth0Group.POST("/validate", auth0routes.ValidateAuth0TokenRoute, JwtAuth0Middleware())
 
 	authGroup.POST("/signin", authenticationroutes.UsernamePasswordSignInRoute)
 
@@ -254,12 +217,12 @@ func main() {
 
 	emailGroup.POST("/verify",
 		authenticationroutes.EmailAddressVerifiedRoute,
-		validateJwtMiddleware)
+		JwtMiddleware())
 
 	// with the correct token, performs the update
-	emailGroup.POST("/reset", authenticationroutes.SendResetEmailEmailRoute, validateJwtMiddleware)
+	emailGroup.POST("/reset", authenticationroutes.SendResetEmailEmailRoute, JwtMiddleware())
 	// with the correct token, performs the update
-	emailGroup.POST("/update", authenticationroutes.UpdateEmailRoute, validateJwtMiddleware)
+	emailGroup.POST("/update", authenticationroutes.UpdateEmailRoute, JwtMiddleware())
 
 	passwordGroup := authGroup.Group("/passwords")
 
@@ -267,26 +230,26 @@ func main() {
 	passwordGroup.POST("/reset", authenticationroutes.SendResetPasswordFromUsernameEmailRoute)
 
 	// with the correct token, updates a password
-	passwordGroup.POST("/update", authenticationroutes.UpdatePasswordRoute, validateJwtMiddleware)
+	passwordGroup.POST("/update", authenticationroutes.UpdatePasswordRoute, JwtMiddleware())
 
 	passwordlessGroup := authGroup.Group("/passwordless")
 
 	passwordlessGroup.POST("/email", func(c *gin.Context) {
-		return authenticationroutes.PasswordlessSigninEmailRoute(c, nil)
+		authenticationroutes.PasswordlessSigninEmailRoute(c, nil)
 	})
 
 	passwordlessGroup.POST("/signin",
 		authenticationroutes.PasswordlessSignInRoute,
-		validateJwtMiddleware)
+		JwtMiddleware())
 
 	tokenGroup := authGroup.Group("/tokens")
-	tokenGroup.Use(validateJwtMiddleware)
+	tokenGroup.Use(JwtMiddleware())
 	tokenGroup.POST("/info", authorization.TokenInfoRoute)
 	tokenGroup.POST("/access", authorization.NewAccessTokenRoute)
 
 	usersGroup := authGroup.Group("/users")
-	usersGroup.Use(validateJwtMiddleware,
-		JwtIsAccessTokenMiddleware)
+	usersGroup.Use(JwtMiddleware(),
+		JwtIsAccessTokenMiddleware())
 
 	usersGroup.POST("", authorization.UserRoute)
 
@@ -298,16 +261,16 @@ func main() {
 	// Deal with logins where we want a session
 	//
 
-	sessionGroup := e.Group("/sessions")
+	sessionGroup := r.Group("/sessions")
 
 	//sessionAuthGroup := sessionGroup.Group("/auth")
 
 	sessionGroup.POST("/signin", sessionRoutes.SessionUsernamePasswordSignInRoute)
-	sessionGroup.POST("/auth0/signin", sessionRoutes.SessionSignInUsingAuth0Route, validateAuth0JwtMiddleware)
+	sessionGroup.POST("/auth0/signin", sessionRoutes.SessionSignInUsingAuth0Route, JwtAuth0Middleware())
 
 	sessionGroup.POST("/passwordless/signin",
 		sessionRoutes.SessionPasswordlessValidateSignInRoute,
-		validateJwtMiddleware)
+		JwtMiddleware())
 
 	sessionGroup.POST("/api/keys/signin", sessionRoutes.SessionApiKeySignInRoute)
 
@@ -322,14 +285,14 @@ func main() {
 
 	sessionGroup.POST("/tokens/access",
 		authenticationroutes.NewAccessTokenFromSessionRoute,
-		SessionIsValidMiddleware)
+		SessionIsValidMiddleware())
 
 	sessionGroup.POST("/refresh",
 		sessionRoutes.SessionRenewRoute,
-		SessionIsValidMiddleware)
+		SessionIsValidMiddleware())
 
 	sessionUserGroup := sessionGroup.Group("/user")
-	sessionUserGroup.Use(SessionIsValidMiddleware)
+	sessionUserGroup.Use(SessionIsValidMiddleware())
 
 	sessionUserGroup.GET("", authenticationroutes.UserFromSessionRoute)
 
@@ -354,7 +317,7 @@ func main() {
 	// module groups: start
 	//
 
-	moduleGroup := e.Group("/modules")
+	moduleGroup := r.Group("/modules")
 	//moduleGroup.Use(jwtMiddleWare,JwtIsAccessTokenMiddleware)
 
 	dnaGroup := moduleGroup.Group("/dna")
@@ -386,8 +349,8 @@ func main() {
 
 	mutationsGroup.POST("/pileup/:assembly",
 		mutationroutes.PileupRoute,
-		validateJwtMiddleware,
-		JwtIsAccessTokenMiddleware,
+		JwtMiddleware(),
+		JwtIsAccessTokenMiddleware(),
 		rdfMiddlware)
 
 	gexGroup := moduleGroup.Group("/gex")
@@ -395,8 +358,8 @@ func main() {
 	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
 	gexGroup.POST("/datasets", gexroutes.GexDatasetsRoute)
 	gexGroup.POST("/exp", gexroutes.GexGeneExpRoute,
-		validateJwtMiddleware,
-		JwtIsAccessTokenMiddleware,
+		JwtMiddleware(),
+		JwtIsAccessTokenMiddleware(),
 		rdfMiddlware)
 
 	geneConvGroup := moduleGroup.Group("/geneconv")
@@ -418,8 +381,8 @@ func main() {
 	pathwayGroup.POST("/overlap", pathwayroutes.PathwayOverlapRoute)
 
 	seqsGroup := moduleGroup.Group("/seqs",
-		validateJwtMiddleware,
-		JwtIsAccessTokenMiddleware,
+		JwtMiddleware(),
+		JwtIsAccessTokenMiddleware(),
 		rdfMiddlware)
 
 	seqsGroup.GET("/genomes", seqroutes.GenomeRoute)
@@ -431,8 +394,8 @@ func main() {
 	cytobandsGroup := moduleGroup.Group("/cytobands")
 	cytobandsGroup.GET("/:assembly/:chr", cytobandroutes.CytobandsRoute)
 
-	bedsGroup := moduleGroup.Group("/beds", validateJwtMiddleware,
-		JwtIsAccessTokenMiddleware,
+	bedsGroup := moduleGroup.Group("/beds", JwtMiddleware(),
+		JwtIsAccessTokenMiddleware(),
 		rdfMiddlware)
 	bedsGroup.GET("/genomes", bedroutes.GenomeRoute)
 	bedsGroup.GET("/platforms/:assembly", bedroutes.PlatformRoute)
@@ -447,21 +410,19 @@ func main() {
 	// Util routes
 	//
 
-	utilsGroup := e.Group("/utils")
+	utilsGroup := r.Group("/utils")
 	//moduleGroup.Use(jwtMiddleWare,JwtIsAccessTokenMiddleware)
 
 	xlsxGroup := utilsGroup.Group("/xlsx")
 	xlsxGroup.POST("/sheets", utilroutes.XlsxSheetsRoute)
 	xlsxGroup.POST("/to/:format", utilroutes.XlsxToRoute)
 
-	//
-	// Util routes end
-	//
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
 
-	httpPort := os.Getenv("PORT")
-	if httpPort == "" {
-		httpPort = "8080"
-	}
+	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 
-	e.Logger.Fatal(e.Start(":" + httpPort))
 }

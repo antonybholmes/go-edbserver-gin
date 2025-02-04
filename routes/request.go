@@ -33,7 +33,7 @@ func EmailNotVerifiedReq(c *gin.Context) {
 	ErrorResp(c, "email address not verified")
 }
 
-func UserDoesNotExistReq(c *gin.Context) {
+func UserDoesNotExistResp(c *gin.Context) {
 	ErrorResp(c, "user does not exist")
 }
 

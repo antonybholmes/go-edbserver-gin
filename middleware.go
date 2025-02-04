@@ -13,7 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo/v4"
 )
 
 type APIError struct {
@@ -84,9 +83,9 @@ func parseToken(c *gin.Context, key *rsa.PublicKey) error {
 	})
 
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token", "message": err.Error()})
+
 		c.Error(err)
-		return
+		return err
 	}
 
 	c.Set("user", *token)
@@ -94,12 +93,13 @@ func parseToken(c *gin.Context, key *rsa.PublicKey) error {
 	return nil
 }
 
-func JWTMiddleware() gin.HandlerFunc {
+func JwtMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		err := parseToken(c, consts.JWT_RSA_PUBLIC_KEY)
 
 		if err != nil {
+			c.Abort()
 			return
 		}
 
@@ -109,12 +109,13 @@ func JWTMiddleware() gin.HandlerFunc {
 	}
 }
 
-func JWTAuth0Middleware() gin.HandlerFunc {
+func JwtAuth0Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		err := parseToken(c, consts.JWT_AUTH0_RSA_PUBLIC_KEY)
 
 		if err != nil {
+			c.Abort()
 			return
 		}
 
@@ -131,64 +132,95 @@ func JwtIsRefreshTokenMiddleware() gin.HandlerFunc {
 
 		if claims.Type != auth.REFRESH_TOKEN {
 			routes.AuthErrorReq(c, "not a refresh token")
+			c.Abort()
+			return
 		}
 
 		c.Next()
 	}
 }
 
-func JwtIsAccessTokenMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func JwtIsAccessTokenMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		user := c.Get("user").(*jwt.Token)
-		claims := user.Claims.(*auth.TokenClaims)
+		user, ok := c.Get("user")
+
+		if !ok {
+			routes.UserDoesNotExistResp(c)
+			c.Abort()
+			return
+		}
+
+		authUser := user.(*jwt.Token)
+		claims := authUser.Claims.(*auth.TokenClaims)
 
 		if claims.Type != auth.ACCESS_TOKEN {
-			routes.AuthErrorReq("not an access token")
+			routes.AuthErrorReq(c, "not an access token")
+			c.Abort()
+			return
 		}
 
-		return next(c)
+		c.Next()
 	}
 }
 
-func JwtHasAdminPermissionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func JwtHasAdminPermissionMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		user := c.Get("user").(*jwt.Token)
-		claims := user.Claims.(*auth.TokenClaims)
+		user, ok := c.Get("user")
+
+		if !ok {
+			routes.UserDoesNotExistResp(c)
+			c.Abort()
+			return
+		}
+
+		authUser := user.(*jwt.Token)
+		claims := authUser.Claims.(*auth.TokenClaims)
 
 		if !auth.IsAdmin((claims.Roles)) {
-			return routes.AuthErrorReq("user is not an admin")
+			routes.AuthErrorReq(c, "user is not an admin")
+			c.Abort()
+			return
 		}
 
-		return next(c)
+		c.Next()
 	}
 }
 
-func JwtHasLoginPermissionMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func JwtHasLoginPermissionMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		user := c.Get("user").(*jwt.Token)
-		claims := user.Claims.(*auth.TokenClaims)
+		user, ok := c.Get("user")
 
-		if !auth.CanSignin((claims.Roles)) {
-			return routes.AuthErrorReq("user is not allowed to login")
+		if !ok {
+			routes.UserDoesNotExistResp(c)
+			c.Abort()
+			return
 		}
 
-		return next(c)
+		authUser := user.(*jwt.Token)
+		claims := authUser.Claims.(*auth.TokenClaims)
+
+		if !auth.CanSignin((claims.Roles)) {
+			routes.AuthErrorReq(c, "user is not allowed to login")
+		}
+
+		c.Next()
 	}
 }
 
 // basic check that session exists and seems to be populated with the user
-func SessionIsValidMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-
+func SessionIsValidMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sessData, err := authenticationroutes.ReadSessionInfo(c)
 
 		if err != nil {
-			return routes.AuthErrorReq("cannot get user id from session")
+			routes.AuthErrorReq(c, "cannot get user id from session")
+			c.Abort()
+			return
 		}
 
 		c.Set("authUser", sessData.AuthUser)
 
-		return next(c)
+		c.Next()
 	}
 }
 
