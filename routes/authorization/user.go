@@ -16,7 +16,7 @@ type NameReq struct {
 }
 
 func UserUpdatedResp(c *gin.Context) {
-	routes.MakeOkPrettyResp(c, "account updated")
+	routes.MakeOkResp(c, "account updated")
 }
 
 func UpdateUserRoute(c *gin.Context) {
@@ -30,7 +30,8 @@ func UpdateUserRoute(c *gin.Context) {
 		authUser, err := userdbcache.FindUserByUuid(uuid)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		err = userdbcache.SetUserInfo(authUser,
@@ -40,7 +41,8 @@ func UpdateUserRoute(c *gin.Context) {
 			false)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		//return SendUserInfoUpdatedEmail(c, authUser)
@@ -49,7 +51,8 @@ func UpdateUserRoute(c *gin.Context) {
 		authUser, err = userdbcache.FindUserByUuid(uuid)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		// send email notification of change

@@ -15,19 +15,20 @@ import (
 )
 
 func PasswordUpdatedResp(c *gin.Context) {
-	routes.MakeOkPrettyResp(c, "password updated")
+	routes.MakeOkResp(c, "password updated")
 }
 
 // Start passwordless login by sending an email
 func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
-	return NewValidator(c).LoadAuthUserFromUsername().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) error {
+	NewValidator(c).LoadAuthUserFromUsername().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
 		authUser := validator.AuthUser
 		req := validator.LoginBodyReq
 
 		otpToken, err := tokengen.ResetPasswordToken(c, authUser)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		// var file string
@@ -58,12 +59,12 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 		//	return routes.ErrorReq(err)
 		//}
 
-		routes.MakeOkPrettyResp(c, "check your email for a password reset link")
+		routes.MakeOkResp(c, "check your email for a password reset link")
 	})
 }
 
 func UpdatePasswordRoute(c *gin.Context) {
-	return NewValidator(c).ParseLoginRequestBody().LoadAuthUserFromToken().Success(func(validator *Validator) {
+	NewValidator(c).ParseLoginRequestBody().LoadAuthUserFromToken().Success(func(validator *Validator) {
 
 		if validator.Claims.Type != auth.RESET_PASSWORD_TOKEN {
 			routes.ErrorResp(c, routes.ERROR_WRONG_TOKEN_TYPE)
@@ -93,7 +94,7 @@ func UpdatePasswordRoute(c *gin.Context) {
 			EmailType: mailer.REDIS_EMAIL_TYPE_PASSWORD_UPDATED}
 		rdb.PublishEmail(&email)
 
-		routes.MakeOkPrettyResp(c, "password updated confirmation email sent")
+		routes.MakeOkResp(c, "password updated confirmation email sent")
 	})
 }
 

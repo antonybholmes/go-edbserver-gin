@@ -47,7 +47,8 @@ func MutationDatasetsRoute(c *gin.Context) {
 	datasets, err := mutationdbcache.List(assembly)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", datasets)
@@ -59,7 +60,8 @@ func MutationsRoute(c *gin.Context) {
 	params, err := ParseParamsFromPost(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	location := params.Locations[0]
@@ -67,7 +69,8 @@ func MutationsRoute(c *gin.Context) {
 	search, err := mutationdbcache.GetInstance().Search(assembly, location, params.Datasets)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	// if err != nil {
@@ -99,7 +102,7 @@ type MafResp struct {
 }
 
 // func MafRoute(c *gin.Context) {
-// 	return NewValidator(c).Success(func(validator *Validator) error {
+// 	 NewValidator(c).Success(func(validator *Validator) {
 // 		assembly := c.Param("assembly")
 
 // 		params, err := ParseParamsFromPost(c)
@@ -196,7 +199,8 @@ func PileupRoute(c *gin.Context) {
 		params, err := ParseParamsFromPost(c)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		log.Debug().Msgf("pileup: %v", params)
@@ -219,13 +223,15 @@ func PileupRoute(c *gin.Context) {
 
 		if err != nil {
 			log.Debug().Msgf("here 1 %s", err)
-			return err
+			c.Error(err)
+			return
 		}
 
 		pileup, err := mutations.GetPileup(search)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		routes.MakeDataResp(c, "", pileup)

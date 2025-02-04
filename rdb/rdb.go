@@ -33,7 +33,8 @@ func PublishEmail(email *mailer.RedisQueueEmail) error {
 	payload, err := json.Marshal(email)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	return Publish(mailer.REDIS_EMAIL_CHANNEL, payload)

@@ -10,7 +10,8 @@ func SessionUpdateUserRoute(c *gin.Context) {
 	sessionData, err := authenticationroutes.ReadSessionInfo(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	authUser := sessionData.AuthUser
@@ -20,7 +21,8 @@ func SessionUpdateUserRoute(c *gin.Context) {
 		err = userdbcache.SetUserInfo(authUser, validator.LoginBodyReq.Username, validator.LoginBodyReq.FirstName, validator.LoginBodyReq.LastName, false)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		return SendUserInfoUpdatedEmail(c, authUser)

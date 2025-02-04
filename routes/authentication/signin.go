@@ -14,15 +14,15 @@ import (
 )
 
 func UserSignedInResp(c *gin.Context) {
-	return routes.MakeOkPrettyResp(c, "user signed in")
+	routes.MakeOkResp(c, "user signed in")
 }
 
 func PasswordlessEmailSentResp(c *gin.Context) {
-	return routes.MakeOkPrettyResp(c, "passwordless email sent")
+	routes.MakeOkResp(c, "passwordless email sent")
 }
 
 func UsernamePasswordSignInRoute(c *gin.Context) {
-	return NewValidator(c).ParseLoginRequestBody().Success(func(validator *Validator) error {
+	NewValidator(c).ParseLoginRequestBody().Success(func(validator *Validator) {
 
 		if validator.LoginBodyReq.Password == "" {
 			return PasswordlessSigninEmailRoute(c, validator)
@@ -53,7 +53,8 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 		err = authUser.CheckPasswordsMatch(validator.LoginBodyReq.Password)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		refreshToken, err := tokengen.RefreshToken(c, authUser) //auth.MakeClaim(authUser.Roles))
@@ -78,14 +79,15 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) error {
 		validator = NewValidator(c)
 	}
 
-	return validator.LoadAuthUserFromUsername().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) error {
+	validator.LoadAuthUserFromUsername().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
 
 		authUser := validator.AuthUser
 
 		passwordlessToken, err := tokengen.PasswordlessToken(c, authUser.Uuid, validator.LoginBodyReq.VisitUrl)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		// var file string
@@ -117,12 +119,12 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) error {
 		//	return routes.ErrorReq(err)
 		//}
 
-		return routes.MakeOkPrettyResp(c, "check your email for a passwordless sign in link")
+		routes.MakeOkResp(c, "check your email for a passwordless sign in link")
 	})
 }
 
 func PasswordlessSignInRoute(c *gin.Context) {
-	return NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) error {
+	NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
 
 		if validator.Claims.Type != auth.PASSWORDLESS_TOKEN {
 			return routes.WrongTokentTypeReq()

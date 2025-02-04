@@ -50,7 +50,8 @@ func TokenInfoRoute(c *gin.Context) {
 	t, err := routes.HeaderAuthToken(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	claims := auth.TokenClaims{}
@@ -60,7 +61,8 @@ func TokenInfoRoute(c *gin.Context) {
 	})
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", &routes.JwtInfo{

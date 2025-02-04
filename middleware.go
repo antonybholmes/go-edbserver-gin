@@ -85,7 +85,8 @@ func parseToken(c *gin.Context, key *rsa.PublicKey) error {
 
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token", "message": err.Error()})
-		return err
+		c.Error(err)
+		return
 	}
 
 	c.Set("user", *token)

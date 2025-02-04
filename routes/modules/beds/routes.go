@@ -44,7 +44,8 @@ func GenomeRoute(c *gin.Context) {
 	platforms, err := bedsdbcache.Genomes()
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", platforms)
@@ -56,7 +57,8 @@ func PlatformRoute(c *gin.Context) {
 	platforms, err := bedsdbcache.Platforms(genome)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", platforms)
@@ -66,7 +68,7 @@ func SearchBedsRoute(c *gin.Context) {
 	genome := c.Param("assembly")
 
 	if genome == "" {
-		return routes.ErrorResp(fmt.Errorf("must supply a genome"))
+		routes.ErrorResp(c,"must supply a genome"))
 	}
 
 	query := c.Query("search")
@@ -74,7 +76,8 @@ func SearchBedsRoute(c *gin.Context) {
 	tracks, err := bedsdbcache.Search(genome, query)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", tracks)
@@ -85,11 +88,12 @@ func BedRegionsRoute(c *gin.Context) {
 	params, err := ParseBedParamsFromPost(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	if len(params.Beds) == 0 {
-		return routes.ErrorResp(fmt.Errorf("at least 1 bed id must be supplied"))
+		routes.ErrorResp(c,"at least 1 bed id must be supplied"))
 	}
 
 	ret := make([][]*beds.BedRegion, 0, len(params.Beds))
@@ -101,7 +105,8 @@ func BedRegionsRoute(c *gin.Context) {
 		reader, err := bedsdbcache.ReaderFromId(bed)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		features, _ := reader.OverlappingRegions(params.Location)

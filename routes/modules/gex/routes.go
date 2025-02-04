@@ -32,7 +32,8 @@ func PlaformsRoute(c *gin.Context) {
 	types, err := gexdbcache.Platforms()
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", types)
@@ -43,13 +44,15 @@ func GexValueTypesRoute(c *gin.Context) {
 	params, err := ParseParamsFromPost(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	valueTypes, err := gexdbcache.GexValueTypes(params.Platform.Id)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", valueTypes)
@@ -60,13 +63,15 @@ func GexDatasetsRoute(c *gin.Context) {
 	params, err := ParseParamsFromPost(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	datasets, err := gexdbcache.Datasets(params.Platform.Id)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", datasets)
@@ -76,14 +81,16 @@ func GexGeneExpRoute(c *gin.Context) {
 	params, err := ParseParamsFromPost(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	// convert search genes into actual genes in the database
 	gexGenes, err := gexdbcache.GetGenes(params.Genes)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	if params.Platform.Id == 2 {
@@ -92,7 +99,8 @@ func GexGeneExpRoute(c *gin.Context) {
 
 		if err != nil {
 
-			return err
+			c.Error(err)
+			return
 		}
 
 		routes.MakeDataResp(c, "", ret)
@@ -102,7 +110,8 @@ func GexGeneExpRoute(c *gin.Context) {
 
 		if err != nil {
 
-			return err
+			c.Error(err)
+			return
 		}
 
 		routes.MakeDataResp(c, "", ret)

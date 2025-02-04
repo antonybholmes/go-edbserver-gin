@@ -31,7 +31,8 @@ func SendAccountCreatedEmail(
 	t, err := template.ParseFiles(FILE)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	var firstName string = ""
@@ -52,13 +53,15 @@ func SendAccountCreatedEmail(
 	})
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	err = mailserver.SendHtmlEmail(address, "New account created", body.String())
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	return nil

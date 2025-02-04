@@ -69,16 +69,8 @@ func MakeDataResp[V any](c *gin.Context, message string, data V) {
 // 	return MakeDataResp(c, message, &ValidResp{Valid: valid})
 // }
 
-func MakeOkPrettyResp(c *gin.Context, message string) {
-	MakeOkResp(c, message, true)
-}
-
-func MakeOkResp(c *gin.Context, message string, pretty bool) {
+func MakeOkResp(c *gin.Context, message string) {
 	MakeSuccessResp(c, message, true)
-}
-
-func MakeSuccessPrettyResp(c *gin.Context, message string, success bool) {
-	MakeSuccessResp(c, message, success)
 }
 
 func MakeSuccessResp(c *gin.Context, message string, success bool) {

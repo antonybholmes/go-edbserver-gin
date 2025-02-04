@@ -41,5 +41,5 @@ func ValidateAuth0TokenRoute(c *gin.Context) {
 	//log.Debug().Msgf("auth0 claims %v", myClaims)
 	//log.Debug().Msgf("auth0 claims %v", myClaims.Email)
 
-	return routes.MakeOkPrettyResp(c, "user was signed out")
+	routes.MakeOkResp(c, "user was signed out")
 }

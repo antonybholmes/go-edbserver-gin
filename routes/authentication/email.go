@@ -41,7 +41,8 @@ func SendEmailWithToken(subject string,
 	address, err := mail.ParseAddress(authUser.Email)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	return BaseSendEmailWithToken(subject, authUser, address, file, token, callbackUrl, vistUrl)
@@ -135,12 +136,12 @@ func BaseSendEmailWithToken(subject string,
 }
 
 func EmailUpdatedResp(c *gin.Context) {
-	routes.MakeOkPrettyResp(c, "email updated")
+	routes.MakeOkResp(c, "email updated")
 }
 
 // Start passwordless login by sending an email
 func SendResetEmailEmailRoute(c *gin.Context) {
-	return NewValidator(c).ParseLoginRequestBody().LoadAuthUserFromToken().Success(func(validator *Validator) {
+	NewValidator(c).ParseLoginRequestBody().LoadAuthUserFromToken().Success(func(validator *Validator) {
 		authUser := validator.AuthUser
 		req := validator.LoginBodyReq
 
@@ -185,12 +186,12 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 		//	return routes.ErrorReq(err)
 		//}
 
-		routes.MakeOkPrettyResp(c, "check your email for a change email link")
+		routes.MakeOkResp(c, "check your email for a change email link")
 	})
 }
 
 func UpdateEmailRoute(c *gin.Context) {
-	return NewValidator(c).CheckEmailIsWellFormed().LoadAuthUserFromToken().Success(func(validator *Validator) error {
+	NewValidator(c).CheckEmailIsWellFormed().LoadAuthUserFromToken().Success(func(validator *Validator) {
 
 		if validator.Claims.Type != auth.CHANGE_EMAIL_TOKEN {
 			return routes.WrongTokentTypeReq()
@@ -199,7 +200,8 @@ func UpdateEmailRoute(c *gin.Context) {
 		err := auth.CheckOTPValid(validator.AuthUser, validator.Claims.OneTimePasscode)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		authUser := validator.AuthUser
@@ -208,13 +210,15 @@ func UpdateEmailRoute(c *gin.Context) {
 		err = userdbcache.SetEmailAddress(authUser, validator.Address, false)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		authUser, err = userdbcache.FindUserByUuid(uuid)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		//return SendEmailChangedEmail(c, authUser)
@@ -224,7 +228,7 @@ func UpdateEmailRoute(c *gin.Context) {
 			EmailType: mailer.REDIS_EMAIL_TYPE_EMAIL_UPDATED}
 		rdb.PublishEmail(&email)
 
-		return routes.MakeOkPrettyResp(c, "email updated confirmation email sent")
+		routes.MakeOkResp(c, "email updated confirmation email sent")
 	})
 }
 

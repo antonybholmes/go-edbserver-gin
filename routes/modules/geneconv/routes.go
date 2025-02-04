@@ -64,7 +64,8 @@ func ConvertRoute(c *gin.Context) {
 	params, err := ParseParamsFromPost(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	var ret geneconv.ConversionResults

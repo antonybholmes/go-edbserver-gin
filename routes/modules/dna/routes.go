@@ -161,7 +161,8 @@ func DNARoute(c *gin.Context) {
 	locations, err := ParseLocationsFromPost(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	assembly := c.Param("assembly")
@@ -169,13 +170,15 @@ func DNARoute(c *gin.Context) {
 	query, err := ParseDNAQuery(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	dnadb, err := dnadbcache.Db(assembly)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	seqs := make([]*DNA, 0, len(locations))
@@ -184,7 +187,8 @@ func DNARoute(c *gin.Context) {
 		seq, err := dnadb.DNA(location, query.Format, query.RepeatMask, query.Rev, query.Comp)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		seqs = append(seqs, &DNA{Location: location, Seq: seq})

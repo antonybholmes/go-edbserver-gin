@@ -112,7 +112,8 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	validator, err := NewValidator(c).ParseLoginRequestBody().Ok()
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	if validator.LoginBodyReq.Password == "" {
@@ -146,13 +147,15 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	err = authUser.CheckPasswordsMatch(validator.LoginBodyReq.Password)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	sess, err := session.Get(consts.SESSION_NAME, c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	// set session options
@@ -175,7 +178,8 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	validator, err := NewValidator(c).ParseLoginRequestBody().Ok()
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	authUser, err := userdbcache.FindUserByApiKey(validator.LoginBodyReq.ApiKey)
@@ -232,14 +236,16 @@ func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
 	email, err := mail.ParseAddress(tokenClaims.Email)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	authUser, err := userdbcache.CreateUserFromAuth0(tokenClaims.Name, email)
 
 	if err != nil {
 
-		return err
+		c.Error(err)
+		return
 	}
 
 	roles, err := userdbcache.UserRoleList(authUser)
@@ -259,7 +265,8 @@ func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
 	err = sr.initSession(c, authUser) // roleClaim)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	return UserSignedInResp(c)
@@ -278,7 +285,8 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) er
 	userData, err := json.Marshal(authUser)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	sess, err := session.Get(consts.SESSION_NAME, c)
@@ -301,7 +309,8 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) er
 	err = sess.Save(c.Request(), c.Response())
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	return nil
@@ -313,7 +322,8 @@ func (sr *SessionRoutes) InitSessionRoute(c *gin.Context) {
 	err := sr.initSession(c, &auth.AuthUser{})
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -351,7 +361,8 @@ func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 	sessionInfo, err := ReadSessionInfo(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", sessionInfo)
@@ -364,7 +375,8 @@ func (sr *SessionRoutes) SessionRenewRoute(c *gin.Context) {
 	authUser, err := userdbcache.FindUserById(authUser.Id)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	//
@@ -381,7 +393,8 @@ func (sr *SessionRoutes) SessionRenewRoute(c *gin.Context) {
 	userData, err := json.Marshal(authUser)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	log.Debug().Msgf("saving %s", string(userData))
@@ -391,7 +404,8 @@ func (sr *SessionRoutes) SessionRenewRoute(c *gin.Context) {
 	err = sess.Save(c.Request(), c.Response())
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -402,7 +416,7 @@ func (sr *SessionRoutes) SessionRenewRoute(c *gin.Context) {
 // can be used to generate access tokens to use resources
 func (sr *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) {
 
-	return NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) error {
+	NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
 
 		if validator.Claims.Type != auth.PASSWORDLESS_TOKEN {
 			return routes.WrongTokentTypeReq()
@@ -413,7 +427,8 @@ func (sr *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) 
 		roles, err := userdbcache.UserRoleList(authUser)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		roleClaim := auth.MakeClaim(roles)
@@ -427,7 +442,8 @@ func (sr *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) 
 		err = sr.initSession(c, authUser) //, roleClaim)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		return UserSignedInResp(c)
@@ -452,7 +468,7 @@ func SessionSignOutRoute(c *gin.Context) {
 
 	sess.Save(c.Request(), c.Response())
 
-	return routes.MakeOkPrettyResp(c, "user has been signed out")
+	routes.MakeOkResp(c, "user has been signed out")
 }
 
 func NewAccessTokenFromSessionRoute(c *gin.Context) {

@@ -1,8 +1,6 @@
 package seqroutes
 
 import (
-	"fmt"
-
 	"github.com/antonybholmes/go-dna"
 	"github.com/antonybholmes/go-edb-server-gin/routes"
 	seq "github.com/antonybholmes/go-seqs"
@@ -60,7 +58,8 @@ func GenomeRoute(c *gin.Context) {
 	platforms, err := seqsdbcache.Genomes()
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", platforms)
@@ -72,7 +71,8 @@ func PlatformRoute(c *gin.Context) {
 	platforms, err := seqsdbcache.Platforms(genome)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", platforms)
@@ -85,7 +85,8 @@ func TracksRoute(c *gin.Context) {
 	tracks, err := seqsdbcache.Tracks(platform, genome)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", tracks)
@@ -95,7 +96,8 @@ func SearchSeqRoute(c *gin.Context) {
 	genome := c.Param("assembly")
 
 	if genome == "" {
-		return routes.ErrorResp(fmt.Errorf("must supply a genome"))
+		routes.ErrorResp(c, "must supply a genome")
+		return
 	}
 
 	query := c.Query("search")
@@ -103,7 +105,8 @@ func SearchSeqRoute(c *gin.Context) {
 	tracks, err := seqsdbcache.Search(genome, query)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", tracks)
@@ -115,7 +118,8 @@ func BinsRoute(c *gin.Context) {
 
 	if err != nil {
 		log.Debug().Msgf("err %s", err)
-		return err
+		c.Error(err)
+		return
 	}
 
 	//log.Debug().Msgf("bin %v %v", params.Locations, params.BinSizes)
@@ -131,7 +135,8 @@ func BinsRoute(c *gin.Context) {
 
 			if err != nil {
 				//log.Debug().Msgf("stupid err %s", err)
-				return err
+				c.Error(err)
+				return
 			}
 
 			// guarantees something is returned even with error

@@ -28,7 +28,8 @@ func UserStatsRoute(c *gin.Context) {
 	users, err := userdbcache.NumUsers()
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	resp := UserStatResp{Users: users}
@@ -46,7 +47,8 @@ func UsersRoute(c *gin.Context) {
 	users, err := userdbcache.Users(req.Records, req.Offset)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", users)
@@ -58,7 +60,8 @@ func RolesRoute(c *gin.Context) {
 	roles, err := userdbcache.Roles()
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", roles)
@@ -88,20 +91,23 @@ func UpdateUserRoute(c *gin.Context) {
 		err := userdbcache.SetUserInfo(authUser, validator.LoginBodyReq.Username, validator.LoginBodyReq.FirstName, validator.LoginBodyReq.LastName, true)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		err = userdbcache.SetEmailAddress(authUser, validator.Address, true)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		if validator.LoginBodyReq.Password != "" {
 			err = userdbcache.SetPassword(authUser, validator.LoginBodyReq.Password)
 
 			if err != nil {
-				return err
+				c.Error(err)
+				return
 			}
 		}
 
@@ -109,10 +115,11 @@ func UpdateUserRoute(c *gin.Context) {
 		err = userdbcache.SetUserRoles(authUser, validator.LoginBodyReq.Roles, true)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
-		return routes.MakeOkPrettyResp(c, "user updated")
+		routes.MakeOkResp(c, "user updated")
 	})
 }
 
@@ -129,7 +136,8 @@ func AddUserRoute(c *gin.Context) {
 			validator.LoginBodyReq.EmailIsVerified)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		// tell user their account was created
@@ -143,7 +151,7 @@ func AddUserRoute(c *gin.Context) {
 			CallBackUrl: consts.APP_URL}
 		rdb.PublishEmail(&email)
 
-		return routes.MakeOkPrettyResp(c, "account created email sent")
+		routes.MakeOkResp(c, "account created email sent")
 	})
 }
 
@@ -153,8 +161,9 @@ func DeleteUserRoute(c *gin.Context) {
 	err := userdbcache.DeleteUser(uuid)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
-	return routes.MakeOkPrettyResp(c, "user deleted")
+	routes.MakeOkResp(c, "user deleted")
 }

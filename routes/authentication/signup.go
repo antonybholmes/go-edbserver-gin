@@ -13,13 +13,14 @@ import (
 )
 
 func SignupRoute(c *gin.Context) {
-	return NewValidator(c).CheckEmailIsWellFormed().Success(func(validator *Validator) error {
+	NewValidator(c).CheckEmailIsWellFormed().Success(func(validator *Validator) {
 		req := validator.LoginBodyReq
 
 		authUser, err := userdbcache.CreateUserFromSignup(req)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		otpToken, err := tokengen.VerifyEmailToken(c, authUser, req.VisitUrl)
@@ -27,7 +28,8 @@ func SignupRoute(c *gin.Context) {
 		//log.Debug().Msgf("%s", otpJwt)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		// var file string
@@ -59,24 +61,24 @@ func SignupRoute(c *gin.Context) {
 		}
 		rdb.PublishEmail(&email)
 
-		return routes.MakeOkPrettyResp(c, "check your email for a verification link")
+		routes.MakeOkResp(c, "check your email for a verification link")
 	})
 }
 
 func EmailAddressVerifiedRoute(c *gin.Context) {
-	return NewValidator(c).LoadAuthUserFromToken().Success(func(validator *Validator) error {
+	NewValidator(c).LoadAuthUserFromToken().Success(func(validator *Validator) {
 
 		authUser := validator.AuthUser
 
 		// if verified, stop and just return true
 		if authUser.EmailVerifiedAt == 0 {
-			return routes.MakeOkPrettyResp(c, "")
+			routes.MakeOkResp(c, "")
 		}
 
 		err := userdbcache.SetIsVerified(authUser.Uuid)
 
 		if err != nil {
-			return routes.MakeSuccessPrettyResp(c, "unable to verify user", false)
+			return routes.MakeSuccessResp(c, "unable to verify user", false)
 		}
 
 		// file := "templates/email/verify/verified.html"
@@ -93,6 +95,6 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 			EmailType: mailer.REDIS_EMAIL_TYPE_VERIFIED}
 		rdb.PublishEmail(&email)
 
-		return routes.MakeOkPrettyResp(c, "email address verified")
+		routes.MakeOkResp(c, "email address verified")
 	})
 }

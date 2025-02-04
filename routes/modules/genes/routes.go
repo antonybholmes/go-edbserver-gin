@@ -82,7 +82,8 @@ func GenomesRoute(c *gin.Context) {
 	infos, err := genedbcache.GetInstance().List()
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	routes.MakeDataResp(c, "", infos)
@@ -92,17 +93,19 @@ func OverlappingGenesRoute(c *gin.Context) {
 	locations, err := dnaroutes.ParseLocationsFromPost(c) // dnaroutes.ParseLocationsFromPost(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	query, err := ParseGeneQuery(c, c.Param("assembly"))
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	if len(locations) == 0 {
-		return routes.ErrorResp(fmt.Errorf("must supply at least 1 location"))
+		routes.ErrorResp(c, "must supply at least 1 location")
 	}
 
 	ret := make([]*GenesResp, 0, len(locations))
@@ -111,7 +114,8 @@ func OverlappingGenesRoute(c *gin.Context) {
 		features, err := query.Db.OverlappingGenes(location, query.Canonical)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		ret = append(ret, &GenesResp{Location: location, Features: features})
@@ -125,13 +129,14 @@ func GeneInfoRoute(c *gin.Context) {
 	search := c.Query("search") // dnaroutes.ParseLocationsFromPost(c)
 
 	if search == "" {
-		return routes.ErrorResp(fmt.Errorf("search cannot be empty"))
+		routes.ErrorResp(c, "search cannot be empty")
 	}
 
 	query, err := ParseGeneQuery(c, c.Param("assembly"))
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	features, _ := query.Db.GeneInfo(search, query.Level)
@@ -147,13 +152,15 @@ func WithinGenesRoute(c *gin.Context) {
 	locations, err := dnaroutes.ParseLocationsFromPost(c) // dnaroutes.ParseLocationsFromPost(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	query, err := ParseGeneQuery(c, c.Param("assembly"))
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	data := make([]*genes.GenomicFeatures, len(locations))
@@ -162,7 +169,8 @@ func WithinGenesRoute(c *gin.Context) {
 		genes, err := query.Db.WithinGenes(location, query.Level)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		data[li] = genes
@@ -176,13 +184,15 @@ func ClosestGeneRoute(c *gin.Context) {
 	locations, err := dnaroutes.ParseLocationsFromPost(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	query, err := ParseGeneQuery(c, c.Param("assembly"))
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	n := routes.ParseN(c, DEFAULT_CLOSEST_N)
@@ -193,7 +203,8 @@ func ClosestGeneRoute(c *gin.Context) {
 		genes, err := query.Db.ClosestGenes(location, n, query.Level)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		data[li] = genes
@@ -231,7 +242,8 @@ func AnnotateRoute(c *gin.Context) {
 	locations, err := dnaroutes.ParseLocationsFromPost(c)
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	// limit amount of data returned per request to 1000 entries at a time
@@ -240,7 +252,8 @@ func AnnotateRoute(c *gin.Context) {
 	query, err := ParseGeneQuery(c, c.Param("assembly"))
 
 	if err != nil {
-		return err
+		c.Error(err)
+		return
 	}
 
 	n := routes.ParseN(c, DEFAULT_CLOSEST_N)
@@ -258,7 +271,8 @@ func AnnotateRoute(c *gin.Context) {
 		annotations, err := annotationDb.Annotate(location)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
 		data[li] = annotations
@@ -268,13 +282,14 @@ func AnnotateRoute(c *gin.Context) {
 		tsv, err := MakeGeneTable(data, tssRegion)
 
 		if err != nil {
-			return err
+			c.Error(err)
+			return
 		}
 
-		return c.String(http.StatusOK, tsv)
+		c.String(http.StatusOK, tsv)
 	} else {
 
-		return c.JSON(http.StatusOK, AnnotationResponse{Status: http.StatusOK, Data: data})
+		c.JSON(http.StatusOK, AnnotationResponse{Status: http.StatusOK, Data: data})
 	}
 }
 
