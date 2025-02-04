@@ -1,0 +1,160 @@
+package adminroutes
+
+import (
+	"github.com/antonybholmes/go-auth/userdbcache"
+	"github.com/antonybholmes/go-edb-server-gin/consts"
+	"github.com/antonybholmes/go-edb-server-gin/rdb"
+	"github.com/antonybholmes/go-edb-server-gin/routes"
+	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
+	"github.com/antonybholmes/go-mailer"
+	"github.com/gin-gonic/gin"
+)
+
+type UserListReq struct {
+	Offset  uint
+	Records uint
+}
+
+type UserStatResp struct {
+	Users uint `json:"users"`
+}
+
+func UserStatsRoute(c *gin.Context) {
+
+	var req UserListReq
+
+	c.Bind(&req)
+
+	users, err := userdbcache.NumUsers()
+
+	if err != nil {
+		return err
+	}
+
+	resp := UserStatResp{Users: users}
+
+	routes.MakeDataResp(c, "", resp)
+
+}
+
+func UsersRoute(c *gin.Context) {
+
+	var req UserListReq
+
+	c.Bind(&req)
+
+	users, err := userdbcache.Users(req.Records, req.Offset)
+
+	if err != nil {
+		return err
+	}
+
+	routes.MakeDataResp(c, "", users)
+
+}
+
+func RolesRoute(c *gin.Context) {
+
+	roles, err := userdbcache.Roles()
+
+	if err != nil {
+		return err
+	}
+
+	routes.MakeDataResp(c, "", roles)
+
+}
+
+func UpdateUserRoute(c *gin.Context) {
+
+	return authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().LoadAuthUserFromUuid().Success(func(validator *authenticationroutes.Validator) error {
+
+		//db, err := userdbcache.NewConn()
+
+		// if err != nil {
+		// 	return routes.ErrorReq(err)
+		// }
+
+		//defer db.Close()
+
+		//authUser, err := userdbcache.FindUserByPublicId(validator.Req.PublicId)
+
+		// if err != nil {
+		// 	return routes.ErrorReq(err)
+		// }
+
+		authUser := validator.AuthUser
+
+		err := userdbcache.SetUserInfo(authUser, validator.LoginBodyReq.Username, validator.LoginBodyReq.FirstName, validator.LoginBodyReq.LastName, true)
+
+		if err != nil {
+			return err
+		}
+
+		err = userdbcache.SetEmailAddress(authUser, validator.Address, true)
+
+		if err != nil {
+			return err
+		}
+
+		if validator.LoginBodyReq.Password != "" {
+			err = userdbcache.SetPassword(authUser, validator.LoginBodyReq.Password)
+
+			if err != nil {
+				return err
+			}
+		}
+
+		// set roles
+		err = userdbcache.SetUserRoles(authUser, validator.LoginBodyReq.Roles, true)
+
+		if err != nil {
+			return err
+		}
+
+		return routes.MakeOkPrettyResp(c, "user updated")
+	})
+}
+
+func AddUserRoute(c *gin.Context) {
+
+	return authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().Success(func(validator *authenticationroutes.Validator) error {
+
+		// assume email is not verified
+		authUser, err := userdbcache.Instance().CreateUser(validator.LoginBodyReq.Username,
+			validator.Address,
+			validator.LoginBodyReq.Password,
+			validator.LoginBodyReq.FirstName,
+			validator.LoginBodyReq.LastName,
+			validator.LoginBodyReq.EmailIsVerified)
+
+		if err != nil {
+			return err
+		}
+
+		// tell user their account was created
+		//go SendAccountCreatedEmail(authUser, validator.Address)
+
+		email := mailer.RedisQueueEmail{Name: authUser.FirstName,
+			To: authUser.Email,
+
+			EmailType: mailer.REDIS_EMAIL_TYPE_ACCOUNT_CREATED,
+
+			CallBackUrl: consts.APP_URL}
+		rdb.PublishEmail(&email)
+
+		return routes.MakeOkPrettyResp(c, "account created email sent")
+	})
+}
+
+func DeleteUserRoute(c *gin.Context) {
+	uuid := c.Param("uuid")
+
+	err := userdbcache.DeleteUser(uuid)
+
+	if err != nil {
+		return err
+	}
+
+	return routes.MakeOkPrettyResp(c, "user deleted")
+}
