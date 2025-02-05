@@ -144,11 +144,8 @@ func main() {
 	// }
 
 	sessionRoutes := authenticationroutes.NewSessionRoutes()
-	rdfMiddlware := RDFMiddleware()
 
 	r := gin.Default()
-
-	//r.Use(gin.Recovery())
 
 	r.Use(cors.New(cors.Config{
 		AllowAllOrigins: true,
@@ -173,7 +170,7 @@ func main() {
 
 	r.GET("/about", func(c *gin.Context) {
 		c.JSON(http.StatusOK,
-			AboutResp{Name: consts.NAME,
+			AboutResp{Name: consts.APP_NAME,
 				Version:   consts.VERSION,
 				Updated:   consts.UPDATED,
 				Copyright: consts.COPYRIGHT})
@@ -222,8 +219,9 @@ func main() {
 	emailGroup := authGroup.Group("/email")
 
 	emailGroup.POST("/verify",
+		JwtMiddleware(),
 		authenticationroutes.EmailAddressVerifiedRoute,
-		JwtMiddleware())
+	)
 
 	// with the correct token, performs the update
 	emailGroup.POST("/reset", JwtMiddleware(), authenticationroutes.SendResetEmailEmailRoute)
@@ -245,8 +243,9 @@ func main() {
 	})
 
 	passwordlessGroup.POST("/signin",
+		JwtMiddleware(),
 		authenticationroutes.PasswordlessSignInRoute,
-		JwtMiddleware())
+	)
 
 	tokenGroup := authGroup.Group("/tokens", JwtMiddleware())
 	tokenGroup.POST("/info", authorization.TokenInfoRoute)
@@ -296,9 +295,7 @@ func main() {
 		sessionRoutes.SessionRenewRoute)
 
 	sessionUserGroup := sessionGroup.Group("/user", SessionIsValidMiddleware())
-
 	sessionUserGroup.GET("", authenticationroutes.UserFromSessionRoute)
-
 	sessionUserGroup.POST("/update", authorization.SessionUpdateUserRoute)
 
 	// sessionPasswordGroup := sessionAuthGroup.Group("/passwords")
@@ -353,7 +350,7 @@ func main() {
 	mutationsGroup.POST("/pileup/:assembly",
 		JwtMiddleware(),
 		JwtIsAccessTokenMiddleware(),
-		rdfMiddlware,
+		RDFMiddleware(),
 		mutationroutes.PileupRoute,
 	)
 
@@ -364,7 +361,7 @@ func main() {
 	gexGroup.POST("/exp",
 		JwtMiddleware(),
 		JwtIsAccessTokenMiddleware(),
-		rdfMiddlware,
+		RDFMiddleware(),
 		gexroutes.GexGeneExpRoute,
 	)
 
@@ -389,7 +386,7 @@ func main() {
 	seqsGroup := moduleGroup.Group("/seqs",
 		JwtMiddleware(),
 		JwtIsAccessTokenMiddleware(),
-		rdfMiddlware)
+		RDFMiddleware())
 
 	seqsGroup.GET("/genomes", seqroutes.GenomeRoute)
 	seqsGroup.GET("/platforms/:assembly", seqroutes.PlatformRoute)
@@ -402,7 +399,7 @@ func main() {
 
 	bedsGroup := moduleGroup.Group("/beds", JwtMiddleware(),
 		JwtIsAccessTokenMiddleware(),
-		rdfMiddlware)
+		RDFMiddleware())
 	bedsGroup.GET("/genomes", bedroutes.GenomeRoute)
 	bedsGroup.GET("/platforms/:assembly", bedroutes.PlatformRoute)
 	bedsGroup.GET("/search/:assembly", bedroutes.SearchBedsRoute)
@@ -429,6 +426,7 @@ func main() {
 		})
 	})
 
+	// required so it can listen externally within docker container
 	r.Run("0.0.0.0:8080") //"localhost:8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 
 }
