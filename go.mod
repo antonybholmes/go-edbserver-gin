@@ -31,13 +31,13 @@ replace github.com/antonybholmes/go-cytobands => ../go-cytobands
 replace github.com/antonybholmes/go-beds => ../go-beds
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20250107213632-9971295f8456 // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20250122235121-a7c6aaac21fd
+	github.com/antonybholmes/go-basemath v0.0.0-20250205152412-840349f1ca5c // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20250205152401-8d271cca2c21
 
 )
 
 require (
-	github.com/antonybholmes/go-auth v0.0.0-20250120143519-cdfc796720e1
+	github.com/antonybholmes/go-auth v0.0.0-20250205152400-c9b536c8c71b
 	github.com/antonybholmes/go-genes v0.0.0-20250113143746-9246da82bc47
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/joho/godotenv v1.5.1 // indirect

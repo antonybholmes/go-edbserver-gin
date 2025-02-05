@@ -217,7 +217,7 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 		return
 	}
 
-	c.String(http.StatusOK, "Session set")
+	c.String(http.StatusOK, "session created")
 
 	// resp, err := readSession(c)
 

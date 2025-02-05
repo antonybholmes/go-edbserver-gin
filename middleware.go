@@ -16,8 +16,8 @@ import (
 )
 
 type APIError struct {
-	Code    int    `json:"code"`
 	Message string `json:"message"`
+	Code    int    `json:"code"`
 }
 
 func ErrorHandlerMiddleware() gin.HandlerFunc {
