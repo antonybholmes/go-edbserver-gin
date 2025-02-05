@@ -20,7 +20,7 @@ type APIError struct {
 	Message string `json:"message"`
 }
 
-func ErrorHandler() gin.HandlerFunc {
+func ErrorHandlerMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Create a defer function that will be called after the handler finishes
 		defer func() {
@@ -32,6 +32,7 @@ func ErrorHandler() gin.HandlerFunc {
 				})
 			}
 		}()
+
 		// Continue processing the request
 		c.Next()
 
@@ -45,7 +46,10 @@ func ErrorHandler() gin.HandlerFunc {
 			statusCode := http.StatusBadRequest
 
 			if err.Meta != nil {
-				if customStatus, ok := err.Meta.(int); ok {
+				// ok indicates cast worked
+				customStatus, ok := err.Meta.(int)
+
+				if ok {
 					statusCode = customStatus
 				}
 			}
@@ -132,10 +136,6 @@ func JwtAuth0Middleware() gin.HandlerFunc {
 			return consts.JWT_AUTH0_RSA_PUBLIC_KEY, nil
 		})
 
-		log.Debug().Msgf("err %s", err)
-
-		log.Debug().Msgf("v %v", claims)
-
 		if err != nil {
 			c.Error(err)
 			c.Abort()
@@ -145,11 +145,8 @@ func JwtAuth0Middleware() gin.HandlerFunc {
 		// use pointer to token
 		c.Set("user", &claims)
 
-		log.Debug().Msgf("aha %v", claims)
-
 		// Continue processing the request
 		c.Next()
-
 	}
 }
 
@@ -158,16 +155,16 @@ func JwtIsRefreshTokenMiddleware() gin.HandlerFunc {
 		user, ok := c.Get("user")
 
 		if !ok {
-			routes.AuthErrorReq(c, "no user")
-			c.Abort()
+			routes.AuthErrorResp(c, "no user")
+
 			return
 		}
 
 		claims := user.(*auth.TokenClaims)
 
 		if claims.Type != auth.REFRESH_TOKEN {
-			routes.AuthErrorReq(c, "not a refresh token")
-			c.Abort()
+			routes.AuthErrorResp(c, "not a refresh token")
+
 			return
 		}
 
@@ -181,15 +178,15 @@ func JwtIsAccessTokenMiddleware() gin.HandlerFunc {
 
 		if !ok {
 			routes.UserDoesNotExistResp(c)
-			c.Abort()
+
 			return
 		}
 
 		claims := user.(*auth.TokenClaims)
 
 		if claims.Type != auth.ACCESS_TOKEN {
-			routes.AuthErrorReq(c, "not an access token")
-			c.Abort()
+			routes.AuthErrorResp(c, "not an access token")
+
 			return
 		}
 
@@ -203,15 +200,14 @@ func JwtHasAdminPermissionMiddleware() gin.HandlerFunc {
 
 		if !ok {
 			routes.UserDoesNotExistResp(c)
-			c.Abort()
 			return
 		}
 
 		claims := user.(*auth.TokenClaims)
 
 		if !auth.IsAdmin((claims.Roles)) {
-			routes.AuthErrorReq(c, "user is not an admin")
-			c.Abort()
+			routes.AuthErrorResp(c, "user is not an admin")
+
 			return
 		}
 
@@ -225,14 +221,15 @@ func JwtHasLoginPermissionMiddleware() gin.HandlerFunc {
 
 		if !ok {
 			routes.UserDoesNotExistResp(c)
-			c.Abort()
+
 			return
 		}
 
 		claims := user.(*auth.TokenClaims)
 
 		if !auth.CanSignin((claims.Roles)) {
-			routes.AuthErrorReq(c, "user is not allowed to login")
+			routes.AuthErrorResp(c, "user is not allowed to login")
+			return
 		}
 
 		c.Next()
@@ -245,8 +242,8 @@ func SessionIsValidMiddleware() gin.HandlerFunc {
 		sessData, err := authenticationroutes.ReadSessionInfo(c)
 
 		if err != nil {
-			routes.AuthErrorReq(c, "cannot get user id from session")
-			c.Abort()
+			routes.AuthErrorResp(c, "cannot get user id from session")
+
 			return
 		}
 
@@ -303,8 +300,8 @@ func JwtRoleMiddleware(validRoles ...string) gin.HandlerFunc {
 		user, ok := c.Get("user")
 
 		if !ok {
-			routes.AuthErrorReq(c, "no user")
-			c.Abort()
+			routes.AuthErrorResp(c, "no user claims")
+
 			return
 		}
 
@@ -316,7 +313,8 @@ func JwtRoleMiddleware(validRoles ...string) gin.HandlerFunc {
 
 		// shortcut for admin, as we allow this for everything
 		if !auth.IsAdmin(claims.Roles) {
-			//log.Debug().Msgf("is admin")
+			routes.NotAdminResp(c)
+
 			return
 		}
 
@@ -332,6 +330,7 @@ func JwtRoleMiddleware(validRoles ...string) gin.HandlerFunc {
 		}
 
 		if !isValidRole {
+			routes.ErrorResp(c, "invalid role")
 			return
 		}
 

@@ -49,22 +49,27 @@ func PasswordsDoNotMatchReq(c *gin.Context) {
 	ErrorResp(c, "passwords do not match")
 }
 
+func NotAdminResp(c *gin.Context) {
+	ErrorResp(c, "user is not an admin")
+}
+
 func WrongTokentTypeReq(c *gin.Context) {
 	ErrorResp(c, ERROR_WRONG_TOKEN_TYPE)
 }
 
-func TokenErrorReq(c *gin.Context) {
+func TokenErrorResp(c *gin.Context) {
 	ErrorResp(c, "token not generated")
 }
 
 func ErrorResp(c *gin.Context, message string) {
 	c.Error(fmt.Errorf("%s", message))
-
+	c.Abort()
 }
 
-func AuthErrorReq(c *gin.Context, message string) {
+func AuthErrorResp(c *gin.Context, message string) {
 	c.Error(fmt.Errorf("%s", message))
 	c.Errors.Last().SetMeta(http.StatusUnauthorized)
+	c.Abort()
 }
 
 // parsedLocation takes an echo context and attempts to extract parameters

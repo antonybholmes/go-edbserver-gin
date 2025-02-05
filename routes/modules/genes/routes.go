@@ -42,7 +42,7 @@ type AnnotationResponse struct {
 	Data   []*genes.GeneAnnotation `json:"data"`
 }
 
-func ParseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
+func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 	level := genes.LEVEL_GENE
 
 	v := c.Query("level")
@@ -97,7 +97,7 @@ func OverlappingGenesRoute(c *gin.Context) {
 		return
 	}
 
-	query, err := ParseGeneQuery(c, c.Param("assembly"))
+	query, err := parseGeneQuery(c, c.Param("assembly"))
 
 	if err != nil {
 		c.Error(err)
@@ -132,7 +132,7 @@ func GeneInfoRoute(c *gin.Context) {
 		routes.ErrorResp(c, "search cannot be empty")
 	}
 
-	query, err := ParseGeneQuery(c, c.Param("assembly"))
+	query, err := parseGeneQuery(c, c.Param("assembly"))
 
 	if err != nil {
 		c.Error(err)
@@ -156,7 +156,7 @@ func WithinGenesRoute(c *gin.Context) {
 		return
 	}
 
-	query, err := ParseGeneQuery(c, c.Param("assembly"))
+	query, err := parseGeneQuery(c, c.Param("assembly"))
 
 	if err != nil {
 		c.Error(err)
@@ -188,7 +188,7 @@ func ClosestGeneRoute(c *gin.Context) {
 		return
 	}
 
-	query, err := ParseGeneQuery(c, c.Param("assembly"))
+	query, err := parseGeneQuery(c, c.Param("assembly"))
 
 	if err != nil {
 		c.Error(err)
@@ -249,7 +249,7 @@ func AnnotateRoute(c *gin.Context) {
 	// limit amount of data returned per request to 1000 entries at a time
 	locations = locations[0:basemath.Min(len(locations), MAX_ANNOTATIONS)]
 
-	query, err := ParseGeneQuery(c, c.Param("assembly"))
+	query, err := parseGeneQuery(c, c.Param("assembly"))
 
 	if err != nil {
 		c.Error(err)

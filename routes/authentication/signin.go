@@ -26,28 +26,33 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 
 		if validator.LoginBodyReq.Password == "" {
 			PasswordlessSigninEmailRoute(c, validator)
+			return
 		}
 
 		authUser, err := userdbcache.FindUserByUsername(validator.LoginBodyReq.Username)
 
 		if err != nil {
 			routes.UserDoesNotExistResp(c)
+			return
 		}
 
 		if authUser.EmailVerifiedAt == 0 {
 			routes.EmailNotVerifiedReq(c)
+			return
 		}
 
 		roles, err := userdbcache.UserRoleList(authUser)
 
 		if err != nil {
-			routes.AuthErrorReq(c, "could not get user roles")
+			routes.AuthErrorResp(c, "could not get user roles")
+			return
 		}
 
 		roleClaim := auth.MakeClaim(roles)
 
 		if !auth.CanSignin(roleClaim) {
 			routes.UserNotAllowedToSignIn(c)
+			return
 		}
 
 		err = authUser.CheckPasswordsMatch(validator.LoginBodyReq.Password)
@@ -60,13 +65,15 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 		refreshToken, err := tokengen.RefreshToken(c, authUser) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
-			routes.TokenErrorReq(c)
+			routes.TokenErrorResp(c)
+			return
 		}
 
 		accessToken, err := tokengen.AccessToken(c, authUser.Uuid, roleClaim) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
-			routes.TokenErrorReq(c)
+			routes.TokenErrorResp(c)
+			return
 		}
 
 		routes.MakeDataResp(c, "", &routes.LoginResp{RefreshToken: refreshToken, AccessToken: accessToken})
@@ -136,7 +143,7 @@ func PasswordlessSignInRoute(c *gin.Context) {
 		roles, err := userdbcache.UserRoleList(authUser)
 
 		if err != nil {
-			routes.AuthErrorReq(c, "could not get user roles")
+			routes.AuthErrorResp(c, "could not get user roles")
 			return
 		}
 
@@ -150,7 +157,7 @@ func PasswordlessSignInRoute(c *gin.Context) {
 		t, err := tokengen.RefreshToken(c, authUser) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
-			routes.TokenErrorReq(c)
+			routes.TokenErrorResp(c)
 			return
 		}
 

@@ -59,6 +59,7 @@ func SignupRoute(c *gin.Context) {
 			CallBackUrl: req.CallbackUrl,
 			//VisitUrl:    req.VisitUrl
 		}
+
 		rdb.PublishEmail(&email)
 
 		routes.MakeOkResp(c, "check your email for a verification link")

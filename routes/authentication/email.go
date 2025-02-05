@@ -128,6 +128,7 @@ func BaseSendEmailWithToken(subject string,
 	err = mailserver.SendHtmlEmail(address, subject, body.String())
 
 	if err != nil {
+
 		return err
 	}
 
@@ -147,12 +148,14 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 		newEmail, err := mail.ParseAddress(req.Email)
 
 		if err != nil {
+			c.Error(err)
 			return
 		}
 
 		otpToken, err := tokengen.ResetEmailToken(c, authUser, newEmail)
 
 		if err != nil {
+			c.Error(err)
 			return
 		}
 
@@ -247,5 +250,4 @@ func SendEmailChangedEmail(c *gin.Context, authUser *auth.AuthUser) {
 	//}
 
 	EmailUpdatedResp(c)
-
 }

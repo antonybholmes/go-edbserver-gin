@@ -165,7 +165,7 @@ func main() {
 		MaxAge:           12 * 3600, // Cache preflight response for 12 hours
 	}))
 
-	r.Use(ErrorHandler())
+	r.Use(ErrorHandlerMiddleware())
 
 	store = cookie.NewStore([]byte(consts.SESSION_KEY), []byte(consts.SESSION_ENCRYPTION_KEY))
 	r.Use(sessions.Sessions(consts.SESSION_NAME, store))

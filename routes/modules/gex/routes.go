@@ -14,7 +14,7 @@ type GexParams struct {
 	Datasets     []int             `json:"datasets"`
 }
 
-func ParseParamsFromPost(c *gin.Context) (*GexParams, error) {
+func parseParamsFromPost(c *gin.Context) (*GexParams, error) {
 
 	var params GexParams
 
@@ -41,7 +41,7 @@ func PlaformsRoute(c *gin.Context) {
 
 func GexValueTypesRoute(c *gin.Context) {
 
-	params, err := ParseParamsFromPost(c)
+	params, err := parseParamsFromPost(c)
 
 	if err != nil {
 		c.Error(err)
@@ -60,7 +60,7 @@ func GexValueTypesRoute(c *gin.Context) {
 
 func GexDatasetsRoute(c *gin.Context) {
 
-	params, err := ParseParamsFromPost(c)
+	params, err := parseParamsFromPost(c)
 
 	if err != nil {
 		c.Error(err)
@@ -78,7 +78,7 @@ func GexDatasetsRoute(c *gin.Context) {
 }
 
 func GexGeneExpRoute(c *gin.Context) {
-	params, err := ParseParamsFromPost(c)
+	params, err := parseParamsFromPost(c)
 
 	if err != nil {
 		c.Error(err)
@@ -98,7 +98,6 @@ func GexGeneExpRoute(c *gin.Context) {
 		ret, err := gexdbcache.MicroarrayValues(gexGenes, params.Platform, params.GexValueType, params.Datasets)
 
 		if err != nil {
-
 			c.Error(err)
 			return
 		}
@@ -109,7 +108,6 @@ func GexGeneExpRoute(c *gin.Context) {
 		ret, err := gexdbcache.RNASeqValues(gexGenes, params.Platform, params.GexValueType, params.Datasets)
 
 		if err != nil {
-
 			c.Error(err)
 			return
 		}

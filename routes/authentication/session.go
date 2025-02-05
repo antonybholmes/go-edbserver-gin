@@ -2,7 +2,6 @@ package authenticationroutes
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/mail"
 	"os"
@@ -116,6 +115,7 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 
 	if validator.LoginBodyReq.Password == "" {
 		PasswordlessSigninEmailRoute(c, validator)
+		return
 	}
 
 	user := validator.LoginBodyReq.Username
@@ -124,22 +124,26 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 
 	if err != nil {
 		routes.UserDoesNotExistResp(c)
+		return
 	}
 
 	if authUser.EmailVerifiedAt == auth.EMAIL_NOT_VERIFIED_TIME_S {
 		routes.EmailNotVerifiedReq(c)
+		return
 	}
 
 	roles, err := userdbcache.UserRoleList(authUser)
 
 	if err != nil {
-		routes.AuthErrorReq(c, "could not get user roles")
+		routes.AuthErrorResp(c, "could not get user roles")
+		return
 	}
 
 	roleClaim := auth.MakeClaim(roles)
 
 	if !auth.CanSignin(roleClaim) {
 		routes.UserNotAllowedToSignIn(c)
+		return
 	}
 
 	err = authUser.CheckPasswordsMatch(validator.LoginBodyReq.Password)
@@ -151,11 +155,6 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 
 	sess := sessions.Default(c) //Key(consts.SESSION_NAME)
 
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
 	// set session options
 	if validator.LoginBodyReq.StaySignedIn {
 		sess.Options(sr.sessionOptions)
@@ -166,7 +165,12 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	//sess.Values[SESSION_PUBLICID] = authUser.PublicId
 	//sess.Values[SESSION_ROLES] = roleClaim //auth.MakeClaim(authUser.Roles)
 
-	sess.Save() //c.Request(), c.Response())
+	err = sess.Save() //c.Request(), c.Response())
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
 	UserSignedInResp(c)
 	//return c.NoContent(http.StatusOK)
@@ -184,22 +188,26 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 
 	if err != nil {
 		routes.UserDoesNotExistResp(c)
+		return
 	}
 
 	if authUser.EmailVerifiedAt == auth.EMAIL_NOT_VERIFIED_TIME_S {
 		routes.EmailNotVerifiedReq(c)
+		return
 	}
 
 	roles, err := userdbcache.UserRoleList(authUser)
 
 	if err != nil {
-		routes.AuthErrorReq(c, "could not get user roles")
+		routes.AuthErrorResp(c, "could not get user roles")
+		return
 	}
 
 	roleClaim := auth.MakeClaim(roles)
 
 	if !auth.CanSignin(roleClaim) {
 		routes.UserNotAllowedToSignIn(c)
+		return
 	}
 
 	err = sr.initSession(c, authUser) //, roleClaim)
@@ -228,7 +236,8 @@ func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
 	}
 
 	if !ok {
-		routes.TokenErrorReq(c)
+		routes.TokenErrorResp(c)
+
 		return
 	}
 
@@ -298,10 +307,6 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) er
 
 	sess := sessions.Default(c) // .Get(consts.SESSION_NAME, c)
 
-	if err != nil {
-		return fmt.Errorf("%s", ERROR_CREATING_SESSION)
-	}
-
 	// set session options
 	sess.Options(sr.sessionOptions)
 
@@ -316,6 +321,7 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) er
 	err = sess.Save() //c.Request(), c.Response())
 
 	if err != nil {
+		c.Error(err)
 		return err
 	}
 
@@ -392,11 +398,6 @@ func (sr *SessionRoutes) SessionRenewRoute(c *gin.Context) {
 
 	sess := sessions.Default(c) // .Get(consts.SESSION_NAME, c)
 
-	if err != nil {
-		c.Error(fmt.Errorf("%s", ERROR_CREATING_SESSION))
-		return
-	}
-
 	userData, err := json.Marshal(authUser)
 
 	if err != nil {
@@ -426,6 +427,7 @@ func (sr *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) 
 
 		if validator.Claims.Type != auth.PASSWORDLESS_TOKEN {
 			routes.WrongTokentTypeReq(c)
+			return
 		}
 
 		authUser := validator.AuthUser
@@ -443,6 +445,7 @@ func (sr *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) 
 
 		if !auth.CanSignin(roleClaim) {
 			routes.UserNotAllowedToSignIn(c)
+			return
 		}
 
 		err = sr.initSession(c, authUser) //, roleClaim)
@@ -506,7 +509,8 @@ func NewAccessTokenFromSessionRoute(c *gin.Context) {
 	t, err := tokengen.AccessToken(c, authUser.Uuid, auth.MakeClaim(authUser.Roles))
 
 	if err != nil {
-		routes.TokenErrorReq(c)
+		routes.TokenErrorResp(c)
+		return
 	}
 
 	routes.MakeDataResp(c, "", &routes.AccessTokenResp{AccessToken: t})

@@ -107,6 +107,7 @@ func UpdateUserRoute(c *gin.Context) {
 
 			if err != nil {
 				c.Error(err)
+
 				return
 			}
 		}

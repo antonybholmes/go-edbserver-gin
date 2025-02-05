@@ -14,7 +14,7 @@ type ReqParams struct {
 	Exact    bool     `json:"exact"`
 }
 
-func ParseParamsFromPost(c *gin.Context) (*ReqParams, error) {
+func parseParamsFromPost(c *gin.Context) (*ReqParams, error) {
 
 	var params ReqParams
 
@@ -61,7 +61,7 @@ func ConvertRoute(c *gin.Context) {
 	// 	return GeneInfoRoute(c, fromSpecies)
 	// }
 
-	params, err := ParseParamsFromPost(c)
+	params, err := parseParamsFromPost(c)
 
 	if err != nil {
 		c.Error(err)
