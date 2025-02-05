@@ -151,12 +151,13 @@ func main() {
 	//r.Use(gin.Recovery())
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{
-			"http://localhost:3000",
-			"http://localhost:8000",
-			"https://edb.rdf-lab.org",
-			"https://dev.edb-app-astro.pages.dev",
-			"https://edb-client-astro.pages.dev"},
+		AllowAllOrigins: true,
+		// AllowOrigins: []string{
+		// 	"http://localhost:3000",
+		// 	"http://localhost:8000",
+		// 	"https://edb.rdf-lab.org",
+		// 	"https://dev.edb-app-astro.pages.dev",
+		// 	"https://edb-client-astro.pages.dev"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
 		//AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, "Set-Cookie"},
