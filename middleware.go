@@ -311,32 +311,32 @@ func JwtRoleMiddleware(validRoles ...string) gin.HandlerFunc {
 
 		claims := user.(*auth.TokenClaims)
 
-		// shortcut for admin, as we allow this for everything
+		log.Debug().Msgf("claims %v", claims)
+
+		// if we are not an admin, lets see what roles
+		// we have and if they match the valid list
 		if !auth.IsAdmin(claims.Roles) {
 			routes.NotAdminResp(c)
 
-			return
-		}
+			isValidRole := false
 
-		isValidRole := false
+			for _, validRole := range validRoles {
 
-		for _, validRole := range validRoles {
+				// if we find a permission, stop and move on
+				if strings.Contains(claims.Roles, validRole) {
+					isValidRole = true
+				}
 
-			// if we find a permission, stop and move on
-			if strings.Contains(claims.Roles, validRole) {
-				isValidRole = true
 			}
 
-		}
-
-		if !isValidRole {
-			routes.ErrorResp(c, "invalid role")
-			return
+			if !isValidRole {
+				routes.ErrorResp(c, "invalid role")
+				return
+			}
 		}
 
 		c.Next()
 	}
-
 }
 
 func RDFMiddleware() gin.HandlerFunc {
