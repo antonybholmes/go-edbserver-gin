@@ -11,6 +11,7 @@ import (
 	"github.com/antonybholmes/go-edb-server-gin/routes"
 	"github.com/antonybholmes/go-mailer"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 func UserSignedInResp(c *gin.Context) {
@@ -90,7 +91,7 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 
 		authUser := validator.AuthUser
 
-		passwordlessToken, err := tokengen.PasswordlessToken(c, authUser.Uuid, validator.LoginBodyReq.VisitUrl)
+		passwordlessToken, err := tokengen.PasswordlessToken(c, authUser.Uuid, validator.LoginBodyReq.RedirectUrl)
 
 		if err != nil {
 			c.Error(err)
@@ -112,12 +113,15 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 		// 	validator.Req.CallbackUrl,
 		// 	validator.Req.VisitUrl)
 
-		email := mailer.RedisQueueEmail{Name: authUser.FirstName,
-			To:          authUser.Email,
-			Token:       passwordlessToken,
-			EmailType:   mailer.REDIS_EMAIL_TYPE_PASSWORDLESS,
-			Ttl:         fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
-			CallBackUrl: validator.LoginBodyReq.CallbackUrl,
+		log.Debug().Msgf("t %s %s", passwordlessToken, consts.URL_SIGN_IN)
+
+		email := mailer.RedisQueueEmail{
+			Name:      authUser.FirstName,
+			To:        authUser.Email,
+			Token:     passwordlessToken,
+			EmailType: mailer.REDIS_EMAIL_TYPE_PASSWORDLESS,
+			Ttl:       fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
+			LinkUrl:   consts.URL_SIGN_IN,
 			//VisitUrl:    validator.Req.VisitUrl
 		}
 		rdb.PublishEmail(&email)

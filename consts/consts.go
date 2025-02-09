@@ -34,6 +34,10 @@ var ACCESS_TOKEN_TTL_MINS time.Duration
 var OTP_TOKEN_TTL_MINS time.Duration
 var SHORT_TTL_MINS time.Duration
 
+var URL_SIGN_IN string
+var URL_RESET_EMAIL string
+var URL_RESET_PASSWORD string
+
 const DO_NOT_REPLY = "Please do not reply to this message. It was sent from a notification-only email address that we don't monitor."
 
 func init() {
@@ -49,6 +53,10 @@ func init() {
 	COPYRIGHT = os.Getenv("COPYRIGHT")
 
 	REDIS_ADDR = os.Getenv("REDIS_ADDR")
+
+	URL_SIGN_IN = os.Getenv("URL_SIGN_IN")
+	URL_RESET_EMAIL = os.Getenv("URL_RESET_EMAIL")
+	URL_RESET_PASSWORD = os.Getenv("URL_RESET_PASSWORD")
 
 	//JWT_PRIVATE_KEY = []byte(os.Getenv("JWT_SECRET"))
 	//JWT_PUBLIC_KEY = []byte(os.Getenv("JWT_SECRET"))

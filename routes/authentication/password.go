@@ -22,7 +22,7 @@ func PasswordUpdatedResp(c *gin.Context) {
 func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 	NewValidator(c).LoadAuthUserFromUsername().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
 		authUser := validator.AuthUser
-		req := validator.LoginBodyReq
+		//req := validator.LoginBodyReq
 
 		otpToken, err := tokengen.ResetPasswordToken(c, authUser)
 
@@ -46,13 +46,13 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 		// 	req.CallbackUrl,
 		// 	req.VisitUrl)
 
-		email := mailer.RedisQueueEmail{Name: authUser.FirstName,
-			To:          authUser.Email,
-			Token:       otpToken,
-			EmailType:   mailer.REDIS_EMAIL_TYPE_PASSWORD_RESET,
-			Ttl:         fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
-			CallBackUrl: req.CallbackUrl,
-			VisitUrl:    req.VisitUrl}
+		email := mailer.RedisQueueEmail{
+			Name:      authUser.FirstName,
+			To:        authUser.Email,
+			Token:     otpToken,
+			EmailType: mailer.REDIS_EMAIL_TYPE_PASSWORD_RESET,
+			Ttl:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
+			LinkUrl:   consts.URL_RESET_PASSWORD}
 		rdb.PublishEmail(&email)
 
 		//if err != nil {
@@ -89,7 +89,8 @@ func UpdatePasswordRoute(c *gin.Context) {
 
 		//return SendPasswordEmail(c, validator.AuthUser, validator.Req.Password)
 
-		email := mailer.RedisQueueEmail{Name: authUser.FirstName,
+		email := mailer.RedisQueueEmail{
+			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			EmailType: mailer.REDIS_EMAIL_TYPE_PASSWORD_UPDATED}
 		rdb.PublishEmail(&email)

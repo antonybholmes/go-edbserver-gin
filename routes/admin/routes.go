@@ -144,12 +144,11 @@ func AddUserRoute(c *gin.Context) {
 		// tell user their account was created
 		//go SendAccountCreatedEmail(authUser, validator.Address)
 
-		email := mailer.RedisQueueEmail{Name: authUser.FirstName,
-			To: authUser.Email,
-
+		email := mailer.RedisQueueEmail{
+			Name:      authUser.FirstName,
+			To:        authUser.Email,
 			EmailType: mailer.REDIS_EMAIL_TYPE_ACCOUNT_CREATED,
-
-			CallBackUrl: consts.APP_URL}
+			LinkUrl:   consts.APP_URL}
 		rdb.PublishEmail(&email)
 
 		routes.MakeOkResp(c, "account created email sent")

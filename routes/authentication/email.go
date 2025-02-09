@@ -175,13 +175,14 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 		// 	req.CallbackUrl,
 		// 	req.VisitUrl)
 
-		email := mailer.RedisQueueEmail{Name: authUser.FirstName,
-			To:          authUser.Email,
-			Token:       otpToken,
-			EmailType:   mailer.REDIS_EMAIL_TYPE_EMAIL_RESET,
-			Ttl:         fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
-			CallBackUrl: req.CallbackUrl,
-			VisitUrl:    req.VisitUrl}
+		email := mailer.RedisQueueEmail{
+			Name:      authUser.FirstName,
+			To:        authUser.Email,
+			Token:     otpToken,
+			EmailType: mailer.REDIS_EMAIL_TYPE_EMAIL_RESET,
+			Ttl:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
+			LinkUrl:   consts.URL_RESET_EMAIL,
+		}
 		rdb.PublishEmail(&email)
 
 		//if err != nil {
@@ -225,7 +226,8 @@ func UpdateEmailRoute(c *gin.Context) {
 
 		//return SendEmailChangedEmail(c, authUser)
 
-		email := mailer.RedisQueueEmail{Name: authUser.FirstName,
+		email := mailer.RedisQueueEmail{
+			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			EmailType: mailer.REDIS_EMAIL_TYPE_EMAIL_UPDATED}
 		rdb.PublishEmail(&email)
