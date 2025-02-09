@@ -126,7 +126,7 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 		//	return routes.ErrorReq(err)
 		//}
 
-		routes.MakeOkResp(c, "check your email for a passwordless sign in link")
+		routes.MakeOkResp(c, "check your email for a magic link to sign in")
 	})
 }
 

@@ -66,7 +66,7 @@ func TokenInfoRoute(c *gin.Context) {
 	}
 
 	routes.MakeDataResp(c, "", &routes.JwtInfo{
-		Uuid: claims.Uuid,
+		Uuid: claims.UserId,
 		Type: claims.Type, //.TokenTypeString(claims.Type),
 		//IpAddr:  claims.IpAddr,
 		Expires: claims.ExpiresAt.UTC().String()})
@@ -77,7 +77,7 @@ func NewAccessTokenRoute(c *gin.Context) {
 	authenticationroutes.NewValidator(c).CheckIsValidRefreshToken().Success(func(validator *authenticationroutes.Validator) {
 
 		// Generate encoded token and send it as response.
-		accessToken, err := tokengen.AccessToken(c, validator.Claims.Uuid, validator.Claims.Roles)
+		accessToken, err := tokengen.AccessToken(c, validator.Claims.UserId, validator.Claims.Roles)
 
 		if err != nil {
 			routes.ErrorResp(c, "error creating access token")

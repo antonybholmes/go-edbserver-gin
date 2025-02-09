@@ -268,10 +268,10 @@ func main() {
 
 	//sessionAuthGroup := sessionGroup.Group("/auth")
 
-	sessionGroup.POST("/signin", sessionRoutes.SessionUsernamePasswordSignInRoute)
 	sessionGroup.POST("/auth0/signin", JwtAuth0Middleware(), sessionRoutes.SessionSignInUsingAuth0Route)
 
-	sessionGroup.POST("/passwordless/signin",
+	sessionGroup.POST("/auth/signin", sessionRoutes.SessionUsernamePasswordSignInRoute)
+	sessionGroup.POST("/auth/passwordless/validate",
 		JwtMiddleware(),
 		sessionRoutes.SessionPasswordlessValidateSignInRoute)
 

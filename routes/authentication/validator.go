@@ -241,7 +241,7 @@ func (validator *Validator) LoadAuthUserFromToken() *Validator {
 		return validator
 	}
 
-	authUser, err := userdbcache.FindUserByUuid(validator.Claims.Uuid)
+	authUser, err := userdbcache.FindUserByUuid(validator.Claims.UserId)
 
 	if err != nil {
 		validator.Err = fmt.Errorf(routes.ERROR_USER_DOES_NOT_EXIST)

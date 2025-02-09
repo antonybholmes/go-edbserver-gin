@@ -25,7 +25,7 @@ func UpdateUserRoute(c *gin.Context) {
 
 		//db, err := userdbcache.AutoConn(nil) //not clear on what is needed for the user and password
 
-		uuid := validator.Claims.Uuid
+		uuid := validator.Claims.UserId
 
 		authUser, err := userdbcache.FindUserByUuid(uuid)
 

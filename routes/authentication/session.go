@@ -76,6 +76,36 @@ func init() {
 	// }
 }
 
+type SessionInfo struct {
+	AuthUser  *auth.AuthUser `json:"user"`
+	IsValid   bool           `json:"valid"`
+	CreatedAt string         `json:"createdAt"`
+	ExpiresAt string         `json:"expiresAt"`
+}
+
+func ReadSessionInfo(c *gin.Context) (*SessionInfo, error) {
+	sess := sessions.Default(c) //.Get(consts.SESSION_NAME, c)
+
+	userData, _ := sess.Get(SESSION_USER).(string)
+
+	var user auth.AuthUser
+
+	if err := json.Unmarshal([]byte(userData), &user); err != nil {
+		return nil, err
+	}
+
+	//publicId, _ := sess.Values[SESSION_PUBLICID].(string)
+	//roles, _ := sess.Values[SESSION_ROLES].(string)
+	createdAt, _ := sess.Get(SESSION_CREATED_AT).(string)
+	expires, _ := sess.Get(SESSION_EXPIRES_AT).(string)
+	//isValid := publicId != ""
+
+	return &SessionInfo{AuthUser: &user,
+			CreatedAt: createdAt,
+			ExpiresAt: expires},
+		nil
+}
+
 type SessionRoutes struct {
 	sessionOptions sessions.Options
 }
@@ -103,6 +133,50 @@ func NewSessionRoutes() *SessionRoutes {
 	}
 
 	return &SessionRoutes{sessionOptions: options}
+}
+
+// initialize a session with default age and ids
+func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) error {
+
+	userData, err := json.Marshal(authUser)
+
+	if err != nil {
+		return err
+	}
+
+	sess := sessions.Default(c) // .Get(consts.SESSION_NAME, c)
+
+	// set session options
+	sess.Options(sr.sessionOptions)
+
+	//sess.Values[SESSION_PUBLICID] = authUser.PublicId
+	//sess.Values[SESSION_ROLES] = roles //auth.MakeClaim(authUser.Roles)
+	sess.Set(SESSION_USER, string(userData))
+
+	now := time.Now().UTC()
+	sess.Set(SESSION_CREATED_AT, now.Format(time.RFC3339))
+	sess.Set(SESSION_EXPIRES_AT, now.Add(time.Duration(sr.sessionOptions.MaxAge)*time.Second).Format(time.RFC3339))
+
+	err = sess.Save() //c.Request(), c.Response())
+
+	if err != nil {
+		c.Error(err)
+		return err
+	}
+
+	return nil
+}
+
+// create empty session for testing
+func (sr *SessionRoutes) InitSessionRoute(c *gin.Context) {
+
+	err := sr.initSession(c, &auth.AuthUser{})
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
 }
 
 func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
@@ -289,135 +363,6 @@ func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
 	UserSignedInResp(c)
 }
 
-type SessionInfo struct {
-	AuthUser  *auth.AuthUser `json:"user"`
-	IsValid   bool           `json:"valid"`
-	CreatedAt string         `json:"createdAt"`
-	ExpiresAt string         `json:"expiresAt"`
-}
-
-// initialize a session with default age and ids
-func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) error {
-
-	userData, err := json.Marshal(authUser)
-
-	if err != nil {
-		return err
-	}
-
-	sess := sessions.Default(c) // .Get(consts.SESSION_NAME, c)
-
-	// set session options
-	sess.Options(sr.sessionOptions)
-
-	//sess.Values[SESSION_PUBLICID] = authUser.PublicId
-	//sess.Values[SESSION_ROLES] = roles //auth.MakeClaim(authUser.Roles)
-	sess.Set(SESSION_USER, string(userData))
-
-	now := time.Now().UTC()
-	sess.Set(SESSION_CREATED_AT, now.Format(time.RFC3339))
-	sess.Set(SESSION_EXPIRES_AT, now.Add(time.Duration(sr.sessionOptions.MaxAge)*time.Second).Format(time.RFC3339))
-
-	err = sess.Save() //c.Request(), c.Response())
-
-	if err != nil {
-		c.Error(err)
-		return err
-	}
-
-	return nil
-}
-
-// create empty session for testing
-func (sr *SessionRoutes) InitSessionRoute(c *gin.Context) {
-
-	err := sr.initSession(c, &auth.AuthUser{})
-
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
-}
-
-func ReadSessionInfo(c *gin.Context) (*SessionInfo, error) {
-	sess := sessions.Default(c) //.Get(consts.SESSION_NAME, c)
-
-	userData, _ := sess.Get(SESSION_USER).(string)
-
-	var user auth.AuthUser
-
-	if err := json.Unmarshal([]byte(userData), &user); err != nil {
-		return nil, err
-	}
-
-	//publicId, _ := sess.Values[SESSION_PUBLICID].(string)
-	//roles, _ := sess.Values[SESSION_ROLES].(string)
-	createdAt, _ := sess.Get(SESSION_CREATED_AT).(string)
-	expires, _ := sess.Get(SESSION_EXPIRES_AT).(string)
-	//isValid := publicId != ""
-
-	return &SessionInfo{AuthUser: &user,
-			CreatedAt: createdAt,
-			ExpiresAt: expires},
-		nil
-}
-
-// Read the user session. Can also be used to determin if session is valid
-func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
-	sessionInfo, err := ReadSessionInfo(c)
-
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
-	routes.MakeDataResp(c, "", sessionInfo)
-}
-
-func (sr *SessionRoutes) SessionRenewRoute(c *gin.Context) {
-	user, ok := c.Get("authUser")
-
-	if !ok {
-		routes.ErrorResp(c, "no auth user")
-		return
-	}
-
-	// refresh user
-	authUser, err := userdbcache.FindUserById(user.(*auth.AuthUser).Id)
-
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
-	//
-	// For the moment just update the user info
-
-	//err = sr.initSession(c, authUser)
-
-	sess := sessions.Default(c) // .Get(consts.SESSION_NAME, c)
-
-	userData, err := json.Marshal(authUser)
-
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
-	log.Debug().Msgf("saving %s", string(userData))
-
-	sess.Set(SESSION_USER, string(userData))
-
-	err = sess.Save() //c.Request(), c.Response())
-
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
-}
-
 // Validate the passwordless token we generated and create
 // a user session. The session acts as a refresh token and
 // can be used to generate access tokens to use resources
@@ -474,6 +419,61 @@ func SessionSignOutRoute(c *gin.Context) {
 	sess.Save() //c.Request(), c.Response())
 
 	routes.MakeOkResp(c, "user has been signed out")
+}
+
+// Read the user session. Can also be used to determin if session is valid
+func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
+	sessionInfo, err := ReadSessionInfo(c)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	routes.MakeDataResp(c, "", sessionInfo)
+}
+
+func (sr *SessionRoutes) SessionRenewRoute(c *gin.Context) {
+	user, ok := c.Get("authUser")
+
+	if !ok {
+		routes.ErrorResp(c, "no auth user")
+		return
+	}
+
+	// refresh user
+	authUser, err := userdbcache.FindUserById(user.(*auth.AuthUser).Id)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	//
+	// For the moment just update the user info
+
+	//err = sr.initSession(c, authUser)
+
+	sess := sessions.Default(c) // .Get(consts.SESSION_NAME, c)
+
+	userData, err := json.Marshal(authUser)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	log.Debug().Msgf("saving %s", string(userData))
+
+	sess.Set(SESSION_USER, string(userData))
+
+	err = sess.Save() //c.Request(), c.Response())
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
 }
 
 func NewAccessTokenFromSessionRoute(c *gin.Context) {
