@@ -113,7 +113,7 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 		// 	validator.Req.CallbackUrl,
 		// 	validator.Req.VisitUrl)
 
-		log.Debug().Msgf("t %s %s", passwordlessToken, consts.URL_SIGN_IN)
+		log.Debug().Msgf("t %s ", passwordlessToken)
 
 		email := mailer.RedisQueueEmail{
 			Name:      authUser.FirstName,
@@ -121,7 +121,7 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 			Token:     passwordlessToken,
 			EmailType: mailer.REDIS_EMAIL_TYPE_PASSWORDLESS,
 			Ttl:       fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
-			LinkUrl:   consts.URL_SIGN_IN,
+			//LinkUrl:   consts.URL_SIGN_IN,
 			//VisitUrl:    validator.Req.VisitUrl
 		}
 		rdb.PublishEmail(&email)

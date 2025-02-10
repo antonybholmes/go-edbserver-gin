@@ -34,7 +34,6 @@ var ACCESS_TOKEN_TTL_MINS time.Duration
 var OTP_TOKEN_TTL_MINS time.Duration
 var SHORT_TTL_MINS time.Duration
 
-var URL_SIGN_IN string
 var URL_RESET_EMAIL string
 var URL_RESET_PASSWORD string
 var URL_VERIFY_EMAIL string
@@ -55,7 +54,6 @@ func init() {
 
 	REDIS_ADDR = os.Getenv("REDIS_ADDR")
 
-	URL_SIGN_IN = os.Getenv("URL_SIGN_IN")
 	URL_RESET_EMAIL = os.Getenv("URL_RESET_EMAIL")
 	URL_RESET_PASSWORD = os.Getenv("URL_RESET_PASSWORD")
 	URL_VERIFY_EMAIL = os.Getenv("URL_VERIFY_EMAIL")
