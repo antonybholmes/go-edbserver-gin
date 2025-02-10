@@ -23,7 +23,7 @@ func SignupRoute(c *gin.Context) {
 			return
 		}
 
-		otpToken, err := tokengen.VerifyEmailToken(c, authUser, req.RedirectUrl)
+		token, err := tokengen.VerifyEmailToken(c, authUser, req.RedirectUrl)
 
 		//log.Debug().Msgf("%s", otpJwt)
 
@@ -54,10 +54,10 @@ func SignupRoute(c *gin.Context) {
 		email := mailer.RedisQueueEmail{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			Token:     otpToken,
+			Token:     token,
 			EmailType: mailer.REDIS_EMAIL_TYPE_VERIFY,
 			Ttl:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
-			LinkUrl:   consts.APP_URL,
+			LinkUrl:   consts.URL_VERIFY_EMAIL,
 			//VisitUrl:    req.VisitUrl
 		}
 

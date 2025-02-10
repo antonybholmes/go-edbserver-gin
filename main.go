@@ -218,7 +218,7 @@ func main() {
 
 	emailGroup := authGroup.Group("/email")
 
-	emailGroup.POST("/verify",
+	emailGroup.POST("/verified",
 		JwtMiddleware(),
 		authenticationroutes.EmailAddressVerifiedRoute,
 	)
