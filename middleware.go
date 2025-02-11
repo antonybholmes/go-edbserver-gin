@@ -291,8 +291,6 @@ func JwtRoleMiddleware(validRoles ...string) gin.HandlerFunc {
 			// if we are not an admin, lets see what roles
 			// we have and if they match the valid list
 			if !auth.IsAdmin(claims.Roles) {
-				routes.NotAdminResp(c)
-
 				isValidRole := false
 
 				for _, validRole := range validRoles {
