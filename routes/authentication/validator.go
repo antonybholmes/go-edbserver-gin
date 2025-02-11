@@ -58,7 +58,7 @@ func (validator *Validator) ParseLoginRequestBody() *Validator {
 	if validator.LoginBodyReq == nil {
 		var req auth.LoginBodyReq
 
-		err := validator.c.Bind(&req)
+		err := validator.c.ShouldBindJSON(&req)
 
 		if err != nil {
 			validator.Err = err
@@ -89,6 +89,7 @@ func (validator *Validator) CheckUsernameIsWellFormed() *Validator {
 }
 
 func (validator *Validator) CheckEmailIsWellFormed() *Validator {
+
 	validator.ParseLoginRequestBody()
 
 	if validator.Err != nil {

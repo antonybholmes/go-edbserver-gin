@@ -220,6 +220,7 @@ func main() {
 
 	emailGroup.POST("/verified",
 		JwtMiddleware(),
+		JwtIsVerifyEmailTokenMiddleware(),
 		authenticationroutes.EmailAddressVerifiedRoute,
 	)
 

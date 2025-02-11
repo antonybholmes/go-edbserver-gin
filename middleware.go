@@ -150,89 +150,76 @@ func JwtAuth0Middleware() gin.HandlerFunc {
 	}
 }
 
-func JwtIsRefreshTokenMiddleware() gin.HandlerFunc {
+type UserClaimsFunc func(c *gin.Context, claims *auth.TokenClaims)
+
+func checkUserExistsMiddleware(c *gin.Context, f UserClaimsFunc) {
+
+	user, ok := c.Get("user")
+
+	if !ok {
+		routes.UserDoesNotExistResp(c)
+
+		return
+	}
+
+	claims := user.(*auth.TokenClaims)
+
+	f(c, claims)
+}
+
+func JwtSpecificTokenMiddleware(tokenType auth.TokenType) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		user, ok := c.Get("user")
+		checkUserExistsMiddleware(c, func(c *gin.Context, claims *auth.TokenClaims) {
 
-		if !ok {
-			routes.AuthErrorResp(c, "no user")
+			if claims.Type != tokenType {
+				routes.AuthErrorResp(c, fmt.Sprintf("wrong token type: %s, should be %s", claims.Type, tokenType))
 
-			return
-		}
+				return
+			}
 
-		claims := user.(*auth.TokenClaims)
-
-		if claims.Type != auth.REFRESH_TOKEN {
-			routes.AuthErrorResp(c, "not a refresh token")
-
-			return
-		}
-
-		c.Next()
+			c.Next()
+		})
 	}
 }
 
+func JwtIsRefreshTokenMiddleware() gin.HandlerFunc {
+	return JwtSpecificTokenMiddleware(auth.REFRESH_TOKEN)
+}
+
 func JwtIsAccessTokenMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		user, ok := c.Get("user")
+	return JwtSpecificTokenMiddleware(auth.ACCESS_TOKEN)
+}
 
-		if !ok {
-			routes.UserDoesNotExistResp(c)
-
-			return
-		}
-
-		claims := user.(*auth.TokenClaims)
-
-		if claims.Type != auth.ACCESS_TOKEN {
-			routes.AuthErrorResp(c, "not an access token")
-
-			return
-		}
-
-		c.Next()
-	}
+func JwtIsVerifyEmailTokenMiddleware() gin.HandlerFunc {
+	return JwtSpecificTokenMiddleware(auth.VERIFY_EMAIL_TOKEN)
 }
 
 func JwtHasAdminPermissionMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		user, ok := c.Get("user")
+		checkUserExistsMiddleware(c, func(c *gin.Context, claims *auth.TokenClaims) {
 
-		if !ok {
-			routes.UserDoesNotExistResp(c)
-			return
-		}
+			if !auth.IsAdmin((claims.Roles)) {
+				routes.AuthErrorResp(c, "user is not an admin")
 
-		claims := user.(*auth.TokenClaims)
+				return
+			}
 
-		if !auth.IsAdmin((claims.Roles)) {
-			routes.AuthErrorResp(c, "user is not an admin")
-
-			return
-		}
-
-		c.Next()
+			c.Next()
+		})
 	}
 }
 
-func JwtHasLoginPermissionMiddleware() gin.HandlerFunc {
+func JwtHasSigninPermissionMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		user, ok := c.Get("user")
+		checkUserExistsMiddleware(c, func(c *gin.Context, claims *auth.TokenClaims) {
 
-		if !ok {
-			routes.UserDoesNotExistResp(c)
+			if !auth.CanSignin((claims.Roles)) {
+				routes.AuthErrorResp(c, "user is not allowed to login")
+				return
+			}
 
-			return
-		}
-
-		claims := user.(*auth.TokenClaims)
-
-		if !auth.CanSignin((claims.Roles)) {
-			routes.AuthErrorResp(c, "user is not allowed to login")
-			return
-		}
-
-		c.Next()
+			c.Next()
+		})
 	}
 }
 
@@ -297,45 +284,34 @@ func JwtRoleMiddleware(validRoles ...string) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
 
-		user, ok := c.Get("user")
+		checkUserExistsMiddleware(c, func(c *gin.Context, claims *auth.TokenClaims) {
 
-		if !ok {
-			routes.AuthErrorResp(c, "no user claims")
+			log.Debug().Msgf("claims %v", claims)
 
-			return
-		}
+			// if we are not an admin, lets see what roles
+			// we have and if they match the valid list
+			if !auth.IsAdmin(claims.Roles) {
+				routes.NotAdminResp(c)
 
-		// if user == nil {
-		// 	return routes.AuthErrorReq("no jwt available")
-		// }
+				isValidRole := false
 
-		claims := user.(*auth.TokenClaims)
+				for _, validRole := range validRoles {
 
-		log.Debug().Msgf("claims %v", claims)
+					// if we find a permission, stop and move on
+					if strings.Contains(claims.Roles, validRole) {
+						isValidRole = true
+					}
 
-		// if we are not an admin, lets see what roles
-		// we have and if they match the valid list
-		if !auth.IsAdmin(claims.Roles) {
-			routes.NotAdminResp(c)
-
-			isValidRole := false
-
-			for _, validRole := range validRoles {
-
-				// if we find a permission, stop and move on
-				if strings.Contains(claims.Roles, validRole) {
-					isValidRole = true
 				}
 
+				if !isValidRole {
+					routes.ErrorResp(c, "invalid role")
+					return
+				}
 			}
 
-			if !isValidRole {
-				routes.ErrorResp(c, "invalid role")
-				return
-			}
-		}
-
-		c.Next()
+			c.Next()
+		})
 	}
 }
 
