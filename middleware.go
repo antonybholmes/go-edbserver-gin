@@ -286,7 +286,7 @@ func JwtRoleMiddleware(validRoles ...string) gin.HandlerFunc {
 
 		checkUserExistsMiddleware(c, func(c *gin.Context, claims *auth.TokenClaims) {
 
-			log.Debug().Msgf("claims %v", claims)
+			//log.Debug().Msgf("claims %v", claims)
 
 			// if we are not an admin, lets see what roles
 			// we have and if they match the valid list
@@ -298,6 +298,7 @@ func JwtRoleMiddleware(validRoles ...string) gin.HandlerFunc {
 					// if we find a permission, stop and move on
 					if strings.Contains(claims.Roles, validRole) {
 						isValidRole = true
+						break
 					}
 
 				}
