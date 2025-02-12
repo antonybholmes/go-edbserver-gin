@@ -194,7 +194,7 @@ func JwtIsVerifyEmailTokenMiddleware() gin.HandlerFunc {
 	return JwtSpecificTokenMiddleware(auth.VERIFY_EMAIL_TOKEN)
 }
 
-func JwtHasAdminPermissionMiddleware() gin.HandlerFunc {
+func JwtIsAdminMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		checkUserExistsMiddleware(c, func(c *gin.Context, claims *auth.TokenClaims) {
 
@@ -209,7 +209,7 @@ func JwtHasAdminPermissionMiddleware() gin.HandlerFunc {
 	}
 }
 
-func JwtHasSigninPermissionMiddleware() gin.HandlerFunc {
+func JwtCanSigninMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		checkUserExistsMiddleware(c, func(c *gin.Context, claims *auth.TokenClaims) {
 

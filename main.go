@@ -154,7 +154,8 @@ func main() {
 			"http://localhost:8000",
 			"https://edb.rdf-lab.org",
 			"https://dev.edb-app-astro.pages.dev",
-			"https://edb-client-astro.pages.dev"},
+			"https://edb-client-astro.pages.dev",
+			"https://edb-client-next.pages.dev"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
 		//AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, "Set-Cookie"},
@@ -191,7 +192,7 @@ func main() {
 	adminGroup := r.Group("/admin",
 		JwtMiddleware(),
 		JwtIsAccessTokenMiddleware(),
-		JwtHasAdminPermissionMiddleware())
+		JwtIsAdminMiddleware())
 
 	adminGroup.GET("/roles", adminroutes.RolesRoute)
 
