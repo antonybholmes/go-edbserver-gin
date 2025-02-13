@@ -1,6 +1,6 @@
 module github.com/antonybholmes/go-edb-server-gin
 
-go 1.23
+go 1.24
 
 replace github.com/antonybholmes/go-auth => ../go-auth
 
@@ -31,13 +31,13 @@ replace github.com/antonybholmes/go-cytobands => ../go-cytobands
 replace github.com/antonybholmes/go-beds => ../go-beds
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20250205152412-840349f1ca5c // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20250205171514-82dd7b47fd97
+	github.com/antonybholmes/go-basemath v0.0.0-20250210230743-9da55b7ac3fd // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20250210230739-b3791e252d47
 
 )
 
 require (
-	github.com/antonybholmes/go-auth v0.0.0-20250205171514-f8d791f6a0e3
+	github.com/antonybholmes/go-auth v0.0.0-20250211162348-4ca547ba1b5a
 	github.com/antonybholmes/go-genes v0.0.0-20250205171518-74f5823b64be
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/joho/godotenv v1.5.1 // indirect
@@ -46,8 +46,8 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-mailer v0.0.0-20250205171512-d98bb8e5219c
-	github.com/antonybholmes/go-sys v0.0.0-20250205171520-3b66c82ca1f3
+	github.com/antonybholmes/go-mailer v0.0.0-20250211162346-0c0915ca27e7
+	github.com/antonybholmes/go-sys v0.0.0-20250210230713-d713d40beb1a
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
