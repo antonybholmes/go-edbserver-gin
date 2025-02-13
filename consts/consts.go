@@ -13,12 +13,14 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var NAME string
-var APP_NAME string
+const NAME = "Experiments Server"
+const APP_NAME = "edb-server"
+const COPYRIGHT = "Copyright (C) 2024 Antony Holmes"
+
 var APP_URL string
 var APP_DOMAIN string
 var VERSION string
-var COPYRIGHT string
+
 var JWT_RSA_PRIVATE_KEY *rsa.PrivateKey //[]byte
 var JWT_RSA_PUBLIC_KEY *rsa.PublicKey   //[]byte
 var JWT_AUTH0_RSA_PUBLIC_KEY *rsa.PublicKey
@@ -44,13 +46,10 @@ func init() {
 	env.Load("consts.env")
 	env.Load("version.env")
 
-	NAME = os.Getenv("NAME")
-	APP_NAME = os.Getenv("APP_NAME")
 	APP_URL = os.Getenv("APP_URL")
 	APP_DOMAIN = os.Getenv("APP_DOMAIN")
 	VERSION = os.Getenv("VERSION")
 	UPDATED = os.Getenv("UPDATED")
-	COPYRIGHT = os.Getenv("COPYRIGHT")
 
 	REDIS_ADDR = os.Getenv("REDIS_ADDR")
 

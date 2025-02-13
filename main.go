@@ -1,13 +1,18 @@
 package main
 
 import (
+	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"runtime"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
+	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/antonybholmes/go-auth/tokengen"
 	"github.com/antonybholmes/go-auth/userdbcache"
@@ -126,26 +131,30 @@ func main() {
 	// Set logging to file
 	//
 
-	// fileLogger := &lumberjack.Logger{
-	// 	Filename:   fmt.Sprintf("logs/%s.log", consts.APP_NAME),
-	// 	MaxSize:    5, //
-	// 	MaxBackups: 10,
-	// 	MaxAge:     14,
-	// 	Compress:   true,
-	// }
+	fileLogger := &lumberjack.Logger{
+		Filename:   fmt.Sprintf("logs/%s.log", consts.APP_NAME),
+		MaxSize:    10,   // Max size in MB before rotating
+		MaxBackups: 3,    // Keep 3 backup files
+		MaxAge:     7,    // Retain files for 7 days
+		Compress:   true, // Compress old log files
+	}
 
-	//logger := zerolog.New(io.MultiWriter(os.Stderr, fileLogger)).With().Timestamp().Logger()
+	logger := zerolog.New(io.MultiWriter(os.Stderr, fileLogger)).With().Timestamp().Logger()
 
 	// we use != development because it means we need to set the env variable in order
 	// to see debugging work. The default is to assume production, in which case we use
 	// lumberjack
-	// if os.Getenv("APP_ENV") != "development" {
-	// 	logger = zerolog.New(io.MultiWriter(zerolog.ConsoleWriter{Out: os.Stderr}, fileLogger)).With().Timestamp().Logger()
-	// }
+	if os.Getenv("APP_ENV") != "development" {
+		logger = zerolog.New(io.MultiWriter(zerolog.ConsoleWriter{Out: os.Stderr}, fileLogger)).With().Timestamp().Logger()
+	}
 
 	sessionRoutes := authenticationroutes.NewSessionRoutes()
 
-	r := gin.Default()
+	//r := gin.Default()
+	r := gin.New()
+
+	r.Use(LoggingMiddleware(logger))
+	r.Use(gin.Recovery())
 
 	r.Use(cors.New(cors.Config{
 		//AllowAllOrigins: true,

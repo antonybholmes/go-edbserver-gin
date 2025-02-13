@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/antonybholmes/go-auth"
 	"github.com/antonybholmes/go-edb-server-gin/consts"
 	"github.com/antonybholmes/go-edb-server-gin/routes"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -18,6 +20,26 @@ import (
 type APIError struct {
 	Message string `json:"message"`
 	Code    int    `json:"code"`
+}
+
+func LoggingMiddleware(logger zerolog.Logger) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		start := time.Now()
+
+		// Process the request
+		c.Next()
+
+		// Log the HTTP request details after it completes
+		duration := time.Since(start)
+
+		// Log the request information
+		logger.Info().
+			Str("method", c.Request.Method).
+			Str("path", c.Request.URL.Path).
+			Int("status", c.Writer.Status()).
+			Dur("duration", duration).
+			Msg("HTTP request")
+	}
 }
 
 func ErrorHandlerMiddleware() gin.HandlerFunc {
