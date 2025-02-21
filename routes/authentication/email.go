@@ -13,10 +13,11 @@ import (
 	"github.com/antonybholmes/go-auth/tokengen"
 	"github.com/antonybholmes/go-auth/userdbcache"
 	"github.com/antonybholmes/go-edb-server-gin/consts"
-	"github.com/antonybholmes/go-edb-server-gin/rdb"
+
 	"github.com/antonybholmes/go-edb-server-gin/routes"
 	"github.com/antonybholmes/go-mailer"
 	"github.com/antonybholmes/go-mailer/mailserver"
+	"github.com/antonybholmes/go-mailer/queue"
 	"github.com/gin-gonic/gin"
 )
 
@@ -175,15 +176,15 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 		// 	req.CallbackUrl,
 		// 	req.VisitUrl)
 
-		email := mailer.RedisQueueEmail{
+		email := mailer.QueueEmail{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			Token:     otpToken,
-			EmailType: mailer.REDIS_EMAIL_TYPE_EMAIL_RESET,
+			EmailType: mailer.QUEUE_EMAIL_TYPE_EMAIL_RESET,
 			Ttl:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_RESET_EMAIL,
 		}
-		rdb.PublishEmail(&email)
+		queue.PublishEmail(&email)
 
 		//if err != nil {
 		//	return routes.ErrorReq(err)
@@ -226,11 +227,11 @@ func UpdateEmailRoute(c *gin.Context) {
 
 		//return SendEmailChangedEmail(c, authUser)
 
-		email := mailer.RedisQueueEmail{
+		email := mailer.QueueEmail{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: mailer.REDIS_EMAIL_TYPE_EMAIL_UPDATED}
-		rdb.PublishEmail(&email)
+			EmailType: mailer.QUEUE_EMAIL_TYPE_EMAIL_UPDATED}
+		queue.PublishEmail(&email)
 
 		routes.MakeOkResp(c, "email updated confirmation email sent")
 	})

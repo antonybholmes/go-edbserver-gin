@@ -3,7 +3,8 @@ package authorization
 import (
 	"github.com/antonybholmes/go-auth"
 	"github.com/antonybholmes/go-auth/userdbcache"
-	"github.com/antonybholmes/go-edb-server-gin/rdb"
+	"github.com/antonybholmes/go-mailer/queue"
+
 	"github.com/antonybholmes/go-edb-server-gin/routes"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
 	"github.com/gin-gonic/gin"
@@ -56,10 +57,10 @@ func UpdateUserRoute(c *gin.Context) {
 		}
 
 		// send email notification of change
-		email := mailer.RedisQueueEmail{Name: authUser.FirstName,
+		email := mailer.QueueEmail{Name: authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: mailer.REDIS_EMAIL_TYPE_ACCOUNT_UPDATED}
-		rdb.PublishEmail(&email)
+			EmailType: mailer.QUEUE_EMAIL_TYPE_ACCOUNT_UPDATED}
+		queue.PublishEmail(&email)
 
 		// send back updated user to having to do a separate call to get the new data
 		routes.MakeDataResp(c, "account updated confirmation email sent", authUser)

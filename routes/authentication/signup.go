@@ -6,7 +6,8 @@ import (
 	"github.com/antonybholmes/go-auth/tokengen"
 	"github.com/antonybholmes/go-auth/userdbcache"
 	"github.com/antonybholmes/go-edb-server-gin/consts"
-	"github.com/antonybholmes/go-edb-server-gin/rdb"
+	"github.com/antonybholmes/go-mailer/queue"
+
 	"github.com/antonybholmes/go-edb-server-gin/routes"
 	"github.com/antonybholmes/go-mailer"
 	"github.com/gin-gonic/gin"
@@ -51,17 +52,17 @@ func SignupRoute(c *gin.Context) {
 		//	return routes.ErrorReq(err)
 		//}
 
-		email := mailer.RedisQueueEmail{
+		email := mailer.QueueEmail{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			Token:     token,
-			EmailType: mailer.REDIS_EMAIL_TYPE_VERIFY,
+			EmailType: mailer.QUEUE_EMAIL_TYPE_VERIFY,
 			Ttl:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_VERIFY_EMAIL,
 			//VisitUrl:    req.VisitUrl
 		}
 
-		rdb.PublishEmail(&email)
+		queue.PublishEmail(&email)
 
 		routes.MakeOkResp(c, "check your email for a verification link")
 	})
@@ -92,11 +93,11 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 		// 	"",
 		// 	"")
 
-		email := mailer.RedisQueueEmail{
+		email := mailer.QueueEmail{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: mailer.REDIS_EMAIL_TYPE_VERIFIED}
-		rdb.PublishEmail(&email)
+			EmailType: mailer.QUEUE_EMAIL_TYPE_VERIFIED}
+		queue.PublishEmail(&email)
 
 		routes.MakeOkResp(c, "email address verified")
 	})

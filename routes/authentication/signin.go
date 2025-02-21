@@ -7,7 +7,8 @@ import (
 	"github.com/antonybholmes/go-auth/tokengen"
 	"github.com/antonybholmes/go-auth/userdbcache"
 	"github.com/antonybholmes/go-edb-server-gin/consts"
-	"github.com/antonybholmes/go-edb-server-gin/rdb"
+	"github.com/antonybholmes/go-mailer/queue"
+
 	"github.com/antonybholmes/go-edb-server-gin/routes"
 	"github.com/antonybholmes/go-mailer"
 	"github.com/gin-gonic/gin"
@@ -115,16 +116,17 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 
 		log.Debug().Msgf("t %s ", passwordlessToken)
 
-		email := mailer.RedisQueueEmail{
+		email := mailer.QueueEmail{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			Token:     passwordlessToken,
-			EmailType: mailer.REDIS_EMAIL_TYPE_PASSWORDLESS,
+			EmailType: mailer.QUEUE_EMAIL_TYPE_PASSWORDLESS,
 			Ttl:       fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
 			//LinkUrl:   consts.URL_SIGN_IN,
 			//VisitUrl:    validator.Req.VisitUrl
 		}
-		rdb.PublishEmail(&email)
+
+		queue.PublishEmail(&email)
 
 		//if err != nil {
 		//	return routes.ErrorReq(err)

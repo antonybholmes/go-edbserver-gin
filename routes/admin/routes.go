@@ -3,7 +3,8 @@ package adminroutes
 import (
 	"github.com/antonybholmes/go-auth/userdbcache"
 	"github.com/antonybholmes/go-edb-server-gin/consts"
-	"github.com/antonybholmes/go-edb-server-gin/rdb"
+	"github.com/antonybholmes/go-mailer/queue"
+
 	"github.com/antonybholmes/go-edb-server-gin/routes"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
 	"github.com/antonybholmes/go-mailer"
@@ -144,12 +145,12 @@ func AddUserRoute(c *gin.Context) {
 		// tell user their account was created
 		//go SendAccountCreatedEmail(authUser, validator.Address)
 
-		email := mailer.RedisQueueEmail{
+		email := mailer.QueueEmail{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: mailer.REDIS_EMAIL_TYPE_ACCOUNT_CREATED,
+			EmailType: mailer.QUEUE_EMAIL_TYPE_ACCOUNT_CREATED,
 			LinkUrl:   consts.APP_URL}
-		rdb.PublishEmail(&email)
+		queue.PublishEmail(&email)
 
 		routes.MakeOkResp(c, "account created email sent")
 	})

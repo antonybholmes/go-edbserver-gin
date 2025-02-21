@@ -12,6 +12,7 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
+	"github.com/segmentio/kafka-go"
 	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/antonybholmes/go-auth/tokengen"
@@ -40,6 +41,8 @@ import (
 	"github.com/antonybholmes/go-geneconv/geneconvdbcache"
 	"github.com/antonybholmes/go-genes/genedbcache"
 	"github.com/antonybholmes/go-gex/gexdbcache"
+	"github.com/antonybholmes/go-mailer"
+	"github.com/antonybholmes/go-mailer/queue"
 	"github.com/antonybholmes/go-motifs/motifsdb"
 	"github.com/antonybholmes/go-mutations/mutationdbcache"
 	"github.com/antonybholmes/go-pathway/pathwaydbcache"
@@ -105,6 +108,22 @@ func init() {
 	cytobandsdbcache.InitCache("data/modules/cytobands/")
 
 	bedsdbcache.InitCache("data/modules/beds/")
+
+	// rdb := redis.NewClient(&redis.Options{
+	// 	Addr:     consts.REDIS_ADDR,
+	// 	Password: "", // no password set
+	// 	DB:       0,  // use default DB
+	// })
+
+	// queue.Init(mailer.NewRedisEmailPublisher(rdb))
+
+	writer := kafka.NewWriter(kafka.WriterConfig{
+		Brokers:  []string{"localhost:9094"}, // Kafka broker
+		Topic:    mailer.QUEUE_EMAIL_CHANNEL, // Topic name
+		Balancer: &kafka.LeastBytes{},        // Balancer (optional)
+	})
+
+	queue.Init(mailer.NewKafkaEmailPublisher(writer))
 }
 
 func main() {
@@ -124,7 +143,7 @@ func main() {
 	//initCache()
 
 	// test redis
-	//email := gomailer.RedisQueueEmail{To: "antony@antonybholmes.dev"}
+	//email := gomailer.QueueEmail{To: "antony@antonybholmes.dev"}
 	//rdb.PublishEmail(&email)
 
 	//
