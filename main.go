@@ -11,8 +11,8 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
-	"github.com/segmentio/kafka-go"
 	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/antonybholmes/go-auth/tokengen"
@@ -109,21 +109,22 @@ func init() {
 
 	bedsdbcache.InitCache("data/modules/beds/")
 
-	// rdb := redis.NewClient(&redis.Options{
-	// 	Addr:     consts.REDIS_ADDR,
-	// 	Password: "", // no password set
-	// 	DB:       0,  // use default DB
-	// })
-
-	// queue.Init(mailer.NewRedisEmailPublisher(rdb))
-
-	writer := kafka.NewWriter(kafka.WriterConfig{
-		Brokers:  []string{"localhost:9094"}, // Kafka broker
-		Topic:    mailer.QUEUE_EMAIL_CHANNEL, // Topic name
-		Balancer: &kafka.LeastBytes{},        // Balancer (optional)
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     consts.REDIS_ADDR,
+		Username: "edb",
+		Password: consts.REDIS_PASSWORD,
+		DB:       0, // use default DB
 	})
 
-	queue.Init(mailer.NewKafkaEmailPublisher(writer))
+	queue.Init(mailer.NewRedisEmailPublisher(rdb))
+
+	// writer := kafka.NewWriter(kafka.WriterConfig{
+	// 	Brokers:  []string{"localhost:9094"}, // Kafka broker
+	// 	Topic:    mailer.QUEUE_EMAIL_CHANNEL, // Topic name
+	// 	Balancer: &kafka.LeastBytes{},        // Balancer (optional)
+	// })
+
+	// queue.Init(mailer.NewKafkaEmailPublisher(writer))
 }
 
 func main() {

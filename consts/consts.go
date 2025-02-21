@@ -30,6 +30,7 @@ var SESSION_ENCRYPTION_KEY string
 var UPDATED string
 
 var REDIS_ADDR string
+var REDIS_PASSWORD string
 
 var PASSWORDLESS_TOKEN_TTL_MINS time.Duration
 var ACCESS_TOKEN_TTL_MINS time.Duration
@@ -52,6 +53,7 @@ func init() {
 	UPDATED = os.Getenv("UPDATED")
 
 	REDIS_ADDR = os.Getenv("REDIS_ADDR")
+	REDIS_PASSWORD = os.Getenv("REDIS_PASSWORD")
 
 	URL_RESET_EMAIL = os.Getenv("URL_RESET_EMAIL")
 	URL_RESET_PASSWORD = os.Getenv("URL_RESET_PASSWORD")
