@@ -33,13 +33,13 @@ replace github.com/antonybholmes/go-cytobands => ../go-cytobands
 replace github.com/antonybholmes/go-beds => ../go-beds
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20250213145427-b2243abab911 // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20250213145422-9c2121741e1f
+	github.com/antonybholmes/go-basemath v0.0.0-20250220232044-da65245fca93 // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20250220232040-74ecfe3b89ba
 )
 
 require (
 	github.com/antonybholmes/go-auth v0.0.0-20250213145421-3aaa2e5b61c4
-	github.com/antonybholmes/go-genes v0.0.0-20250205171518-74f5823b64be
+	github.com/antonybholmes/go-genes v0.0.0-20250220232043-2f736193ad80
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.24
@@ -47,19 +47,19 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-mailer v0.0.0-20250213145420-82d50e638ce2
+	github.com/antonybholmes/go-mailer v0.0.0-20250221223048-ff5171f13c6e
 	github.com/antonybholmes/go-sys v0.0.0-20250213145427-162471c206ff
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
 require (
-	github.com/antonybholmes/go-beds v0.0.0-20250205171511-27c9db460426
-	github.com/antonybholmes/go-geneconv v0.0.0-20250205171520-978d384f5d4f
-	github.com/antonybholmes/go-math v0.0.0-20250205152412-840349f1ca5c
-	github.com/antonybholmes/go-motifs v0.0.0-20250205171516-ec338fab0afc
-	github.com/antonybholmes/go-mutations v0.0.0-20250205171516-4a5a25eecb96
-	github.com/antonybholmes/go-pathway v0.0.0-20250205171510-54e15ded0a64
-	github.com/antonybholmes/go-seqs v0.0.0-20250205171513-452206075530
+	github.com/antonybholmes/go-beds v0.0.0-20250220232038-2a0e5c96f0c7
+	github.com/antonybholmes/go-geneconv v0.0.0-20250220232045-9ac281a499bb
+	github.com/antonybholmes/go-math v0.0.0-20250220232044-da65245fca93
+	github.com/antonybholmes/go-motifs v0.0.0-20250220232042-2f89f5223af1
+	github.com/antonybholmes/go-mutations v0.0.0-20250220232041-7937e339bfc9
+	github.com/antonybholmes/go-pathway v0.0.0-20250220232036-0b6b4988d0f4
+	github.com/antonybholmes/go-seqs v0.0.0-20250220232039-d4c33ddd92c0
 	github.com/gin-contrib/cors v1.7.3
 	github.com/gin-contrib/sessions v1.0.2
 	github.com/gin-gonic/gin v1.10.0
@@ -96,7 +96,7 @@ require (
 	github.com/go-sql-driver/mysql v1.9.0 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.17.7 // indirect
+	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.9 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
@@ -105,7 +105,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
-	github.com/pierrec/lz4/v4 v4.1.15 // indirect
+	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
 	github.com/segmentio/kafka-go v0.4.47 // indirect
@@ -121,15 +121,15 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-cytobands v0.0.0-20250205171511-1b160eec2646
-	github.com/antonybholmes/go-gex v0.0.0-20250205171515-dfe453ea0c91
+	github.com/antonybholmes/go-cytobands v0.0.0-20250220232037-e8f6d016a266
+	github.com/antonybholmes/go-gex v0.0.0-20250213145422-58990a57358b
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/context v1.1.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/xyproto/randomstring v1.2.0 // indirect
-	golang.org/x/crypto v0.33.0 // indirect
+	golang.org/x/crypto v0.34.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
