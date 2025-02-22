@@ -26,8 +26,8 @@ type XlsxSheetsResp struct {
 	Sheets []string `json:"sheets"`
 }
 
-func makeXlsxReader(data string) (*bytes.Reader, error) {
-	xlsxb, err := b64.StdEncoding.DecodeString(data)
+func makeXlsxReader(b64data string) (*bytes.Reader, error) {
+	xlsxb, err := b64.StdEncoding.DecodeString(b64data)
 
 	if err != nil {
 		return nil, err
@@ -95,7 +95,11 @@ func XlsxToRoute(c *gin.Context) {
 		return
 	}
 
-	table, err := sys.XlsxToJson(reader, req.Sheet, req.Indexes, req.Headers, req.SkipRows)
+	table, err := sys.XlsxToJson(reader,
+		req.Sheet,
+		req.Indexes,
+		req.Headers,
+		req.SkipRows)
 
 	if err != nil {
 		c.Error(err)
