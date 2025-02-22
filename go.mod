@@ -2,6 +2,8 @@ module github.com/antonybholmes/go-edb-server-gin
 
 go 1.24
 
+toolchain go1.24.0
+
 replace github.com/antonybholmes/go-auth => ../go-auth
 
 replace github.com/antonybholmes/go-dna => ../go-dna
@@ -62,7 +64,6 @@ require (
 	github.com/gin-contrib/sessions v1.0.2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/redis/go-redis/v9 v9.7.1
-	github.com/segmentio/kafka-go v0.4.47
 )
 
 require (
@@ -107,6 +108,7 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
+	github.com/segmentio/kafka-go v0.4.47 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/xuri/efp v0.0.0-20241211021726-c4e992084aa6 // indirect
