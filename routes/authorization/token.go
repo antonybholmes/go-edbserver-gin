@@ -10,10 +10,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type AuthReq struct {
-	Authorization string `header:"Authorization"`
-}
-
 // func RenewTokenRoute(c *gin.Context) {
 // 	user := c.Get("user").(*jwt.Token)
 // 	claims := user.Claims.(*auth.JwtCustomClaims)
@@ -56,7 +52,7 @@ func TokenInfoRoute(c *gin.Context) {
 
 	claims := auth.TokenClaims{}
 
-	_, err = jwt.ParseWithClaims(t, &claims, func(token *jwt.Token) (interface{}, error) {
+	_, err = jwt.ParseWithClaims(t, &claims, func(token *jwt.Token) (any, error) {
 		return consts.JWT_RSA_PUBLIC_KEY, nil
 	})
 

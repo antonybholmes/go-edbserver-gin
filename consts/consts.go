@@ -15,7 +15,7 @@ import (
 
 const NAME = "Experiments Server"
 const APP_NAME = "edb-server"
-const COPYRIGHT = "Copyright (C) 2024 Antony Holmes"
+const COPYRIGHT = "Copyright (C) 2024-2025 Antony Holmes"
 
 var APP_URL string
 var APP_DOMAIN string
@@ -40,8 +40,6 @@ var SHORT_TTL_MINS time.Duration
 var URL_RESET_EMAIL string
 var URL_RESET_PASSWORD string
 var URL_VERIFY_EMAIL string
-
-const DO_NOT_REPLY = "Please do not reply to this message. It was sent from a notification-only email address that we don't monitor."
 
 func init() {
 	env.Load("consts.env")

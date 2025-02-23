@@ -37,7 +37,7 @@ import (
 	pathwayroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/pathway"
 	seqroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/seqs"
 	toolsroutes "github.com/antonybholmes/go-edb-server-gin/routes/tools"
-	utilroutes "github.com/antonybholmes/go-edb-server-gin/routes/util"
+	utilsroutes "github.com/antonybholmes/go-edb-server-gin/routes/utils"
 	"github.com/antonybholmes/go-geneconv/geneconvdbcache"
 	"github.com/antonybholmes/go-genes/genedbcache"
 	"github.com/antonybholmes/go-gex/gexdbcache"
@@ -448,8 +448,8 @@ func main() {
 	//moduleGroup.Use(jwtMiddleWare,JwtIsAccessTokenMiddleware)
 
 	xlsxGroup := utilsGroup.Group("/xlsx")
-	xlsxGroup.POST("/sheets", utilroutes.XlsxSheetsRoute)
-	xlsxGroup.POST("/to/:format", utilroutes.XlsxToRoute)
+	xlsxGroup.POST("/sheets", utilsroutes.XlsxSheetsRoute)
+	xlsxGroup.POST("/to/:format", utilsroutes.XlsxToRoute)
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
