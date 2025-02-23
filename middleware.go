@@ -102,7 +102,8 @@ func parseToken(c *gin.Context) (string, error) {
 	return tokenString, nil
 }
 
-func JwtMiddleware() gin.HandlerFunc {
+// Reads the token and parses the authorization JWT. If no jwt is present, aborts access.
+func JwtParseMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		tokenString, err := parseToken(c)
