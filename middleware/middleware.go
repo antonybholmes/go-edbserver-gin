@@ -1,4 +1,4 @@
-package main
+package middleware
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/antonybholmes/go-auth"
 	"github.com/antonybholmes/go-edb-server-gin/consts"
 	"github.com/antonybholmes/go-edb-server-gin/routes"
-	"github.com/antonybholmes/go-edb-server-gin/session"
+
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 
@@ -248,7 +248,7 @@ func JwtCanSigninMiddleware() gin.HandlerFunc {
 // basic check that session exists and seems to be populated with the user
 func SessionIsValidMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		sessData, err := session.ReadSessionInfo(c)
+		sessData, err := ReadSessionInfo(c)
 
 		if err != nil {
 			routes.AuthErrorResp(c, "cannot get user id from session")

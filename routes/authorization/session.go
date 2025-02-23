@@ -2,15 +2,16 @@ package authorization
 
 import (
 	"github.com/antonybholmes/go-auth/userdbcache"
+	"github.com/antonybholmes/go-edb-server-gin/middleware"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
-	"github.com/antonybholmes/go-edb-server-gin/session"
+
 	"github.com/antonybholmes/go-mailer"
 	"github.com/antonybholmes/go-mailer/queue"
 	"github.com/gin-gonic/gin"
 )
 
 func SessionUpdateUserRoute(c *gin.Context) {
-	sessionData, err := session.ReadSessionInfo(c)
+	sessionData, err := middleware.ReadSessionInfo(c)
 
 	if err != nil {
 		c.Error(err)

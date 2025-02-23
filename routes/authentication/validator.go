@@ -6,8 +6,8 @@ import (
 
 	"github.com/antonybholmes/go-auth"
 	"github.com/antonybholmes/go-auth/userdbcache"
+	"github.com/antonybholmes/go-edb-server-gin/middleware"
 	"github.com/antonybholmes/go-edb-server-gin/routes"
-	"github.com/antonybholmes/go-edb-server-gin/session"
 	"github.com/gin-gonic/gin"
 )
 
@@ -175,7 +175,7 @@ func (validator *Validator) LoadAuthUserFromSession() *Validator {
 		return validator
 	}
 
-	sessionData, err := session.ReadSessionInfo(validator.c)
+	sessionData, err := middleware.ReadSessionInfo(validator.c)
 
 	if err != nil {
 		validator.Err = fmt.Errorf("user not in session")

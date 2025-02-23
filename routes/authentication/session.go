@@ -11,8 +11,10 @@ import (
 	"github.com/antonybholmes/go-auth"
 	"github.com/antonybholmes/go-auth/tokengen"
 	"github.com/antonybholmes/go-auth/userdbcache"
+	"github.com/antonybholmes/go-edb-server-gin/middleware"
+
 	"github.com/antonybholmes/go-edb-server-gin/routes"
-	"github.com/antonybholmes/go-edb-server-gin/session"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -63,11 +65,11 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) er
 
 	//sess.Values[SESSION_PUBLICID] = authUser.PublicId
 	//sess.Values[SESSION_ROLES] = roles //auth.MakeClaim(authUser.Roles)
-	sess.Set(session.SESSION_USER, string(userData))
+	sess.Set(middleware.SESSION_USER, string(userData))
 
 	now := time.Now().UTC()
-	sess.Set(session.SESSION_CREATED_AT, now.Format(time.RFC3339))
-	sess.Set(session.SESSION_EXPIRES_AT, now.Add(time.Duration(sr.sessionOptions.MaxAge)*time.Second).Format(time.RFC3339))
+	sess.Set(middleware.SESSION_CREATED_AT, now.Format(time.RFC3339))
+	sess.Set(middleware.SESSION_EXPIRES_AT, now.Add(time.Duration(sr.sessionOptions.MaxAge)*time.Second).Format(time.RFC3339))
 
 	err = sess.Save() //c.Request(), c.Response())
 
@@ -145,7 +147,7 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	if validator.LoginBodyReq.StaySignedIn {
 		sess.Options(sr.sessionOptions)
 	} else {
-		sess.Options(session.SESSION_OPT_ZERO)
+		sess.Options(middleware.SESSION_OPT_ZERO)
 	}
 
 	//sess.Values[SESSION_PUBLICID] = authUser.PublicId
@@ -199,7 +201,7 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	err = sr.initSession(c, authUser) //, roleClaim)
 
 	if err != nil {
-		routes.ErrorResp(c, session.ERROR_CREATING_SESSION)
+		routes.ErrorResp(c, middleware.ERROR_CREATING_SESSION)
 		return
 	}
 
@@ -322,11 +324,11 @@ func SessionSignOutRoute(c *gin.Context) {
 	log.Debug().Msgf("invalidate session")
 
 	// invalidate by time
-	sess.Set(session.SESSION_USER, "")
+	sess.Set(middleware.SESSION_USER, "")
 	//sess.Values[SESSION_ROLES] = ""
-	sess.Set(session.SESSION_CREATED_AT, "")
-	sess.Set(session.SESSION_EXPIRES_AT, "")
-	sess.Options(session.SESSION_OPT_ZERO)
+	sess.Set(middleware.SESSION_CREATED_AT, "")
+	sess.Set(middleware.SESSION_EXPIRES_AT, "")
+	sess.Options(middleware.SESSION_OPT_ZERO)
 
 	sess.Save() //c.Request(), c.Response())
 
@@ -335,7 +337,7 @@ func SessionSignOutRoute(c *gin.Context) {
 
 // Read the user session. Can also be used to determin if session is valid
 func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
-	sessionInfo, err := session.ReadSessionInfo(c)
+	sessionInfo, err := middleware.ReadSessionInfo(c)
 
 	if err != nil {
 		c.Error(err)
@@ -377,7 +379,7 @@ func (sr *SessionRoutes) SessionRenewRoute(c *gin.Context) {
 
 	log.Debug().Msgf("saving %s", string(userData))
 
-	sess.Set(session.SESSION_USER, string(userData))
+	sess.Set(middleware.SESSION_USER, string(userData))
 
 	err = sess.Save() //c.Request(), c.Response())
 
