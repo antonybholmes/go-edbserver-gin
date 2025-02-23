@@ -9,10 +9,9 @@ import (
 	"github.com/antonybholmes/go-auth"
 	"github.com/antonybholmes/go-edb-server-gin/consts"
 	"github.com/antonybholmes/go-edb-server-gin/routes"
-	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
+	"github.com/antonybholmes/go-edb-server-gin/session"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -150,7 +149,7 @@ func JwtAuth0Middleware() gin.HandlerFunc {
 
 		claims := auth.Auth0TokenClaims{}
 
-		log.Debug().Msgf("tok %s", tokenString)
+		//log.Debug().Msgf("token %s", tokenString)
 
 		// Parse the JWT
 		_, err = jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
@@ -189,7 +188,7 @@ func checkUserExistsMiddleware(c *gin.Context, f UserClaimsFunc) {
 	f(c, claims)
 }
 
-func JwtSpecificTokenMiddleware(tokenType auth.TokenType) gin.HandlerFunc {
+func JwtIsSpecificTokenTypeMiddleware(tokenType auth.TokenType) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		checkUserExistsMiddleware(c, func(c *gin.Context, claims *auth.TokenClaims) {
 
@@ -205,15 +204,15 @@ func JwtSpecificTokenMiddleware(tokenType auth.TokenType) gin.HandlerFunc {
 }
 
 func JwtIsRefreshTokenMiddleware() gin.HandlerFunc {
-	return JwtSpecificTokenMiddleware(auth.REFRESH_TOKEN)
+	return JwtIsSpecificTokenTypeMiddleware(auth.REFRESH_TOKEN)
 }
 
 func JwtIsAccessTokenMiddleware() gin.HandlerFunc {
-	return JwtSpecificTokenMiddleware(auth.ACCESS_TOKEN)
+	return JwtIsSpecificTokenTypeMiddleware(auth.ACCESS_TOKEN)
 }
 
 func JwtIsVerifyEmailTokenMiddleware() gin.HandlerFunc {
-	return JwtSpecificTokenMiddleware(auth.VERIFY_EMAIL_TOKEN)
+	return JwtIsSpecificTokenTypeMiddleware(auth.VERIFY_EMAIL_TOKEN)
 }
 
 func JwtIsAdminMiddleware() gin.HandlerFunc {
@@ -248,7 +247,7 @@ func JwtCanSigninMiddleware() gin.HandlerFunc {
 // basic check that session exists and seems to be populated with the user
 func SessionIsValidMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		sessData, err := authenticationroutes.ReadSessionInfo(c)
+		sessData, err := session.ReadSessionInfo(c)
 
 		if err != nil {
 			routes.AuthErrorResp(c, "cannot get user id from session")

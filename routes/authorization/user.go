@@ -1,7 +1,6 @@
 package authorization
 
 import (
-	"github.com/antonybholmes/go-auth"
 	"github.com/antonybholmes/go-auth/userdbcache"
 	"github.com/antonybholmes/go-mailer/queue"
 
@@ -73,23 +72,4 @@ func UserRoute(c *gin.Context) {
 		Success(func(validator *authenticationroutes.Validator) {
 			routes.MakeDataResp(c, "", validator.AuthUser)
 		})
-}
-
-func SendUserInfoUpdatedEmail(c *gin.Context, authUser *auth.AuthUser) {
-
-	file := "templates/email/account/updated.html"
-
-	go authenticationroutes.SendEmailWithToken("Account Updated",
-		authUser,
-		file,
-		"",
-		"",
-		"")
-
-	//if err != nil {
-	//	return routes.ErrorReq(err)
-	//}
-
-	UserUpdatedResp(c)
-
 }

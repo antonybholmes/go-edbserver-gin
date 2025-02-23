@@ -1,4 +1,4 @@
-package authenticationroutes
+package authentication
 
 import (
 	"encoding/json"
@@ -12,99 +12,11 @@ import (
 	"github.com/antonybholmes/go-auth/tokengen"
 	"github.com/antonybholmes/go-auth/userdbcache"
 	"github.com/antonybholmes/go-edb-server-gin/routes"
+	"github.com/antonybholmes/go-edb-server-gin/session"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-
 	"github.com/rs/zerolog/log"
 )
-
-const (
-	//SESSION_PUBLICID   string = "publicId"
-	//SESSION_ROLES      string = "roles"
-	SESSION_USER       string = "user"
-	SESSION_CREATED_AT string = "createdAt"
-	SESSION_EXPIRES_AT string = "expiresAt"
-)
-
-const (
-	ERROR_CREATING_SESSION string = "error creating session"
-)
-
-var SESSION_OPT_ZERO sessions.Options
-
-//var SESSION_OPT_24H *sessions.Options
-//var SESSION_OPT_30_DAYS *sessions.Options
-//var SESSION_OPT_7_DAYS *sessions.Options
-
-func init() {
-
-	// HttpOnly and Secure are disabled so we can use them
-	// cross domain for testing
-	// http only false to allow js to delete etc on the client side
-
-	// For sessions that should end when browser closes
-	SESSION_OPT_ZERO = sessions.Options{
-		Path:     "/",
-		MaxAge:   0,
-		HttpOnly: false,
-		Secure:   true,
-		SameSite: http.SameSiteNoneMode,
-	}
-
-	// SESSION_OPT_24H = &sessions.Options{
-	// 	Path:     "/",
-	// 	MaxAge:   auth.MAX_AGE_DAY_SECS,
-	// 	HttpOnly: false,
-	// 	Secure:   true,
-	// 	SameSite: http.SameSiteNoneMode,
-	// }
-
-	// SESSION_OPT_30_DAYS = &sessions.Options{
-	// 	Path:     "/",
-	// 	MaxAge:   auth.MAX_AGE_30_DAYS_SECS,
-	// 	HttpOnly: false,
-	// 	Secure:   true,
-	// 	SameSite: http.SameSiteNoneMode,
-	// }
-
-	// SESSION_OPT_7_DAYS = &sessions.Options{
-	// 	Path:     "/",
-	// 	MaxAge:   auth.MAX_AGE_7_DAYS_SECS,
-	// 	HttpOnly: false,
-	// 	Secure:   true,
-	// 	SameSite: http.SameSiteNoneMode,
-	// }
-}
-
-type SessionInfo struct {
-	AuthUser  *auth.AuthUser `json:"user"`
-	IsValid   bool           `json:"valid"`
-	CreatedAt string         `json:"createdAt"`
-	ExpiresAt string         `json:"expiresAt"`
-}
-
-func ReadSessionInfo(c *gin.Context) (*SessionInfo, error) {
-	sess := sessions.Default(c) //.Get(consts.SESSION_NAME, c)
-
-	userData, _ := sess.Get(SESSION_USER).(string)
-
-	var user auth.AuthUser
-
-	if err := json.Unmarshal([]byte(userData), &user); err != nil {
-		return nil, err
-	}
-
-	//publicId, _ := sess.Values[SESSION_PUBLICID].(string)
-	//roles, _ := sess.Values[SESSION_ROLES].(string)
-	createdAt, _ := sess.Get(SESSION_CREATED_AT).(string)
-	expires, _ := sess.Get(SESSION_EXPIRES_AT).(string)
-	//isValid := publicId != ""
-
-	return &SessionInfo{AuthUser: &user,
-			CreatedAt: createdAt,
-			ExpiresAt: expires},
-		nil
-}
 
 type SessionRoutes struct {
 	sessionOptions sessions.Options
@@ -151,11 +63,11 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) er
 
 	//sess.Values[SESSION_PUBLICID] = authUser.PublicId
 	//sess.Values[SESSION_ROLES] = roles //auth.MakeClaim(authUser.Roles)
-	sess.Set(SESSION_USER, string(userData))
+	sess.Set(session.SESSION_USER, string(userData))
 
 	now := time.Now().UTC()
-	sess.Set(SESSION_CREATED_AT, now.Format(time.RFC3339))
-	sess.Set(SESSION_EXPIRES_AT, now.Add(time.Duration(sr.sessionOptions.MaxAge)*time.Second).Format(time.RFC3339))
+	sess.Set(session.SESSION_CREATED_AT, now.Format(time.RFC3339))
+	sess.Set(session.SESSION_EXPIRES_AT, now.Add(time.Duration(sr.sessionOptions.MaxAge)*time.Second).Format(time.RFC3339))
 
 	err = sess.Save() //c.Request(), c.Response())
 
@@ -233,7 +145,7 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	if validator.LoginBodyReq.StaySignedIn {
 		sess.Options(sr.sessionOptions)
 	} else {
-		sess.Options(SESSION_OPT_ZERO)
+		sess.Options(session.SESSION_OPT_ZERO)
 	}
 
 	//sess.Values[SESSION_PUBLICID] = authUser.PublicId
@@ -287,7 +199,7 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	err = sr.initSession(c, authUser) //, roleClaim)
 
 	if err != nil {
-		routes.ErrorResp(c, ERROR_CREATING_SESSION)
+		routes.ErrorResp(c, session.ERROR_CREATING_SESSION)
 		return
 	}
 
@@ -410,11 +322,11 @@ func SessionSignOutRoute(c *gin.Context) {
 	log.Debug().Msgf("invalidate session")
 
 	// invalidate by time
-	sess.Set(SESSION_USER, "")
+	sess.Set(session.SESSION_USER, "")
 	//sess.Values[SESSION_ROLES] = ""
-	sess.Set(SESSION_CREATED_AT, "")
-	sess.Set(SESSION_EXPIRES_AT, "")
-	sess.Options(SESSION_OPT_ZERO)
+	sess.Set(session.SESSION_CREATED_AT, "")
+	sess.Set(session.SESSION_EXPIRES_AT, "")
+	sess.Options(session.SESSION_OPT_ZERO)
 
 	sess.Save() //c.Request(), c.Response())
 
@@ -423,7 +335,7 @@ func SessionSignOutRoute(c *gin.Context) {
 
 // Read the user session. Can also be used to determin if session is valid
 func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
-	sessionInfo, err := ReadSessionInfo(c)
+	sessionInfo, err := session.ReadSessionInfo(c)
 
 	if err != nil {
 		c.Error(err)
@@ -465,7 +377,7 @@ func (sr *SessionRoutes) SessionRenewRoute(c *gin.Context) {
 
 	log.Debug().Msgf("saving %s", string(userData))
 
-	sess.Set(SESSION_USER, string(userData))
+	sess.Set(session.SESSION_USER, string(userData))
 
 	err = sess.Save() //c.Request(), c.Response())
 

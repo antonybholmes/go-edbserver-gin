@@ -3,11 +3,14 @@ package authorization
 import (
 	"github.com/antonybholmes/go-auth/userdbcache"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
+	"github.com/antonybholmes/go-edb-server-gin/session"
+	"github.com/antonybholmes/go-mailer"
+	"github.com/antonybholmes/go-mailer/queue"
 	"github.com/gin-gonic/gin"
 )
 
 func SessionUpdateUserRoute(c *gin.Context) {
-	sessionData, err := authenticationroutes.ReadSessionInfo(c)
+	sessionData, err := session.ReadSessionInfo(c)
 
 	if err != nil {
 		c.Error(err)
@@ -25,6 +28,18 @@ func SessionUpdateUserRoute(c *gin.Context) {
 			return
 		}
 
-		SendUserInfoUpdatedEmail(c, authUser)
+		//SendUserInfoUpdatedEmail(c, authUser)
+
+		email := mailer.QueueEmail{
+			Name: authUser.FirstName,
+			To:   authUser.Email,
+			//Token:     passwordlessToken,
+			EmailType: mailer.QUEUE_EMAIL_TYPE_EMAIL_UPDATED,
+			//Ttl:       fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
+			//LinkUrl:   consts.URL_SIGN_IN,
+			//VisitUrl:    validator.Req.VisitUrl
+		}
+
+		queue.PublishEmail(&email)
 	})
 }

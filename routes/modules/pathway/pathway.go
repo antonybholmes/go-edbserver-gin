@@ -1,4 +1,4 @@
-package pathwayroutes
+package pathway
 
 import (
 	"github.com/antonybholmes/go-edb-server-gin/routes"

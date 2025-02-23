@@ -1,4 +1,4 @@
-package geneconvroutes
+package geneconv
 
 import (
 	"strings"

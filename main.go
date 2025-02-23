@@ -25,7 +25,7 @@ import (
 	adminroutes "github.com/antonybholmes/go-edb-server-gin/routes/admin"
 	auth0routes "github.com/antonybholmes/go-edb-server-gin/routes/auth0"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
-	"github.com/antonybholmes/go-edb-server-gin/routes/authorization"
+	authorizationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authorization"
 	bedroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/beds"
 	cytobandroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/cytobands"
 	dnaroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/dna"
@@ -279,15 +279,15 @@ func main() {
 	)
 
 	tokenGroup := authGroup.Group("/tokens", JwtMiddleware())
-	tokenGroup.POST("/info", authorization.TokenInfoRoute)
-	tokenGroup.POST("/access", authorization.NewAccessTokenRoute)
+	tokenGroup.POST("/info", authorizationroutes.TokenInfoRoute)
+	tokenGroup.POST("/access", authorizationroutes.NewAccessTokenRoute)
 
 	usersGroup := authGroup.Group("/users", JwtMiddleware(),
 		JwtIsAccessTokenMiddleware())
 
-	usersGroup.POST("", authorization.UserRoute)
+	usersGroup.POST("", authorizationroutes.UserRoute)
 
-	usersGroup.POST("/update", authorization.UpdateUserRoute)
+	usersGroup.POST("/update", authorizationroutes.UpdateUserRoute)
 
 	//usersGroup.POST("/passwords/update", authentication.UpdatePasswordRoute)
 
@@ -327,7 +327,7 @@ func main() {
 
 	sessionUserGroup := sessionGroup.Group("/user", SessionIsValidMiddleware())
 	sessionUserGroup.GET("", authenticationroutes.UserFromSessionRoute)
-	sessionUserGroup.POST("/update", authorization.SessionUpdateUserRoute)
+	sessionUserGroup.POST("/update", authorizationroutes.SessionUpdateUserRoute)
 
 	// sessionPasswordGroup := sessionAuthGroup.Group("/passwords")
 	// sessionPasswordGroup.Use(SessionIsValidMiddleware)

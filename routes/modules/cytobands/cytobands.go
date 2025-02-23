@@ -1,4 +1,4 @@
-package seqroutes
+package cytobands
 
 import (
 	"github.com/antonybholmes/go-edb-server-gin/routes"

@@ -1,4 +1,4 @@
-package authenticationroutes
+package authentication
 
 import (
 	"fmt"
@@ -7,6 +7,7 @@ import (
 	"github.com/antonybholmes/go-auth"
 	"github.com/antonybholmes/go-auth/userdbcache"
 	"github.com/antonybholmes/go-edb-server-gin/routes"
+	"github.com/antonybholmes/go-edb-server-gin/session"
 	"github.com/gin-gonic/gin"
 )
 
@@ -174,7 +175,7 @@ func (validator *Validator) LoadAuthUserFromSession() *Validator {
 		return validator
 	}
 
-	sessionData, err := ReadSessionInfo(validator.c)
+	sessionData, err := session.ReadSessionInfo(validator.c)
 
 	if err != nil {
 		validator.Err = fmt.Errorf("user not in session")

@@ -1,4 +1,4 @@
-package authenticationroutes
+package authentication
 
 import (
 	"fmt"

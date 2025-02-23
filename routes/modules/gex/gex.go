@@ -1,4 +1,4 @@
-package gexroutes
+package gex
 
 import (
 	"github.com/antonybholmes/go-edb-server-gin/routes"

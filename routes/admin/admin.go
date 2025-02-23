@@ -1,4 +1,4 @@
-package adminroutes
+package admin
 
 import (
 	"github.com/antonybholmes/go-auth/userdbcache"

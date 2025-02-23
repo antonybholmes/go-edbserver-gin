@@ -1,4 +1,4 @@
-package utilroutes
+package util
 
 import (
 	"bytes"

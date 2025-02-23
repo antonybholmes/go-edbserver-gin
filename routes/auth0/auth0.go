@@ -1,4 +1,4 @@
-package auth0routes
+package auth0
 
 import (
 	"github.com/antonybholmes/go-edb-server-gin/routes"

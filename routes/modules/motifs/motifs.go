@@ -1,4 +1,4 @@
-package motifroutes
+package motifs
 
 import (
 	"github.com/antonybholmes/go-edb-server-gin/routes"

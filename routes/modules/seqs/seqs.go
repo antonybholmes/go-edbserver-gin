@@ -1,4 +1,4 @@
-package seqroutes
+package seqs
 
 import (
 	"github.com/antonybholmes/go-dna"

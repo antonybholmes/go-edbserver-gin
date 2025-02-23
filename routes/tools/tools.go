@@ -1,4 +1,4 @@
-package toolsroutes
+package tools
 
 import (
 	"crypto/rand"

@@ -1,4 +1,4 @@
-package mutationroutes
+package mutations
 
 import (
 	"github.com/antonybholmes/go-dna"

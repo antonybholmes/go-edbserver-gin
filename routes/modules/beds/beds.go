@@ -1,4 +1,4 @@
-package bedroutes
+package beds
 
 import (
 	"github.com/antonybholmes/go-beds"

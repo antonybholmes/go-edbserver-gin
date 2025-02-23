@@ -1,4 +1,4 @@
-package generoutes
+package genes
 
 import (
 	"bytes"

@@ -1,4 +1,4 @@
-package dnaroutes
+package dna
 
 import (
 	"fmt"
