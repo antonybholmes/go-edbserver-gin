@@ -2,9 +2,7 @@ module github.com/antonybholmes/go-edb-server-gin
 
 go 1.24
 
-toolchain go1.24.0
-
-replace github.com/antonybholmes/go-auth => ../go-auth
+replace github.com/antonybholmes/go-web => ../go-web
 
 replace github.com/antonybholmes/go-dna => ../go-dna
 
@@ -38,8 +36,8 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-auth v0.0.0-20250213145421-3aaa2e5b61c4
 	github.com/antonybholmes/go-genes v0.0.0-20250220232043-2f736193ad80
+	github.com/antonybholmes/go-web v0.0.0-20250213145421-3aaa2e5b61c4
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.24

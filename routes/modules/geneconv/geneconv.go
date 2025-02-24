@@ -3,9 +3,9 @@ package geneconv
 import (
 	"strings"
 
-	"github.com/antonybholmes/go-auth/routes"
 	geneconv "github.com/antonybholmes/go-geneconv"
 	geneconvdbcache "github.com/antonybholmes/go-geneconv/geneconvdbcache"
+	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 )
 

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/mail"
 
-	"github.com/antonybholmes/go-auth"
-	"github.com/antonybholmes/go-auth/middleware"
-	"github.com/antonybholmes/go-auth/routes"
-	"github.com/antonybholmes/go-auth/userdbcache"
+	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/middleware"
+	"github.com/antonybholmes/go-web/routes"
+	"github.com/antonybholmes/go-web/userdbcache"
 	"github.com/gin-gonic/gin"
 )
 

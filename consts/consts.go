@@ -7,8 +7,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/antonybholmes/go-auth"
 	"github.com/antonybholmes/go-sys/env"
+	"github.com/antonybholmes/go-web/auth"
 
 	"github.com/golang-jwt/jwt/v5"
 )

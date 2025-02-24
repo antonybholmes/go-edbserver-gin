@@ -1,9 +1,9 @@
 package pathway
 
 import (
-	"github.com/antonybholmes/go-auth/routes"
 	pathway "github.com/antonybholmes/go-pathway"
 	"github.com/antonybholmes/go-pathway/pathwaydbcache"
+	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 )
 

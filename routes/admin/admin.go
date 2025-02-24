@@ -1,13 +1,13 @@
 package admin
 
 import (
-	"github.com/antonybholmes/go-auth/userdbcache"
 	"github.com/antonybholmes/go-edb-server-gin/consts"
 	"github.com/antonybholmes/go-mailer/queue"
+	"github.com/antonybholmes/go-web/userdbcache"
 
-	"github.com/antonybholmes/go-auth/routes"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
 	"github.com/antonybholmes/go-mailer"
+	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 )
 

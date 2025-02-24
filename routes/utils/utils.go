@@ -8,9 +8,9 @@ import (
 	"math/big"
 	"strconv"
 
-	"github.com/antonybholmes/go-auth"
-	"github.com/antonybholmes/go-auth/routes"
 	"github.com/antonybholmes/go-sys"
+	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 )
 

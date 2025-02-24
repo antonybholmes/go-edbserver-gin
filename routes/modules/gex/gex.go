@@ -1,9 +1,9 @@
 package gex
 
 import (
-	"github.com/antonybholmes/go-auth/routes"
 	"github.com/antonybholmes/go-gex"
 	"github.com/antonybholmes/go-gex/gexdbcache"
+	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 )
 

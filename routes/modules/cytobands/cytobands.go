@@ -1,7 +1,7 @@
 package cytobands
 
 import (
-	"github.com/antonybholmes/go-auth/routes"
+	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 
 	"github.com/antonybholmes/go-cytobands/cytobandsdbcache"

@@ -1,12 +1,12 @@
 package authorization
 
 import (
-	"github.com/antonybholmes/go-auth"
-	"github.com/antonybholmes/go-auth/middleware"
-	"github.com/antonybholmes/go-auth/routes"
-	"github.com/antonybholmes/go-auth/tokengen"
 	"github.com/antonybholmes/go-edb-server-gin/consts"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
+	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/middleware"
+	"github.com/antonybholmes/go-web/routes"
+	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )

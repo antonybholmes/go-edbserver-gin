@@ -1,9 +1,9 @@
 package motifs
 
 import (
-	"github.com/antonybholmes/go-auth/routes"
 	"github.com/antonybholmes/go-motifs"
 	"github.com/antonybholmes/go-motifs/motifsdb"
+	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )

@@ -1,7 +1,7 @@
 package auth0
 
 import (
-	"github.com/antonybholmes/go-auth/routes"
+	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 )
 

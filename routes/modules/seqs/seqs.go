@@ -1,9 +1,9 @@
 package seqs
 
 import (
-	"github.com/antonybholmes/go-auth/routes"
 	"github.com/antonybholmes/go-dna"
 	seq "github.com/antonybholmes/go-seqs"
+	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 

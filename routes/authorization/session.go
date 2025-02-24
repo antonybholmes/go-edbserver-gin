@@ -1,9 +1,9 @@
 package authorization
 
 import (
-	"github.com/antonybholmes/go-auth/middleware"
-	"github.com/antonybholmes/go-auth/userdbcache"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
+	"github.com/antonybholmes/go-web/middleware"
+	"github.com/antonybholmes/go-web/userdbcache"
 
 	"github.com/antonybholmes/go-mailer"
 	"github.com/antonybholmes/go-mailer/queue"

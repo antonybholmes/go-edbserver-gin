@@ -15,9 +15,6 @@ import (
 	"github.com/rs/zerolog"
 	"gopkg.in/natefinch/lumberjack.v2"
 
-	"github.com/antonybholmes/go-auth/routes"
-	"github.com/antonybholmes/go-auth/tokengen"
-	"github.com/antonybholmes/go-auth/userdbcache"
 	"github.com/antonybholmes/go-beds/bedsdbcache"
 	"github.com/antonybholmes/go-cytobands/cytobandsdbcache"
 	"github.com/antonybholmes/go-dna/dnadbcache"
@@ -36,8 +33,11 @@ import (
 	mutationroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/mutation"
 	pathwayroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/pathway"
 	seqroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/seqs"
+	"github.com/antonybholmes/go-web/routes"
+	"github.com/antonybholmes/go-web/tokengen"
+	"github.com/antonybholmes/go-web/userdbcache"
 
-	"github.com/antonybholmes/go-auth/middleware"
+	"github.com/antonybholmes/go-web/middleware"
 
 	utilsroutes "github.com/antonybholmes/go-edb-server-gin/routes/utils"
 	"github.com/antonybholmes/go-geneconv/geneconvdbcache"

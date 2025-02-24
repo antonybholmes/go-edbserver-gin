@@ -8,12 +8,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/antonybholmes/go-auth/routes"
 	"github.com/antonybholmes/go-dna"
 	dnaroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/dna"
 	"github.com/antonybholmes/go-genes"
 	"github.com/antonybholmes/go-genes/genedbcache"
 	basemath "github.com/antonybholmes/go-math"
+	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 )
 
