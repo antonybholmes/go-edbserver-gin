@@ -170,6 +170,7 @@ func main() {
 		logger = zerolog.New(io.MultiWriter(zerolog.ConsoleWriter{Out: os.Stderr}, fileLogger)).With().Timestamp().Logger()
 	}
 
+	// all subsequent middleware is reliant on this to function
 	jwtUserMiddleWare := middleware.JwtUserMiddleware(
 		middleware.JwtClaimsParser(consts.JWT_RSA_PUBLIC_KEY))
 
@@ -180,7 +181,7 @@ func main() {
 
 	accessTokenMiddleware := middleware.JwtIsAccessTokenMiddleware()
 
-	rdfMiddleware := middleware.JwtHasRDFRoleMiddleware()
+	rdfRoleMiddleware := middleware.JwtHasRDFRoleMiddleware()
 
 	sessionRoutes := authenticationroutes.NewSessionRoutes()
 
@@ -209,19 +210,23 @@ func main() {
 
 	r.Use(middleware.ErrorHandlerMiddleware())
 
-	store = cookie.NewStore([]byte(consts.SESSION_KEY), []byte(consts.SESSION_ENCRYPTION_KEY))
+	store = cookie.NewStore([]byte(consts.SESSION_KEY),
+		[]byte(consts.SESSION_ENCRYPTION_KEY))
 	r.Use(sessions.Sessions(consts.SESSION_NAME, store))
 
 	r.GET("/about", func(c *gin.Context) {
 		c.JSON(http.StatusOK,
-			AboutResp{Name: consts.APP_NAME,
+			AboutResp{
+				Name:      consts.APP_NAME,
 				Version:   consts.VERSION,
 				Updated:   consts.UPDATED,
 				Copyright: consts.COPYRIGHT})
 	})
 
 	r.GET("/info", func(c *gin.Context) {
-		routes.MakeDataResp(c, "", InfoResp{Arch: runtime.GOARCH, IpAddr: c.ClientIP()})
+		routes.MakeDataResp(c, "", InfoResp{
+			Arch:   runtime.GOARCH,
+			IpAddr: c.ClientIP()})
 	})
 
 	//
@@ -279,7 +284,8 @@ func main() {
 	passwordGroup := authGroup.Group("/passwords")
 
 	// sends a reset link
-	passwordGroup.POST("/reset", authenticationroutes.SendResetPasswordFromUsernameEmailRoute)
+	passwordGroup.POST("/reset",
+		authenticationroutes.SendResetPasswordFromUsernameEmailRoute)
 
 	// with the correct token, updates a password
 	passwordGroup.POST("/update",
@@ -323,21 +329,19 @@ func main() {
 		jwtAuth0UserMiddleware,
 		sessionRoutes.SessionSignInUsingAuth0Route)
 
-	sessionGroup.POST("/auth/signin", sessionRoutes.SessionUsernamePasswordSignInRoute)
+	sessionGroup.POST("/auth/signin",
+		sessionRoutes.SessionUsernamePasswordSignInRoute)
 	sessionGroup.POST("/auth/passwordless/validate",
 		jwtUserMiddleWare,
 		sessionRoutes.SessionPasswordlessValidateSignInRoute)
 
-	sessionGroup.POST("/api/keys/signin", sessionRoutes.SessionApiKeySignInRoute)
+	sessionGroup.POST("/api/keys/signin",
+		sessionRoutes.SessionApiKeySignInRoute)
 
-	//sessionGroup.POST("/init", sessionRoutes.InitSessionRoute)
 	sessionGroup.GET("/info", sessionRoutes.SessionInfoRoute)
 
-	sessionGroup.POST("/signout", authenticationroutes.SessionSignOutRoute)
-
-	//sessionGroup.POST("/email/reset", authentication.SessionSendResetEmailEmailRoute)
-
-	//sessionGroup.POST("/password/reset", authentication.SessionSendResetPasswordEmailRoute)
+	sessionGroup.POST("/signout",
+		authenticationroutes.SessionSignOutRoute)
 
 	sessionGroup.POST("/tokens/access",
 		sessionMiddleware,
@@ -377,14 +381,17 @@ func main() {
 	// 	NewJwtPermissionsMiddleware("rdf"))
 
 	mutationsGroup := moduleGroup.Group("/mutations")
-	mutationsGroup.GET("/datasets/:assembly", mutationroutes.MutationDatasetsRoute)
-	mutationsGroup.POST("/:assembly/:name", mutationroutes.MutationsRoute)
-	mutationsGroup.POST("/maf/:assembly", mutationroutes.PileupRoute)
+	mutationsGroup.GET("/datasets/:assembly",
+		mutationroutes.MutationDatasetsRoute)
+	mutationsGroup.POST("/:assembly/:name",
+		mutationroutes.MutationsRoute)
+	mutationsGroup.POST("/maf/:assembly",
+		mutationroutes.PileupRoute)
 
 	mutationsGroup.POST("/pileup/:assembly",
 		jwtUserMiddleWare,
 		accessTokenMiddleware,
-		rdfMiddleware,
+		rdfRoleMiddleware,
 		mutationroutes.PileupRoute,
 	)
 
@@ -395,7 +402,7 @@ func main() {
 	gexGroup.POST("/exp",
 		jwtUserMiddleWare,
 		accessTokenMiddleware,
-		rdfMiddleware,
+		rdfRoleMiddleware,
 		gexroutes.GexGeneExpRoute,
 	)
 
@@ -419,7 +426,7 @@ func main() {
 	seqsGroup := moduleGroup.Group("/seqs",
 		jwtUserMiddleWare,
 		accessTokenMiddleware,
-		rdfMiddleware)
+		rdfRoleMiddleware)
 
 	seqsGroup.GET("/genomes", seqroutes.GenomeRoute)
 	seqsGroup.GET("/platforms/:assembly", seqroutes.PlatformRoute)
@@ -433,7 +440,7 @@ func main() {
 	bedsGroup := moduleGroup.Group("/beds",
 		jwtUserMiddleWare,
 		accessTokenMiddleware,
-		rdfMiddleware)
+		rdfRoleMiddleware)
 	bedsGroup.GET("/genomes", bedroutes.GenomeRoute)
 	bedsGroup.GET("/platforms/:assembly", bedroutes.PlatformRoute)
 	bedsGroup.GET("/search/:assembly", bedroutes.SearchBedsRoute)
