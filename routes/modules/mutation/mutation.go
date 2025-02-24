@@ -66,7 +66,9 @@ func MutationsRoute(c *gin.Context) {
 
 	location := params.Locations[0]
 
-	search, err := mutationdbcache.GetInstance().Search(assembly, location, params.Datasets)
+	search, err := mutationdbcache.GetInstance().Search(assembly,
+		location,
+		params.Datasets)
 
 	if err != nil {
 		c.Error(err)
@@ -219,7 +221,9 @@ func PileupRoute(c *gin.Context) {
 		// 	ret.Mutations[i] = make([]*mutations.Mutation, 0, 10)
 		// }
 
-		search, err := mutationdbcache.GetInstance().Search(assembly, location, params.Datasets)
+		search, err := mutationdbcache.GetInstance().Search(assembly,
+			location,
+			params.Datasets)
 
 		if err != nil {
 			log.Debug().Msgf("here 1 %s", err)

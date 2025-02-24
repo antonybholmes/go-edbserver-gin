@@ -77,7 +77,8 @@ func UpdateEmailRoute(c *gin.Context) {
 			routes.WrongTokentTypeReq(c)
 		}
 
-		err := auth.CheckOTPValid(validator.AuthUser, validator.Claims.OneTimePasscode)
+		err := auth.CheckOTPValid(validator.AuthUser,
+			validator.Claims.OneTimePasscode)
 
 		if err != nil {
 			c.Error(err)
@@ -87,7 +88,9 @@ func UpdateEmailRoute(c *gin.Context) {
 		authUser := validator.AuthUser
 		uuid := authUser.Uuid
 
-		err = userdbcache.SetEmailAddress(authUser, validator.Address, false)
+		err = userdbcache.SetEmailAddress(authUser,
+			validator.Address,
+			false)
 
 		if err != nil {
 			c.Error(err)

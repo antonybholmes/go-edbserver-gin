@@ -86,7 +86,10 @@ func ConvertRoute(c *gin.Context) {
 	for _, search := range params.Searches {
 
 		// Don't care about the errors, just plug empty list into failures
-		conversion, _ := geneconvdbcache.Convert(search, fromSpecies, toSpecies, params.Exact)
+		conversion, _ := geneconvdbcache.Convert(search,
+			fromSpecies,
+			toSpecies,
+			params.Exact)
 
 		ret.Conversions = append(ret.Conversions, conversion)
 	}

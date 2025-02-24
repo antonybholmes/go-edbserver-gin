@@ -74,7 +74,9 @@ func NewAccessTokenRoute(c *gin.Context) {
 	authenticationroutes.NewValidator(c).CheckIsValidRefreshToken().Success(func(validator *authenticationroutes.Validator) {
 
 		// Generate encoded token and send it as response.
-		accessToken, err := tokengen.AccessToken(c, validator.Claims.UserId, validator.Claims.Roles)
+		accessToken, err := tokengen.AccessToken(c,
+			validator.Claims.UserId,
+			validator.Claims.Roles)
 
 		if err != nil {
 			routes.ErrorResp(c, "error creating access token")

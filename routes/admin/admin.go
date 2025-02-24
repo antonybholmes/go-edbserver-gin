@@ -89,14 +89,20 @@ func UpdateUserRoute(c *gin.Context) {
 
 		authUser := validator.AuthUser
 
-		err := userdbcache.SetUserInfo(authUser, validator.LoginBodyReq.Username, validator.LoginBodyReq.FirstName, validator.LoginBodyReq.LastName, true)
+		err := userdbcache.SetUserInfo(authUser,
+			validator.LoginBodyReq.Username,
+			validator.LoginBodyReq.FirstName,
+			validator.LoginBodyReq.LastName,
+			true)
 
 		if err != nil {
 			c.Error(err)
 			return
 		}
 
-		err = userdbcache.SetEmailAddress(authUser, validator.Address, true)
+		err = userdbcache.SetEmailAddress(authUser,
+			validator.Address,
+			true)
 
 		if err != nil {
 			c.Error(err)
@@ -104,7 +110,8 @@ func UpdateUserRoute(c *gin.Context) {
 		}
 
 		if validator.LoginBodyReq.Password != "" {
-			err = userdbcache.SetPassword(authUser, validator.LoginBodyReq.Password)
+			err = userdbcache.SetPassword(authUser,
+				validator.LoginBodyReq.Password)
 
 			if err != nil {
 				c.Error(err)
@@ -114,7 +121,9 @@ func UpdateUserRoute(c *gin.Context) {
 		}
 
 		// set roles
-		err = userdbcache.SetUserRoles(authUser, validator.LoginBodyReq.Roles, true)
+		err = userdbcache.SetUserRoles(authUser,
+			validator.LoginBodyReq.Roles,
+			true)
 
 		if err != nil {
 			c.Error(err)
@@ -130,7 +139,8 @@ func AddUserRoute(c *gin.Context) {
 	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().Success(func(validator *authenticationroutes.Validator) {
 
 		// assume email is not verified
-		authUser, err := userdbcache.Instance().CreateUser(validator.LoginBodyReq.Username,
+		authUser, err := userdbcache.Instance().CreateUser(
+			validator.LoginBodyReq.Username,
 			validator.Address,
 			validator.LoginBodyReq.Password,
 			validator.LoginBodyReq.FirstName,

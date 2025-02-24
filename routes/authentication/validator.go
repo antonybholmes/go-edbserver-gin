@@ -27,7 +27,13 @@ type Validator struct {
 }
 
 func NewValidator(c *gin.Context) *Validator {
-	return &Validator{c: c, Address: nil, LoginBodyReq: nil, AuthUser: nil, Claims: nil, Err: nil}
+	return &Validator{
+		c:            c,
+		Address:      nil,
+		LoginBodyReq: nil,
+		AuthUser:     nil,
+		Claims:       nil,
+		Err:          nil}
 
 }
 

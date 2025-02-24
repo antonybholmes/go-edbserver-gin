@@ -150,7 +150,12 @@ func ParseDNAQuery(c *gin.Context) (*DNAQuery, error) {
 		}
 	}
 
-	return &DNAQuery{Rev: rev, Comp: comp, Format: format, RepeatMask: repeatMask}, nil
+	return &DNAQuery{
+			Rev:        rev,
+			Comp:       comp,
+			Format:     format,
+			RepeatMask: repeatMask},
+		nil
 }
 
 func GenomesRoute(c *gin.Context) {
@@ -184,7 +189,11 @@ func DNARoute(c *gin.Context) {
 	seqs := make([]*DNA, 0, len(locations))
 
 	for _, location := range locations {
-		seq, err := dnadb.DNA(location, query.Format, query.RepeatMask, query.Rev, query.Comp)
+		seq, err := dnadb.DNA(location,
+			query.Format,
+			query.RepeatMask,
+			query.Rev,
+			query.Comp)
 
 		if err != nil {
 			c.Error(err)
@@ -194,5 +203,12 @@ func DNARoute(c *gin.Context) {
 		seqs = append(seqs, &DNA{Location: location, Seq: seq})
 	}
 
-	routes.MakeDataResp(c, "", &DNAResp{Assembly: assembly, Format: query.Format, IsRev: query.Rev, IsComplement: query.Comp, Seqs: seqs})
+	routes.MakeDataResp(c,
+		"",
+		&DNAResp{
+			Assembly:     assembly,
+			Format:       query.Format,
+			IsRev:        query.Rev,
+			IsComplement: query.Comp,
+			Seqs:         seqs})
 }

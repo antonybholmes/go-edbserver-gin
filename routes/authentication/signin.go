@@ -77,7 +77,9 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		routes.MakeDataResp(c, "", &routes.LoginResp{RefreshToken: refreshToken, AccessToken: accessToken})
+		routes.MakeDataResp(c, "", &routes.LoginResp{
+			RefreshToken: refreshToken,
+			AccessToken:  accessToken})
 	})
 }
 
@@ -91,7 +93,9 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 
 		authUser := validator.AuthUser
 
-		passwordlessToken, err := tokengen.PasswordlessToken(c, authUser.Uuid, validator.LoginBodyReq.RedirectUrl)
+		passwordlessToken, err := tokengen.PasswordlessToken(c,
+			authUser.Uuid,
+			validator.LoginBodyReq.RedirectUrl)
 
 		if err != nil {
 			c.Error(err)

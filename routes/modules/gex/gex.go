@@ -95,7 +95,9 @@ func GexGeneExpRoute(c *gin.Context) {
 
 	if params.Platform.Id == 2 {
 		// microarray
-		ret, err := gexdbcache.MicroarrayValues(gexGenes, params.Platform, params.GexValueType, params.Datasets)
+		ret, err := gexdbcache.MicroarrayValues(gexGenes,
+			params.Platform,
+			params.GexValueType, params.Datasets)
 
 		if err != nil {
 			c.Error(err)
@@ -105,7 +107,10 @@ func GexGeneExpRoute(c *gin.Context) {
 		routes.MakeDataResp(c, "", ret)
 	} else {
 		// default to rna-seq
-		ret, err := gexdbcache.RNASeqValues(gexGenes, params.Platform, params.GexValueType, params.Datasets)
+		ret, err := gexdbcache.RNASeqValues(gexGenes,
+			params.Platform,
+			params.GexValueType,
+			params.Datasets)
 
 		if err != nil {
 			c.Error(err)

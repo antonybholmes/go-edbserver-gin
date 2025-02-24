@@ -51,7 +51,12 @@ func ParseSeqParamsFromPost(c *gin.Context) (*SeqParams, error) {
 		locations = append(locations, location)
 	}
 
-	return &SeqParams{Locations: locations, BinSizes: params.BinSizes, Tracks: params.Tracks, Scale: params.Scale}, nil
+	return &SeqParams{
+			Locations: locations,
+			BinSizes:  params.BinSizes,
+			Tracks:    params.Tracks,
+			Scale:     params.Scale},
+		nil
 }
 
 func GenomeRoute(c *gin.Context) {
@@ -131,7 +136,9 @@ func BinsRoute(c *gin.Context) {
 
 		for _, track := range params.Tracks {
 
-			reader, err := seqsdbcache.ReaderFromId(track, params.BinSizes[li], params.Scale)
+			reader, err := seqsdbcache.ReaderFromId(track,
+				params.BinSizes[li],
+				params.Scale)
 
 			if err != nil {
 				//log.Debug().Msgf("stupid err %s", err)

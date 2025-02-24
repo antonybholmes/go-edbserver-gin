@@ -84,7 +84,8 @@ func DatasetRoute(c *gin.Context) {
 
 	//log.Debug().Msgf("params %v", params)
 
-	datasets, err := pathwaydbcache.MakePublicDataset(params.Organization, params.Name)
+	datasets, err := pathwaydbcache.MakePublicDataset(params.Organization,
+		params.Name)
 
 	if err != nil {
 		c.Error(err)

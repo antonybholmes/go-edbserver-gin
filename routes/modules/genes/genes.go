@@ -59,7 +59,12 @@ func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 		return nil, fmt.Errorf("unable to open database for assembly %s %s", assembly, err)
 	}
 
-	return &GeneQuery{Assembly: assembly, Db: db, Level: level, Canonical: canonical}, nil
+	return &GeneQuery{
+			Assembly:  assembly,
+			Db:        db,
+			Level:     level,
+			Canonical: canonical},
+		nil
 }
 
 // func GeneDBInfoRoute(c *gin.Context) {
