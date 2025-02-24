@@ -1,11 +1,10 @@
 package pathway
 
 import (
-	"github.com/antonybholmes/go-edb-server-gin/routes"
+	"github.com/antonybholmes/go-auth/routes"
 	pathway "github.com/antonybholmes/go-pathway"
 	"github.com/antonybholmes/go-pathway/pathwaydbcache"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
 
 type ReqOverlapParams struct {
@@ -83,7 +82,7 @@ func DatasetRoute(c *gin.Context) {
 		return
 	}
 
-	log.Debug().Msgf("params %v", params)
+	//log.Debug().Msgf("params %v", params)
 
 	datasets, err := pathwaydbcache.MakePublicDataset(params.Organization, params.Name)
 

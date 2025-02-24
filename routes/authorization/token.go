@@ -2,9 +2,10 @@ package authorization
 
 import (
 	"github.com/antonybholmes/go-auth"
+	"github.com/antonybholmes/go-auth/middleware"
+	"github.com/antonybholmes/go-auth/routes"
 	"github.com/antonybholmes/go-auth/tokengen"
 	"github.com/antonybholmes/go-edb-server-gin/consts"
-	"github.com/antonybholmes/go-edb-server-gin/routes"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -43,7 +44,7 @@ import (
 // }
 
 func TokenInfoRoute(c *gin.Context) {
-	t, err := routes.HeaderAuthToken(c)
+	t, err := middleware.ParseToken(c)
 
 	if err != nil {
 		c.Error(err)

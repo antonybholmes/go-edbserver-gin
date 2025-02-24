@@ -1,8 +1,8 @@
 package authorization
 
 import (
+	"github.com/antonybholmes/go-auth/middleware"
 	"github.com/antonybholmes/go-auth/userdbcache"
-	"github.com/antonybholmes/go-edb-server-gin/middleware"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
 
 	"github.com/antonybholmes/go-mailer"
@@ -22,7 +22,11 @@ func SessionUpdateUserRoute(c *gin.Context) {
 
 	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().Success(func(validator *authenticationroutes.Validator) {
 
-		err = userdbcache.SetUserInfo(authUser, validator.LoginBodyReq.Username, validator.LoginBodyReq.FirstName, validator.LoginBodyReq.LastName, false)
+		err = userdbcache.SetUserInfo(authUser,
+			validator.LoginBodyReq.Username,
+			validator.LoginBodyReq.FirstName,
+			validator.LoginBodyReq.LastName,
+			false)
 
 		if err != nil {
 			c.Error(err)

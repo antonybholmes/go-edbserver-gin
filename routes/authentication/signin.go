@@ -9,10 +9,9 @@ import (
 	"github.com/antonybholmes/go-edb-server-gin/consts"
 	"github.com/antonybholmes/go-mailer/queue"
 
-	"github.com/antonybholmes/go-edb-server-gin/routes"
+	"github.com/antonybholmes/go-auth/routes"
 	"github.com/antonybholmes/go-mailer"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
 
 func UserSignedInResp(c *gin.Context) {
@@ -114,7 +113,7 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 		// 	validator.Req.CallbackUrl,
 		// 	validator.Req.VisitUrl)
 
-		log.Debug().Msgf("t %s ", passwordlessToken)
+		//log.Debug().Msgf("t %s ", passwordlessToken)
 
 		email := mailer.QueueEmail{
 			Name:      authUser.FirstName,

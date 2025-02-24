@@ -5,9 +5,9 @@ import (
 	"net/mail"
 
 	"github.com/antonybholmes/go-auth"
+	"github.com/antonybholmes/go-auth/middleware"
+	"github.com/antonybholmes/go-auth/routes"
 	"github.com/antonybholmes/go-auth/userdbcache"
-	"github.com/antonybholmes/go-edb-server-gin/middleware"
-	"github.com/antonybholmes/go-edb-server-gin/routes"
 	"github.com/gin-gonic/gin"
 )
 

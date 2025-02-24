@@ -9,11 +9,11 @@ import (
 	"time"
 
 	"github.com/antonybholmes/go-auth"
+	"github.com/antonybholmes/go-auth/middleware"
 	"github.com/antonybholmes/go-auth/tokengen"
 	"github.com/antonybholmes/go-auth/userdbcache"
-	"github.com/antonybholmes/go-edb-server-gin/middleware"
 
-	"github.com/antonybholmes/go-edb-server-gin/routes"
+	"github.com/antonybholmes/go-auth/routes"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -347,7 +347,7 @@ func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 	routes.MakeDataResp(c, "", sessionInfo)
 }
 
-func (sr *SessionRoutes) SessionRenewRoute(c *gin.Context) {
+func (sr *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 	user, ok := c.Get("authUser")
 
 	if !ok {

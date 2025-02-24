@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	"github.com/antonybholmes/go-auth"
-	"github.com/antonybholmes/go-edb-server-gin/routes"
+	"github.com/antonybholmes/go-auth/routes"
 	"github.com/antonybholmes/go-sys"
 	"github.com/gin-gonic/gin"
 )

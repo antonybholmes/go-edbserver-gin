@@ -3,7 +3,7 @@ package geneconv
 import (
 	"strings"
 
-	"github.com/antonybholmes/go-edb-server-gin/routes"
+	"github.com/antonybholmes/go-auth/routes"
 	geneconv "github.com/antonybholmes/go-geneconv"
 	geneconvdbcache "github.com/antonybholmes/go-geneconv/geneconvdbcache"
 	"github.com/gin-gonic/gin"

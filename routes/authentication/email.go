@@ -10,7 +10,7 @@ import (
 	"github.com/antonybholmes/go-auth/userdbcache"
 	"github.com/antonybholmes/go-edb-server-gin/consts"
 
-	"github.com/antonybholmes/go-edb-server-gin/routes"
+	"github.com/antonybholmes/go-auth/routes"
 	"github.com/antonybholmes/go-mailer"
 	"github.com/antonybholmes/go-mailer/queue"
 	"github.com/gin-gonic/gin"

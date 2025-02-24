@@ -5,7 +5,7 @@ import (
 	"github.com/antonybholmes/go-edb-server-gin/consts"
 	"github.com/antonybholmes/go-mailer/queue"
 
-	"github.com/antonybholmes/go-edb-server-gin/routes"
+	"github.com/antonybholmes/go-auth/routes"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
 	"github.com/antonybholmes/go-mailer"
 	"github.com/gin-gonic/gin"

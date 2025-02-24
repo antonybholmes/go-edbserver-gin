@@ -4,7 +4,7 @@ import (
 	"github.com/antonybholmes/go-auth/userdbcache"
 	"github.com/antonybholmes/go-mailer/queue"
 
-	"github.com/antonybholmes/go-edb-server-gin/routes"
+	"github.com/antonybholmes/go-auth/routes"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
 	"github.com/gin-gonic/gin"
 

@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/antonybholmes/go-auth/routes"
 	"github.com/antonybholmes/go-dna"
 	"github.com/antonybholmes/go-dna/dnadbcache"
-	"github.com/antonybholmes/go-edb-server-gin/routes"
 	"github.com/gin-gonic/gin"
 )
 

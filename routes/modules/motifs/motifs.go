@@ -1,7 +1,7 @@
 package motifs
 
 import (
-	"github.com/antonybholmes/go-edb-server-gin/routes"
+	"github.com/antonybholmes/go-auth/routes"
 	"github.com/antonybholmes/go-motifs"
 	"github.com/antonybholmes/go-motifs/motifsdb"
 	"github.com/gin-gonic/gin"
