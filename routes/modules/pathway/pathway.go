@@ -3,7 +3,7 @@ package pathway
 import (
 	pathway "github.com/antonybholmes/go-pathway"
 	"github.com/antonybholmes/go-pathway/pathwaydbcache"
-	"github.com/antonybholmes/go-web/routes"
+	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 )
 
@@ -53,7 +53,7 @@ func ParseDatasetParamsFromPost(c *gin.Context) (*ReqDatasetParams, error) {
 // 	params, err := ParseParamsFromPost(c)
 
 // 	if err != nil {
-// 		return routes.ErrorReq(err)
+// 		return web.ErrorReq(err)
 // 	}
 
 // 	ret := make([]geneconv.Conversion, len(params.Searches))
@@ -65,12 +65,12 @@ func ParseDatasetParamsFromPost(c *gin.Context) (*ReqDatasetParams, error) {
 // 		ret[ni] = geneconv.Conversion{Search: search, Genes: genes}
 // 	}
 
-// 	routes.MakeDataResp(c, "", ret)
+// 	web.MakeDataResp(c, "", ret)
 // }
 
 func GenesRoute(c *gin.Context) {
 
-	routes.MakeDataResp(c, "", pathwaydbcache.Genes())
+	web.MakeDataResp(c, "", pathwaydbcache.Genes())
 }
 
 func DatasetRoute(c *gin.Context) {
@@ -92,7 +92,7 @@ func DatasetRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", datasets)
+	web.MakeDataResp(c, "", datasets)
 }
 
 func DatasetsRoute(c *gin.Context) {
@@ -104,7 +104,7 @@ func DatasetsRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", datasets)
+	web.MakeDataResp(c, "", datasets)
 }
 
 func PathwayOverlapRoute(c *gin.Context) {
@@ -137,7 +137,7 @@ func PathwayOverlapRoute(c *gin.Context) {
 	// 	ret.Conversions = append(ret.Conversions, conversion)
 	// }
 
-	routes.MakeDataResp(c, "", tests)
+	web.MakeDataResp(c, "", tests)
 
-	// routes.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
+	// web.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
 }

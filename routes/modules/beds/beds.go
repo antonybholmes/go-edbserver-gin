@@ -3,7 +3,7 @@ package beds
 import (
 	"github.com/antonybholmes/go-beds"
 	"github.com/antonybholmes/go-dna"
-	"github.com/antonybholmes/go-web/routes"
+	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 
 	"github.com/antonybholmes/go-beds/bedsdbcache"
@@ -46,7 +46,7 @@ func GenomeRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", platforms)
+	web.MakeDataResp(c, "", platforms)
 }
 
 func PlatformRoute(c *gin.Context) {
@@ -59,14 +59,14 @@ func PlatformRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", platforms)
+	web.MakeDataResp(c, "", platforms)
 }
 
 func SearchBedsRoute(c *gin.Context) {
 	genome := c.Param("assembly")
 
 	if genome == "" {
-		routes.ErrorResp(c, "must supply a genome")
+		web.ErrorResp(c, "must supply a genome")
 	}
 
 	query := c.Query("search")
@@ -78,7 +78,7 @@ func SearchBedsRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", tracks)
+	web.MakeDataResp(c, "", tracks)
 }
 
 func BedRegionsRoute(c *gin.Context) {
@@ -91,7 +91,7 @@ func BedRegionsRoute(c *gin.Context) {
 	}
 
 	if len(params.Beds) == 0 {
-		routes.ErrorResp(c, "at least 1 bed id must be supplied")
+		web.ErrorResp(c, "at least 1 bed id must be supplied")
 	}
 
 	ret := make([][]*beds.BedRegion, 0, len(params.Beds))
@@ -112,5 +112,5 @@ func BedRegionsRoute(c *gin.Context) {
 		ret = append(ret, features)
 	}
 
-	routes.MakeDataResp(c, "", ret)
+	web.MakeDataResp(c, "", ret)
 }

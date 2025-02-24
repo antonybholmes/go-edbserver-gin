@@ -6,13 +6,13 @@ import (
 	"net/mail"
 
 	"github.com/antonybholmes/go-edb-server-gin/consts"
+	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
 
 	"github.com/antonybholmes/go-mailer"
 	"github.com/antonybholmes/go-mailer/queue"
-	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 )
 
@@ -63,10 +63,10 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 		queue.PublishEmail(&email)
 
 		//if err != nil {
-		//	return routes.ErrorReq(err)
+		//	return web.ErrorReq(err)
 		//}
 
-		routes.MakeOkResp(c, "check your email for a change email link")
+		web.MakeOkResp(c, "check your email for a change email link")
 	})
 }
 
@@ -74,7 +74,7 @@ func UpdateEmailRoute(c *gin.Context) {
 	NewValidator(c).CheckEmailIsWellFormed().LoadAuthUserFromToken().Success(func(validator *Validator) {
 
 		if validator.Claims.Type != auth.CHANGE_EMAIL_TOKEN {
-			routes.WrongTokentTypeReq(c)
+			web.WrongTokentTypeReq(c)
 		}
 
 		err := auth.CheckOTPValid(validator.AuthUser,
@@ -112,6 +112,6 @@ func UpdateEmailRoute(c *gin.Context) {
 			EmailType: mailer.QUEUE_EMAIL_TYPE_EMAIL_UPDATED}
 		queue.PublishEmail(&email)
 
-		routes.MakeOkResp(c, "email updated confirmation email sent")
+		web.MakeOkResp(c, "email updated confirmation email sent")
 	})
 }

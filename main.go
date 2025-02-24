@@ -7,14 +7,6 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
-	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
-	"github.com/rs/zerolog"
-	"gopkg.in/natefinch/lumberjack.v2"
-
 	"github.com/antonybholmes/go-beds/bedsdbcache"
 	"github.com/antonybholmes/go-cytobands/cytobandsdbcache"
 	"github.com/antonybholmes/go-dna/dnadbcache"
@@ -33,9 +25,16 @@ import (
 	mutationroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/mutation"
 	pathwayroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/pathway"
 	seqroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/seqs"
-	"github.com/antonybholmes/go-web/routes"
+	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
+	"github.com/rs/zerolog"
+	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/antonybholmes/go-web/middleware"
 
@@ -224,7 +223,7 @@ func main() {
 	})
 
 	r.GET("/info", func(c *gin.Context) {
-		routes.MakeDataResp(c, "", InfoResp{
+		web.MakeDataResp(c, "", InfoResp{
 			Arch:   runtime.GOARCH,
 			IpAddr: c.ClientIP()})
 	})

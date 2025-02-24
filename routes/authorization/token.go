@@ -3,9 +3,9 @@ package authorization
 import (
 	"github.com/antonybholmes/go-edb-server-gin/consts"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
+	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/middleware"
-	"github.com/antonybholmes/go-web/routes"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -37,7 +37,7 @@ import (
 // 	t, err := token.SignedString([]byte(consts.JWT_SECRET))
 
 // 	if err != nil {
-// 		return routes.ErrorReq("error signing token")
+// 		return web.ErrorReq("error signing token")
 // 	}
 
 // 	return MakeDataResp(c, "", &JwtResp{t})
@@ -62,7 +62,7 @@ func TokenInfoRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", &routes.JwtInfo{
+	web.MakeDataResp(c, "", &web.JwtInfo{
 		Uuid: claims.UserId,
 		Type: claims.Type, //.TokenTypeString(claims.Type),
 		//IpAddr:  claims.IpAddr,
@@ -79,10 +79,10 @@ func NewAccessTokenRoute(c *gin.Context) {
 			validator.Claims.Roles)
 
 		if err != nil {
-			routes.ErrorResp(c, "error creating access token")
+			web.ErrorResp(c, "error creating access token")
 		}
 
-		routes.MakeDataResp(c, "", &routes.AccessTokenResp{AccessToken: accessToken})
+		web.MakeDataResp(c, "", &web.AccessTokenResp{AccessToken: accessToken})
 	})
 
 }

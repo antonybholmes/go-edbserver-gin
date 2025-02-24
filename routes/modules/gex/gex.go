@@ -3,7 +3,7 @@ package gex
 import (
 	"github.com/antonybholmes/go-gex"
 	"github.com/antonybholmes/go-gex/gexdbcache"
-	"github.com/antonybholmes/go-web/routes"
+	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 )
 
@@ -36,7 +36,7 @@ func PlaformsRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", types)
+	web.MakeDataResp(c, "", types)
 }
 
 func GexValueTypesRoute(c *gin.Context) {
@@ -55,7 +55,7 @@ func GexValueTypesRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", valueTypes)
+	web.MakeDataResp(c, "", valueTypes)
 }
 
 func GexDatasetsRoute(c *gin.Context) {
@@ -74,7 +74,7 @@ func GexDatasetsRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", datasets)
+	web.MakeDataResp(c, "", datasets)
 }
 
 func GexGeneExpRoute(c *gin.Context) {
@@ -104,7 +104,7 @@ func GexGeneExpRoute(c *gin.Context) {
 			return
 		}
 
-		routes.MakeDataResp(c, "", ret)
+		web.MakeDataResp(c, "", ret)
 	} else {
 		// default to rna-seq
 		ret, err := gexdbcache.RNASeqValues(gexGenes,
@@ -117,7 +117,7 @@ func GexGeneExpRoute(c *gin.Context) {
 			return
 		}
 
-		routes.MakeDataResp(c, "", ret)
+		web.MakeDataResp(c, "", ret)
 	}
 }
 
@@ -127,16 +127,16 @@ func GexGeneExpRoute(c *gin.Context) {
 // 	params, err := ParseParamsFromPost(c)
 
 // 	if err != nil {
-// 		return routes.ErrorReq(err)
+// 		return web.ErrorReq(err)
 // 	}
 
 // 	search, err := gexdbcache.GetInstance().Search(gexType, params.Datasets, params.Genes)
 
 // 	if err != nil {
-// 		return routes.ErrorReq(err)
+// 		return web.ErrorReq(err)
 // 	}
 
-// 	routes.MakeDataResp(c, "", search)
+// 	web.MakeDataResp(c, "", search)
 
-// 	//routes.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
+// 	//web.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
 // }

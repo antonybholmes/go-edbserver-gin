@@ -5,7 +5,7 @@ import (
 
 	geneconv "github.com/antonybholmes/go-geneconv"
 	geneconvdbcache "github.com/antonybholmes/go-geneconv/geneconvdbcache"
-	"github.com/antonybholmes/go-web/routes"
+	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,7 +37,7 @@ func parseParamsFromPost(c *gin.Context) (*ReqParams, error) {
 // 	params, err := ParseParamsFromPost(c)
 
 // 	if err != nil {
-// 		return routes.ErrorReq(err)
+// 		return web.ErrorReq(err)
 // 	}
 
 // 	ret := make([]geneconv.Conversion, len(params.Searches))
@@ -49,7 +49,7 @@ func parseParamsFromPost(c *gin.Context) (*ReqParams, error) {
 // 		ret[ni] = geneconv.Conversion{Search: search, Genes: genes}
 // 	}
 
-// 	routes.MakeDataResp(c, "", ret)
+// 	web.MakeDataResp(c, "", ret)
 // }
 
 func ConvertRoute(c *gin.Context) {
@@ -94,7 +94,7 @@ func ConvertRoute(c *gin.Context) {
 		ret.Conversions = append(ret.Conversions, conversion)
 	}
 
-	routes.MakeDataResp(c, "", ret)
+	web.MakeDataResp(c, "", ret)
 
-	//routes.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
+	//web.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
 }

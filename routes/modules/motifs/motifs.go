@@ -3,7 +3,7 @@ package motifs
 import (
 	"github.com/antonybholmes/go-motifs"
 	"github.com/antonybholmes/go-motifs/motifsdb"
-	"github.com/antonybholmes/go-web/routes"
+	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
@@ -47,9 +47,9 @@ func DatasetsRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", datasets)
+	web.MakeDataResp(c, "", datasets)
 
-	//routes.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
+	//web.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
 }
 
 func SearchRoute(c *gin.Context) {
@@ -64,7 +64,7 @@ func SearchRoute(c *gin.Context) {
 	search := params.Search
 
 	if len(search) < MIN_SEARCH_LEN {
-		routes.ErrorResp(c, "Search too short")
+		web.ErrorResp(c, "Search too short")
 		return
 	}
 
@@ -79,7 +79,7 @@ func SearchRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "",
+	web.MakeDataResp(c, "",
 		MotifRes{
 			Search:     search,
 			Motifs:     motifs,
@@ -87,5 +87,5 @@ func SearchRoute(c *gin.Context) {
 			Complement: params.Complement,
 		})
 
-	//routes.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
+	//web.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
 }

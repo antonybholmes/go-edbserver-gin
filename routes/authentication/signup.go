@@ -4,12 +4,11 @@ import (
 	"fmt"
 
 	"github.com/antonybholmes/go-edb-server-gin/consts"
+	"github.com/antonybholmes/go-mailer"
 	"github.com/antonybholmes/go-mailer/queue"
+	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
-
-	"github.com/antonybholmes/go-mailer"
-	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 )
 
@@ -49,7 +48,7 @@ func SignupRoute(c *gin.Context) {
 		// 	req.VisitUrl)
 
 		//if err != nil {
-		//	return routes.ErrorReq(err)
+		//	return web.ErrorReq(err)
 		//}
 
 		email := mailer.QueueEmail{
@@ -64,7 +63,7 @@ func SignupRoute(c *gin.Context) {
 
 		queue.PublishEmail(&email)
 
-		routes.MakeOkResp(c, "check your email for a verification link")
+		web.MakeOkResp(c, "check your email for a verification link")
 	})
 }
 
@@ -75,13 +74,13 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 
 		// if verified, stop and just return true
 		if authUser.EmailVerifiedAt == 0 {
-			routes.MakeOkResp(c, "")
+			web.MakeOkResp(c, "")
 		}
 
 		err := userdbcache.SetIsVerified(authUser.Uuid)
 
 		if err != nil {
-			routes.MakeSuccessResp(c, "unable to verify user", false)
+			web.MakeSuccessResp(c, "unable to verify user", false)
 		}
 
 		// file := "templates/email/verify/verified.html"
@@ -99,6 +98,6 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 			EmailType: mailer.QUEUE_EMAIL_TYPE_VERIFIED}
 		queue.PublishEmail(&email)
 
-		routes.MakeOkResp(c, "email address verified")
+		web.MakeOkResp(c, "email address verified")
 	})
 }

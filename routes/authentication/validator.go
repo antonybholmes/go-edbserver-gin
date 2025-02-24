@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/mail"
 
+	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/middleware"
-	"github.com/antonybholmes/go-web/routes"
 	"github.com/antonybholmes/go-web/userdbcache"
 	"github.com/gin-gonic/gin"
 )
@@ -125,7 +125,7 @@ func (validator *Validator) LoadAuthUserFromUuid() *Validator {
 	authUser, err := userdbcache.FindUserByUuid(validator.LoginBodyReq.Uuid)
 
 	if err != nil {
-		validator.Err = fmt.Errorf(routes.ERROR_USER_DOES_NOT_EXIST)
+		validator.Err = fmt.Errorf(web.ERROR_USER_DOES_NOT_EXIST)
 	} else {
 		validator.AuthUser = authUser
 	}
@@ -144,7 +144,7 @@ func (validator *Validator) LoadAuthUserFromEmail() *Validator {
 	authUser, err := userdbcache.FindUserByEmail(validator.Address)
 
 	if err != nil {
-		validator.Err = fmt.Errorf(routes.ERROR_USER_DOES_NOT_EXIST)
+		validator.Err = fmt.Errorf(web.ERROR_USER_DOES_NOT_EXIST)
 	} else {
 		validator.AuthUser = authUser
 	}
@@ -165,7 +165,7 @@ func (validator *Validator) LoadAuthUserFromUsername() *Validator {
 	//log.Debug().Msgf("beep2 %s", authUser.Username)
 
 	if err != nil {
-		validator.Err = fmt.Errorf(routes.ERROR_USER_DOES_NOT_EXIST)
+		validator.Err = fmt.Errorf(web.ERROR_USER_DOES_NOT_EXIST)
 	} else {
 		validator.AuthUser = authUser
 	}
@@ -252,7 +252,7 @@ func (validator *Validator) LoadAuthUserFromToken() *Validator {
 	authUser, err := userdbcache.FindUserByUuid(validator.Claims.UserId)
 
 	if err != nil {
-		validator.Err = fmt.Errorf(routes.ERROR_USER_DOES_NOT_EXIST)
+		validator.Err = fmt.Errorf(web.ERROR_USER_DOES_NOT_EXIST)
 	} else {
 		validator.AuthUser = authUser
 	}

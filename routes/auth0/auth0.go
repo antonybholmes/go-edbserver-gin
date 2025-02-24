@@ -1,7 +1,7 @@
 package auth0
 
 import (
-	"github.com/antonybholmes/go-web/routes"
+	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 )
 
@@ -41,5 +41,5 @@ func ValidateAuth0TokenRoute(c *gin.Context) {
 	//log.Debug().Msgf("auth0 claims %v", myClaims)
 	//log.Debug().Msgf("auth0 claims %v", myClaims.Email)
 
-	routes.MakeOkResp(c, "user was signed out")
+	web.MakeOkResp(c, "user was signed out")
 }

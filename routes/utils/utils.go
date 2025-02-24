@@ -9,8 +9,8 @@ import (
 	"strconv"
 
 	"github.com/antonybholmes/go-sys"
+	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
-	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 )
 
@@ -83,7 +83,7 @@ func XlsxSheetsRoute(c *gin.Context) {
 
 	resp := XlsxSheetsResp{Sheets: sheets}
 
-	routes.MakeDataResp(c, "", resp)
+	web.MakeDataResp(c, "", resp)
 }
 
 func XlsxToRoute(c *gin.Context) {
@@ -124,7 +124,7 @@ func XlsxToRoute(c *gin.Context) {
 
 	resp := XlsxResp{Table: table}
 
-	routes.MakeDataResp(c, "", resp)
+	web.MakeDataResp(c, "", resp)
 }
 
 // generateRandomString generates a random string of specified length from the letters set.
@@ -148,7 +148,7 @@ func HashedPasswordRoute(c *gin.Context) {
 	password := c.Query("password")
 
 	if len(password) == 0 {
-		routes.ErrorResp(c, "password cannot be empty")
+		web.ErrorResp(c, "password cannot be empty")
 		return
 	}
 
@@ -156,7 +156,7 @@ func HashedPasswordRoute(c *gin.Context) {
 
 	ret := HashResp{Password: password, Hash: hash}
 
-	routes.MakeDataResp(c, "", ret)
+	web.MakeDataResp(c, "", ret)
 }
 
 func RandomKeyRoute(c *gin.Context) {
@@ -164,7 +164,7 @@ func RandomKeyRoute(c *gin.Context) {
 	l, err := strconv.Atoi(c.Query("l"))
 
 	if err != nil || l < 1 {
-		routes.ErrorResp(c, "length cannot be zero")
+		web.ErrorResp(c, "length cannot be zero")
 		return
 	}
 
@@ -177,5 +177,5 @@ func RandomKeyRoute(c *gin.Context) {
 
 	ret := KeyResp{Key: key, Length: l}
 
-	routes.MakeDataResp(c, "", ret)
+	web.MakeDataResp(c, "", ret)
 }

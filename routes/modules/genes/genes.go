@@ -13,7 +13,7 @@ import (
 	"github.com/antonybholmes/go-genes"
 	"github.com/antonybholmes/go-genes/genedbcache"
 	basemath "github.com/antonybholmes/go-math"
-	"github.com/antonybholmes/go-web/routes"
+	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 )
 
@@ -71,16 +71,16 @@ func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 // 	query, err := ParseGeneQuery(c, c.Param("assembly"))
 
 // 	if err != nil {
-// 		return routes.ErrorReq(err)
+// 		return web.ErrorReq(err)
 // 	}
 
 // 	info, _ := query.Db.GeneDBInfo()
 
 // 	// if err != nil {
-// 	// 	return routes.ErrorReq(err)
+// 	// 	return web.ErrorReq(err)
 // 	// }
 
-// 	routes.MakeDataResp(c, "", &info)
+// 	web.MakeDataResp(c, "", &info)
 // }
 
 func GenomesRoute(c *gin.Context) {
@@ -91,7 +91,7 @@ func GenomesRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", infos)
+	web.MakeDataResp(c, "", infos)
 }
 
 func OverlappingGenesRoute(c *gin.Context) {
@@ -110,7 +110,7 @@ func OverlappingGenesRoute(c *gin.Context) {
 	}
 
 	if len(locations) == 0 {
-		routes.ErrorResp(c, "must supply at least 1 location")
+		web.ErrorResp(c, "must supply at least 1 location")
 	}
 
 	ret := make([]*GenesResp, 0, len(locations))
@@ -127,14 +127,14 @@ func OverlappingGenesRoute(c *gin.Context) {
 
 	}
 
-	routes.MakeDataResp(c, "", &ret)
+	web.MakeDataResp(c, "", &ret)
 }
 
 func GeneInfoRoute(c *gin.Context) {
 	search := c.Query("search") // dnaroutes.ParseLocationsFromPost(c)
 
 	if search == "" {
-		routes.ErrorResp(c, "search cannot be empty")
+		web.ErrorResp(c, "search cannot be empty")
 	}
 
 	query, err := parseGeneQuery(c, c.Param("assembly"))
@@ -147,10 +147,10 @@ func GeneInfoRoute(c *gin.Context) {
 	features, _ := query.Db.GeneInfo(search, query.Level)
 
 	// if err != nil {
-	// 	return routes.ErrorReq(err)
+	// 	return web.ErrorReq(err)
 	// }
 
-	routes.MakeDataResp(c, "", &features)
+	web.MakeDataResp(c, "", &features)
 }
 
 func WithinGenesRoute(c *gin.Context) {
@@ -181,7 +181,7 @@ func WithinGenesRoute(c *gin.Context) {
 		data[li] = genes
 	}
 
-	routes.MakeDataResp(c, "", &data)
+	web.MakeDataResp(c, "", &data)
 }
 
 // Find the n closest genes to a location
@@ -200,7 +200,7 @@ func ClosestGeneRoute(c *gin.Context) {
 		return
 	}
 
-	n := routes.ParseN(c, DEFAULT_CLOSEST_N)
+	n := web.ParseN(c, DEFAULT_CLOSEST_N)
 
 	data := make([]*genes.GenomicFeatures, len(locations))
 
@@ -215,7 +215,7 @@ func ClosestGeneRoute(c *gin.Context) {
 		data[li] = genes
 	}
 
-	routes.MakeDataResp(c, "", &data)
+	web.MakeDataResp(c, "", &data)
 }
 
 func ParseTSSRegion(c *gin.Context) *dna.TSSRegion {
@@ -261,11 +261,11 @@ func AnnotateRoute(c *gin.Context) {
 		return
 	}
 
-	n := routes.ParseN(c, DEFAULT_CLOSEST_N)
+	n := web.ParseN(c, DEFAULT_CLOSEST_N)
 
 	tssRegion := ParseTSSRegion(c)
 
-	output := routes.ParseOutput(c)
+	output := web.ParseOutput(c)
 
 	annotationDb := genes.NewAnnotateDb(query.Db, tssRegion, n)
 

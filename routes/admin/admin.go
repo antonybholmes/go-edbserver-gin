@@ -2,12 +2,11 @@ package admin
 
 import (
 	"github.com/antonybholmes/go-edb-server-gin/consts"
-	"github.com/antonybholmes/go-mailer/queue"
-	"github.com/antonybholmes/go-web/userdbcache"
-
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
 	"github.com/antonybholmes/go-mailer"
-	"github.com/antonybholmes/go-web/routes"
+	"github.com/antonybholmes/go-mailer/queue"
+	"github.com/antonybholmes/go-web"
+	"github.com/antonybholmes/go-web/userdbcache"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,7 +34,7 @@ func UserStatsRoute(c *gin.Context) {
 
 	resp := UserStatResp{Users: users}
 
-	routes.MakeDataResp(c, "", resp)
+	web.MakeDataResp(c, "", resp)
 
 }
 
@@ -52,7 +51,7 @@ func UsersRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", users)
+	web.MakeDataResp(c, "", users)
 
 }
 
@@ -65,7 +64,7 @@ func RolesRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", roles)
+	web.MakeDataResp(c, "", roles)
 
 }
 
@@ -76,7 +75,7 @@ func UpdateUserRoute(c *gin.Context) {
 		//db, err := userdbcache.NewConn()
 
 		// if err != nil {
-		// 	return routes.ErrorReq(err)
+		// 	return web.ErrorReq(err)
 		// }
 
 		//defer db.Close()
@@ -84,7 +83,7 @@ func UpdateUserRoute(c *gin.Context) {
 		//authUser, err := userdbcache.FindUserByPublicId(validator.Req.PublicId)
 
 		// if err != nil {
-		// 	return routes.ErrorReq(err)
+		// 	return web.ErrorReq(err)
 		// }
 
 		authUser := validator.AuthUser
@@ -130,7 +129,7 @@ func UpdateUserRoute(c *gin.Context) {
 			return
 		}
 
-		routes.MakeOkResp(c, "user updated")
+		web.MakeOkResp(c, "user updated")
 	})
 }
 
@@ -162,7 +161,7 @@ func AddUserRoute(c *gin.Context) {
 			LinkUrl:   consts.APP_URL}
 		queue.PublishEmail(&email)
 
-		routes.MakeOkResp(c, "account created email sent")
+		web.MakeOkResp(c, "account created email sent")
 	})
 }
 
@@ -176,5 +175,5 @@ func DeleteUserRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeOkResp(c, "user deleted")
+	web.MakeOkResp(c, "user deleted")
 }

@@ -4,22 +4,21 @@ import (
 	"fmt"
 
 	"github.com/antonybholmes/go-edb-server-gin/consts"
+	"github.com/antonybholmes/go-mailer"
 	"github.com/antonybholmes/go-mailer/queue"
+	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
-
-	"github.com/antonybholmes/go-mailer"
-	"github.com/antonybholmes/go-web/routes"
 	"github.com/gin-gonic/gin"
 )
 
 func UserSignedInResp(c *gin.Context) {
-	routes.MakeOkResp(c, "user signed in")
+	web.MakeOkResp(c, "user signed in")
 }
 
 func PasswordlessEmailSentResp(c *gin.Context) {
-	routes.MakeOkResp(c, "passwordless email sent")
+	web.MakeOkResp(c, "passwordless email sent")
 }
 
 func UsernamePasswordSignInRoute(c *gin.Context) {
@@ -33,26 +32,26 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 		authUser, err := userdbcache.FindUserByUsername(validator.LoginBodyReq.Username)
 
 		if err != nil {
-			routes.UserDoesNotExistResp(c)
+			web.UserDoesNotExistResp(c)
 			return
 		}
 
 		if authUser.EmailVerifiedAt == 0 {
-			routes.EmailNotVerifiedReq(c)
+			web.EmailNotVerifiedReq(c)
 			return
 		}
 
 		roles, err := userdbcache.UserRoleList(authUser)
 
 		if err != nil {
-			routes.AuthErrorResp(c, "could not get user roles")
+			web.AuthErrorResp(c, "could not get user roles")
 			return
 		}
 
 		roleClaim := auth.MakeClaim(roles)
 
 		if !auth.CanSignin(roleClaim) {
-			routes.UserNotAllowedToSignIn(c)
+			web.UserNotAllowedToSignIn(c)
 			return
 		}
 
@@ -66,18 +65,18 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 		refreshToken, err := tokengen.RefreshToken(c, authUser) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
-			routes.TokenErrorResp(c)
+			web.TokenErrorResp(c)
 			return
 		}
 
 		accessToken, err := tokengen.AccessToken(c, authUser.Uuid, roleClaim) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
-			routes.TokenErrorResp(c)
+			web.TokenErrorResp(c)
 			return
 		}
 
-		routes.MakeDataResp(c, "", &routes.LoginResp{
+		web.MakeDataResp(c, "", &web.LoginResp{
 			RefreshToken: refreshToken,
 			AccessToken:  accessToken})
 	})
@@ -132,10 +131,10 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 		queue.PublishEmail(&email)
 
 		//if err != nil {
-		//	return routes.ErrorReq(err)
+		//	return web.ErrorReq(err)
 		//}
 
-		routes.MakeOkResp(c, "check your email for a magic link to sign in")
+		web.MakeOkResp(c, "check your email for a magic link to sign in")
 	})
 }
 
@@ -143,7 +142,7 @@ func PasswordlessSignInRoute(c *gin.Context) {
 	NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
 
 		if validator.Claims.Type != auth.PASSWORDLESS_TOKEN {
-			routes.WrongTokentTypeReq(c)
+			web.WrongTokentTypeReq(c)
 			return
 		}
 
@@ -152,24 +151,24 @@ func PasswordlessSignInRoute(c *gin.Context) {
 		roles, err := userdbcache.UserRoleList(authUser)
 
 		if err != nil {
-			routes.AuthErrorResp(c, "could not get user roles")
+			web.AuthErrorResp(c, "could not get user roles")
 			return
 		}
 
 		roleClaim := auth.MakeClaim(roles)
 
 		if !auth.CanSignin(roleClaim) {
-			routes.UserNotAllowedToSignIn(c)
+			web.UserNotAllowedToSignIn(c)
 			return
 		}
 
 		t, err := tokengen.RefreshToken(c, authUser) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
-			routes.TokenErrorResp(c)
+			web.TokenErrorResp(c)
 			return
 		}
 
-		routes.MakeDataResp(c, "", &routes.RefreshTokenResp{RefreshToken: t})
+		web.MakeDataResp(c, "", &web.RefreshTokenResp{RefreshToken: t})
 	})
 }

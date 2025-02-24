@@ -8,12 +8,11 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
-
-	"github.com/antonybholmes/go-web/routes"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -111,26 +110,26 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	authUser, err := userdbcache.FindUserByUsername(user)
 
 	if err != nil {
-		routes.UserDoesNotExistResp(c)
+		web.UserDoesNotExistResp(c)
 		return
 	}
 
 	if authUser.EmailVerifiedAt == auth.EMAIL_NOT_VERIFIED_TIME_S {
-		routes.EmailNotVerifiedReq(c)
+		web.EmailNotVerifiedReq(c)
 		return
 	}
 
 	roles, err := userdbcache.UserRoleList(authUser)
 
 	if err != nil {
-		routes.AuthErrorResp(c, "could not get user roles")
+		web.AuthErrorResp(c, "could not get user roles")
 		return
 	}
 
 	roleClaim := auth.MakeClaim(roles)
 
 	if !auth.CanSignin(roleClaim) {
-		routes.UserNotAllowedToSignIn(c)
+		web.UserNotAllowedToSignIn(c)
 		return
 	}
 
@@ -175,33 +174,33 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	authUser, err := userdbcache.FindUserByApiKey(validator.LoginBodyReq.ApiKey)
 
 	if err != nil {
-		routes.UserDoesNotExistResp(c)
+		web.UserDoesNotExistResp(c)
 		return
 	}
 
 	if authUser.EmailVerifiedAt == auth.EMAIL_NOT_VERIFIED_TIME_S {
-		routes.EmailNotVerifiedReq(c)
+		web.EmailNotVerifiedReq(c)
 		return
 	}
 
 	roles, err := userdbcache.UserRoleList(authUser)
 
 	if err != nil {
-		routes.AuthErrorResp(c, "could not get user roles")
+		web.AuthErrorResp(c, "could not get user roles")
 		return
 	}
 
 	roleClaim := auth.MakeClaim(roles)
 
 	if !auth.CanSignin(roleClaim) {
-		routes.UserNotAllowedToSignIn(c)
+		web.UserNotAllowedToSignIn(c)
 		return
 	}
 
 	err = sr.initSession(c, authUser) //, roleClaim)
 
 	if err != nil {
-		routes.ErrorResp(c, middleware.ERROR_CREATING_SESSION)
+		web.ErrorResp(c, middleware.ERROR_CREATING_SESSION)
 		return
 	}
 
@@ -210,10 +209,10 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	// resp, err := readSession(c)
 
 	// if err != nil {
-	// 	routes.ErrorReq(ERROR_CREATING_SESSION)
+	// 	web.ErrorReq(ERROR_CREATING_SESSION)
 	// }
 
-	// routes.MakeDataResp(c, "", resp)
+	// web.MakeDataResp(c, "", resp)
 }
 
 func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
@@ -224,7 +223,7 @@ func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
 	}
 
 	if !ok {
-		routes.TokenErrorResp(c)
+		web.TokenErrorResp(c)
 
 		return
 	}
@@ -256,7 +255,7 @@ func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
 	roles, err := userdbcache.UserRoleList(authUser)
 
 	if err != nil {
-		routes.ErrorResp(c, "user roles not found")
+		web.ErrorResp(c, "user roles not found")
 	}
 
 	roleClaim := auth.MakeClaim(roles)
@@ -264,7 +263,7 @@ func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
 	//log.Debug().Msgf("user %v", authUser)
 
 	if !auth.CanSignin(roleClaim) {
-		routes.UserNotAllowedToSignIn(c)
+		web.UserNotAllowedToSignIn(c)
 	}
 
 	err = sr.initSession(c, authUser) // roleClaim)
@@ -285,7 +284,7 @@ func (sr *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) 
 	NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
 
 		if validator.Claims.Type != auth.PASSWORDLESS_TOKEN {
-			routes.WrongTokentTypeReq(c)
+			web.WrongTokentTypeReq(c)
 			return
 		}
 
@@ -303,7 +302,7 @@ func (sr *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) 
 		//log.Debug().Msgf("user %v", authUser)
 
 		if !auth.CanSignin(roleClaim) {
-			routes.UserNotAllowedToSignIn(c)
+			web.UserNotAllowedToSignIn(c)
 			return
 		}
 
@@ -332,7 +331,7 @@ func SessionSignOutRoute(c *gin.Context) {
 
 	sess.Save() //c.Request(), c.Response())
 
-	routes.MakeOkResp(c, "user has been signed out")
+	web.MakeOkResp(c, "user has been signed out")
 }
 
 // Read the user session. Can also be used to determin if session is valid
@@ -344,14 +343,14 @@ func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", sessionInfo)
+	web.MakeDataResp(c, "", sessionInfo)
 }
 
 func (sr *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 	user, ok := c.Get("authUser")
 
 	if !ok {
-		routes.ErrorResp(c, "no auth user")
+		web.ErrorResp(c, "no auth user")
 		return
 	}
 
@@ -396,18 +395,18 @@ func NewAccessTokenFromSessionRoute(c *gin.Context) {
 	// userData, ok := sess.Values["user"].(string)
 
 	// if !ok {
-	// 	routes.ErrorReq(fmt.Errorf("malformed user info"))
+	// 	web.ErrorReq(fmt.Errorf("malformed user info"))
 	// }
 
 	// var user auth.AuthUser
 	// if err := json.Unmarshal([]byte(userData), &user); err != nil {
-	// 	routes.ErrorReq(err)
+	// 	web.ErrorReq(err)
 	// }
 
 	user, ok := c.Get("authUser")
 
 	if !ok {
-		routes.ErrorResp(c, "no auth user")
+		web.ErrorResp(c, "no auth user")
 		return
 	}
 
@@ -416,27 +415,27 @@ func NewAccessTokenFromSessionRoute(c *gin.Context) {
 	//r//oles, _ := sess.Values[SESSION_ROLES].(string)
 
 	// if publicId == "" {
-	// 	routes.ErrorReq(fmt.Errorf("public id cannot be empty"))
+	// 	web.ErrorReq(fmt.Errorf("public id cannot be empty"))
 	// }
 
 	// generate a new token from what is stored in the sesssion
 	t, err := tokengen.AccessToken(c, authUser.Uuid, auth.MakeClaim(authUser.Roles))
 
 	if err != nil {
-		routes.TokenErrorResp(c)
+		web.TokenErrorResp(c)
 		return
 	}
 
-	routes.MakeDataResp(c, "", &routes.AccessTokenResp{AccessToken: t})
+	web.MakeDataResp(c, "", &web.AccessTokenResp{AccessToken: t})
 }
 
 func UserFromSessionRoute(c *gin.Context) {
 	user, ok := c.Get("authUser")
 
 	if !ok {
-		routes.ErrorResp(c, "no auth user")
+		web.ErrorResp(c, "no auth user")
 		return
 	}
 
-	routes.MakeDataResp(c, "", user)
+	web.MakeDataResp(c, "", user)
 }

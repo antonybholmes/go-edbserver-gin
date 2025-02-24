@@ -3,11 +3,10 @@ package seqs
 import (
 	"github.com/antonybholmes/go-dna"
 	seq "github.com/antonybholmes/go-seqs"
-	"github.com/antonybholmes/go-web/routes"
+	"github.com/antonybholmes/go-seqs/seqsdbcache"
+	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-
-	"github.com/antonybholmes/go-seqs/seqsdbcache"
 )
 
 type ReqSeqParams struct {
@@ -67,7 +66,7 @@ func GenomeRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", platforms)
+	web.MakeDataResp(c, "", platforms)
 }
 
 func PlatformRoute(c *gin.Context) {
@@ -80,7 +79,7 @@ func PlatformRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", platforms)
+	web.MakeDataResp(c, "", platforms)
 }
 
 func TracksRoute(c *gin.Context) {
@@ -94,14 +93,14 @@ func TracksRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", tracks)
+	web.MakeDataResp(c, "", tracks)
 }
 
 func SearchSeqRoute(c *gin.Context) {
 	genome := c.Param("assembly")
 
 	if genome == "" {
-		routes.ErrorResp(c, "must supply a genome")
+		web.ErrorResp(c, "must supply a genome")
 		return
 	}
 
@@ -114,7 +113,7 @@ func SearchSeqRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", tracks)
+	web.MakeDataResp(c, "", tracks)
 }
 
 func BinsRoute(c *gin.Context) {
@@ -152,7 +151,7 @@ func BinsRoute(c *gin.Context) {
 			binCounts, _ := reader.BinCounts(location)
 
 			// if err != nil {
-			// 	return routes.ErrorReq(err)
+			// 	return web.ErrorReq(err)
 			// }
 
 			resp.BinCounts = append(resp.BinCounts, binCounts)
@@ -163,5 +162,5 @@ func BinsRoute(c *gin.Context) {
 
 	//log.Debug().Msgf("ret %v", len(ret))
 
-	routes.MakeDataResp(c, "", ret)
+	web.MakeDataResp(c, "", ret)
 }

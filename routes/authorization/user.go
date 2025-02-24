@@ -5,10 +5,9 @@ import (
 	"github.com/antonybholmes/go-web/userdbcache"
 
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
-	"github.com/antonybholmes/go-web/routes"
-	"github.com/gin-gonic/gin"
-
 	"github.com/antonybholmes/go-mailer"
+	"github.com/antonybholmes/go-web"
+	"github.com/gin-gonic/gin"
 )
 
 type NameReq struct {
@@ -16,7 +15,7 @@ type NameReq struct {
 }
 
 func UserUpdatedResp(c *gin.Context) {
-	routes.MakeOkResp(c, "account updated")
+	web.MakeOkResp(c, "account updated")
 }
 
 func UpdateUserRoute(c *gin.Context) {
@@ -62,7 +61,7 @@ func UpdateUserRoute(c *gin.Context) {
 		queue.PublishEmail(&email)
 
 		// send back updated user to having to do a separate call to get the new data
-		routes.MakeDataResp(c, "account updated confirmation email sent", authUser)
+		web.MakeDataResp(c, "account updated confirmation email sent", authUser)
 	})
 }
 
@@ -70,6 +69,6 @@ func UserRoute(c *gin.Context) {
 	authenticationroutes.NewValidator(c).
 		LoadAuthUserFromToken().
 		Success(func(validator *authenticationroutes.Validator) {
-			routes.MakeDataResp(c, "", validator.AuthUser)
+			web.MakeDataResp(c, "", validator.AuthUser)
 		})
 }

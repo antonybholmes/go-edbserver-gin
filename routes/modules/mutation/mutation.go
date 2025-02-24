@@ -3,11 +3,10 @@ package mutations
 import (
 	"github.com/antonybholmes/go-dna"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
-	"github.com/antonybholmes/go-web/routes"
-	"github.com/gin-gonic/gin"
-
 	"github.com/antonybholmes/go-mutations"
 	"github.com/antonybholmes/go-mutations/mutationdbcache"
+	"github.com/antonybholmes/go-web"
+	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
 
@@ -51,7 +50,7 @@ func MutationDatasetsRoute(c *gin.Context) {
 		return
 	}
 
-	routes.MakeDataResp(c, "", datasets)
+	web.MakeDataResp(c, "", datasets)
 }
 
 func MutationsRoute(c *gin.Context) {
@@ -76,7 +75,7 @@ func MutationsRoute(c *gin.Context) {
 	}
 
 	// if err != nil {
-	// 	return routes.ErrorReq(err)
+	// 	return web.ErrorReq(err)
 	// }
 
 	// ret := make([]*mutations.SearchResults, len(locations))
@@ -85,15 +84,15 @@ func MutationsRoute(c *gin.Context) {
 	// 	mutations, err := db.FindMutations(location)
 
 	// 	if err != nil {
-	// 		return routes.ErrorReq(err)
+	// 		return web.ErrorReq(err)
 	// 	}
 
 	// 	ret[i] = mutations
 	// }
 
-	routes.MakeDataResp(c, "", search)
+	web.MakeDataResp(c, "", search)
 
-	//routes.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
+	//web.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
 }
 
 type MafResp struct {
@@ -110,7 +109,7 @@ type MafResp struct {
 // 		params, err := ParseParamsFromPost(c)
 
 // 		if err != nil {
-// 			return routes.ErrorReq(err)
+// 			return web.ErrorReq(err)
 // 		}
 
 // 		location := params.Locations[0]
@@ -136,13 +135,13 @@ type MafResp struct {
 // 			dataset, err := mutationdbcache.GetDataset(assembly, id)
 
 // 			if err != nil {
-// 				return routes.ErrorReq(err)
+// 				return web.ErrorReq(err)
 // 			}
 
 // 			results, err := dataset.Search(location)
 
 // 			if err != nil {
-// 				return routes.ErrorReq(err)
+// 				return web.ErrorReq(err)
 // 			}
 
 // 			// sum the total number of samples involved
@@ -180,10 +179,10 @@ type MafResp struct {
 
 // 		}
 
-// 		routes.MakeDataResp(c, "", ret)
+// 		web.MakeDataResp(c, "", ret)
 // 	})
 
-// 	//routes.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
+// 	//web.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
 // }
 
 type PileupResp struct {
@@ -238,8 +237,8 @@ func PileupRoute(c *gin.Context) {
 			return
 		}
 
-		routes.MakeDataResp(c, "", pileup)
+		web.MakeDataResp(c, "", pileup)
 	})
 
-	//routes.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
+	//web.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
 }
