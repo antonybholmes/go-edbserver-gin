@@ -10,50 +10,50 @@ import (
 
 	"github.com/antonybholmes/go-dna"
 	dnaroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/dna"
-	"github.com/antonybholmes/go-genes"
-	"github.com/antonybholmes/go-genes/genedbcache"
+	"github.com/antonybholmes/go-genome"
+	"github.com/antonybholmes/go-genome/genomedbcache"
 	basemath "github.com/antonybholmes/go-math"
 	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 )
 
-const DEFAULT_LEVEL = genes.LEVEL_GENE
+const DEFAULT_LEVEL = genome.LEVEL_GENE
 
 const DEFAULT_CLOSEST_N uint16 = 5
 
 // A GeneQuery contains info from query params.
 type GeneQuery struct {
-	Level    genes.Level
-	Db       *genes.GeneDB
+	Level    genome.Level
+	Db       *genome.GeneDB
 	Assembly string
 	// only show canonical genes
 	Canonical bool
 }
 
 type GenesResp struct {
-	Location *dna.Location           `json:"location"`
-	Features []*genes.GenomicFeature `json:"features"`
+	Location *dna.Location            `json:"location"`
+	Features []*genome.GenomicFeature `json:"features"`
 }
 
 const MAX_ANNOTATIONS = 1000
 
 type AnnotationResponse struct {
-	Status int                     `json:"status"`
-	Data   []*genes.GeneAnnotation `json:"data"`
+	Status int                      `json:"status"`
+	Data   []*genome.GeneAnnotation `json:"data"`
 }
 
 func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
-	level := genes.LEVEL_GENE
+	level := genome.LEVEL_GENE
 
 	v := c.Query("level")
 
 	if v != "" {
-		level = genes.ParseLevel(v)
+		level = genome.ParseLevel(v)
 	}
 
 	canonical := strings.HasPrefix(strings.ToLower(c.Query("canonical")), "t")
 
-	db, err := genedbcache.GeneDB(assembly)
+	db, err := genomedbcache.GeneDB(assembly)
 
 	if err != nil {
 		return nil, fmt.Errorf("unable to open database for assembly %s %s", assembly, err)
@@ -84,7 +84,7 @@ func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 // }
 
 func GenomesRoute(c *gin.Context) {
-	infos, err := genedbcache.GetInstance().List()
+	infos, err := genomedbcache.GetInstance().List()
 
 	if err != nil {
 		c.Error(err)
@@ -168,7 +168,7 @@ func WithinGenesRoute(c *gin.Context) {
 		return
 	}
 
-	data := make([]*genes.GenomicFeatures, len(locations))
+	data := make([]*genome.GenomicFeatures, len(locations))
 
 	for li, location := range locations {
 		genes, err := query.Db.WithinGenes(location, query.Level)
@@ -202,7 +202,7 @@ func ClosestGeneRoute(c *gin.Context) {
 
 	n := web.ParseN(c, DEFAULT_CLOSEST_N)
 
-	data := make([]*genes.GenomicFeatures, len(locations))
+	data := make([]*genome.GenomicFeatures, len(locations))
 
 	for li, location := range locations {
 		genes, err := query.Db.ClosestGenes(location, n, query.Level)
@@ -267,9 +267,9 @@ func AnnotateRoute(c *gin.Context) {
 
 	output := web.ParseOutput(c)
 
-	annotationDb := genes.NewAnnotateDb(query.Db, tssRegion, n)
+	annotationDb := genome.NewAnnotateDb(query.Db, tssRegion, n)
 
-	data := make([]*genes.GeneAnnotation, len(locations))
+	data := make([]*genome.GeneAnnotation, len(locations))
 
 	for li, location := range locations {
 
@@ -299,7 +299,7 @@ func AnnotateRoute(c *gin.Context) {
 }
 
 func MakeGeneTable(
-	data []*genes.GeneAnnotation,
+	data []*genome.GeneAnnotation,
 	ts *dna.TSSRegion,
 ) (string, error) {
 	var buffer bytes.Buffer
@@ -349,7 +349,7 @@ func MakeGeneTable(
 
 		for _, closestGene := range annotation.ClosestGenes {
 			row = append(row, closestGene.GeneId)
-			row = append(row, genes.GeneWithStrandLabel(closestGene.GeneSymbol, closestGene.Strand))
+			row = append(row, genome.GeneWithStrandLabel(closestGene.GeneSymbol, closestGene.Strand))
 			row = append(row, closestGene.PromLabel)
 			row = append(row, strconv.Itoa(closestGene.TssDist))
 			row = append(row, closestGene.Location.String())

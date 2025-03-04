@@ -19,7 +19,7 @@ import (
 	cytobandroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/cytobands"
 	dnaroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/dna"
 	geneconvroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/geneconv"
-	generoutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/genes"
+	genomeroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/genome"
 	gexroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/gex"
 	motifroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/motifs"
 	mutationroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/mutation"
@@ -40,7 +40,7 @@ import (
 
 	utilsroutes "github.com/antonybholmes/go-edb-server-gin/routes/utils"
 	"github.com/antonybholmes/go-geneconv/geneconvdbcache"
-	"github.com/antonybholmes/go-genes/genedbcache"
+	"github.com/antonybholmes/go-genome/genomedbcache"
 	"github.com/antonybholmes/go-gex/gexdbcache"
 	"github.com/antonybholmes/go-mailer"
 	"github.com/antonybholmes/go-mailer/queue"
@@ -91,7 +91,7 @@ func init() {
 	//mailserver.Init()
 
 	dnadbcache.InitCache("data/modules/dna")
-	genedbcache.InitCache("data/modules/genes")
+	genomedbcache.InitCache("data/modules/genome")
 	//microarraydb.InitDB("data/microarray")
 
 	gexdbcache.InitCache("data/modules/gex")
@@ -366,13 +366,13 @@ func main() {
 	dnaGroup.POST("/:assembly", dnaroutes.DNARoute)
 	dnaGroup.GET("/genomes", dnaroutes.GenomesRoute)
 
-	genesGroup := moduleGroup.Group("/genes")
-	genesGroup.GET("/genomes", generoutes.GenomesRoute)
-	genesGroup.POST("/within/:assembly", generoutes.WithinGenesRoute)
-	genesGroup.POST("/closest/:assembly", generoutes.ClosestGeneRoute)
-	genesGroup.POST("/annotate/:assembly", generoutes.AnnotateRoute)
-	genesGroup.POST("/overlap/:assembly", generoutes.OverlappingGenesRoute)
-	genesGroup.GET("/info/:assembly", generoutes.GeneInfoRoute)
+	genomeGroup := moduleGroup.Group("/genome")
+	genomeGroup.GET("/genomes", genomeroutes.GenomesRoute)
+	genomeGroup.POST("/within/:assembly", genomeroutes.WithinGenesRoute)
+	genomeGroup.POST("/closest/:assembly", genomeroutes.ClosestGeneRoute)
+	genomeGroup.POST("/annotate/:assembly", genomeroutes.AnnotateRoute)
+	genomeGroup.POST("/overlap/:assembly", genomeroutes.OverlappingGenesRoute)
+	genomeGroup.GET("/info/:assembly", genomeroutes.GeneInfoRoute)
 
 	// mutationsGroup := moduleGroup.Group("/mutations",
 	// 	jwtMiddleWare,

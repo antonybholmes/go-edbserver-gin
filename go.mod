@@ -6,7 +6,7 @@ replace github.com/antonybholmes/go-web => ../go-web
 
 replace github.com/antonybholmes/go-dna => ../go-dna
 
-replace github.com/antonybholmes/go-genes => ../go-genes
+replace github.com/antonybholmes/go-genome => ../go-genome
 
 replace github.com/antonybholmes/go-mutations => ../go-mutations
 
@@ -36,7 +36,7 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-genes v0.0.0-20250220232043-2f736193ad80
+	github.com/antonybholmes/go-genome v0.0.0-20250220232043-2f736193ad80
 	github.com/antonybholmes/go-web v0.0.0-20250224021128-add7cfae5f78
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/joho/godotenv v1.5.1 // indirect

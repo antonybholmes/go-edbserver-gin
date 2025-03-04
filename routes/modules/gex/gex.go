@@ -11,7 +11,7 @@ type GexParams struct {
 	Platform     *gex.ValueType    `json:"platform"`
 	GexValueType *gex.GexValueType `json:"gexValueType"`
 	Genes        []string          `json:"genes"`
-	Datasets     []int             `json:"datasets"`
+	Datasets     []string          `json:"datasets"`
 }
 
 func parseParamsFromPost(c *gin.Context) (*GexParams, error) {
