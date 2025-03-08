@@ -21,6 +21,7 @@ import (
 	geneconvroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/geneconv"
 	genomeroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/genome"
 	gexroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/gex"
+	hubroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/hubs"
 	motifroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/motifs"
 	mutationroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/mutation"
 	pathwayroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/pathway"
@@ -403,6 +404,14 @@ func main() {
 		accessTokenMiddleware,
 		rdfRoleMiddleware,
 		gexroutes.GexGeneExpRoute,
+	)
+
+	hubsGroup := moduleGroup.Group("/hubs")
+	hubsGroup.GET("/",
+		jwtUserMiddleWare,
+		accessTokenMiddleware,
+		rdfRoleMiddleware,
+		hubroutes.HubsRoute,
 	)
 
 	geneConvGroup := moduleGroup.Group("/geneconv")
