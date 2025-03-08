@@ -410,7 +410,7 @@ func main() {
 	)
 
 	hubsGroup := moduleGroup.Group("/hubs")
-	hubsGroup.POST("",
+	hubsGroup.GET("/:assembly",
 		jwtUserMiddleWare,
 		accessTokenMiddleware,
 		rdfRoleMiddleware,

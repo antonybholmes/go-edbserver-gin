@@ -29,12 +29,14 @@ func parseParamsFromPost(c *gin.Context) (*HubParams, error) {
 
 func HubsRoute(c *gin.Context) {
 
-	types, err := hubsdbcache.Hubs()
+	assembly := c.Param("assembly")
+
+	hubs, err := hubsdbcache.Hubs(assembly)
 
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	web.MakeDataResp(c, "", types)
+	web.MakeDataResp(c, "", hubs)
 }
