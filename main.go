@@ -26,6 +26,7 @@ import (
 	mutationroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/mutation"
 	pathwayroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/pathway"
 	seqroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/seqs"
+	"github.com/antonybholmes/go-hubs/hubsdbcache"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
@@ -110,6 +111,8 @@ func init() {
 	cytobandsdbcache.InitCache("data/modules/cytobands/")
 
 	bedsdbcache.InitCache("data/modules/beds/")
+
+	hubsdbcache.InitCache("data/modules/hubs/")
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     consts.REDIS_ADDR,
@@ -407,7 +410,7 @@ func main() {
 	)
 
 	hubsGroup := moduleGroup.Group("/hubs")
-	hubsGroup.GET("/",
+	hubsGroup.POST("",
 		jwtUserMiddleWare,
 		accessTokenMiddleware,
 		rdfRoleMiddleware,
