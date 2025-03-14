@@ -8,10 +8,11 @@ import (
 )
 
 type GexParams struct {
-	Platform     *gex.ValueType    `json:"platform"`
-	GexValueType *gex.GexValueType `json:"gexValueType"`
-	Genes        []string          `json:"genes"`
-	Datasets     []string          `json:"datasets"`
+	Species  string   `json:"species"`
+	Platform string   `json:"platform"`
+	GexType  string   `json:"gexType"`
+	Genes    []string `json:"genes"`
+	Datasets []string `json:"datasets"`
 }
 
 func parseParamsFromPost(c *gin.Context) (*GexParams, error) {
@@ -27,9 +28,9 @@ func parseParamsFromPost(c *gin.Context) (*GexParams, error) {
 	return &params, nil
 }
 
-func PlaformsRoute(c *gin.Context) {
+func SpeciesRoute(c *gin.Context) {
 
-	types, err := gexdbcache.Platforms()
+	types, err := gexdbcache.Species()
 
 	if err != nil {
 		c.Error(err)
@@ -39,35 +40,41 @@ func PlaformsRoute(c *gin.Context) {
 	web.MakeDataResp(c, "", types)
 }
 
-func GexValueTypesRoute(c *gin.Context) {
+func PlaformsRoute(c *gin.Context) {
 
-	params, err := parseParamsFromPost(c)
+	//species := c.Param("species")
 
-	if err != nil {
-		c.Error(err)
-		return
-	}
+	platforms := gexdbcache.Platforms() //species)
 
-	valueTypes, err := gexdbcache.GexValueTypes(params.Platform.Id)
-
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
-	web.MakeDataResp(c, "", valueTypes)
+	web.MakeDataResp(c, "", platforms)
 }
+
+// func GexValueTypesRoute(c *gin.Context) {
+
+// 	params, err := parseParamsFromPost(c)
+
+// 	if err != nil {
+// 		c.Error(err)
+// 		return
+// 	}
+
+// 	valueTypes, err := gexdbcache.GexValueTypes(params.Platform.Id)
+
+// 	if err != nil {
+// 		c.Error(err)
+// 		return
+// 	}
+
+// 	web.MakeDataResp(c, "", valueTypes)
+// }
 
 func GexDatasetsRoute(c *gin.Context) {
 
-	params, err := parseParamsFromPost(c)
+	species := c.Param("species")
 
-	if err != nil {
-		c.Error(err)
-		return
-	}
+	platform := c.Param("platform")
 
-	datasets, err := gexdbcache.Datasets(params.Platform.Id)
+	datasets, err := gexdbcache.Datasets(species, platform)
 
 	if err != nil {
 		c.Error(err)
@@ -85,19 +92,9 @@ func GexGeneExpRoute(c *gin.Context) {
 		return
 	}
 
-	// convert search genes into actual genes in the database
-	gexGenes, err := gexdbcache.GetGenes(params.Genes)
-
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
-	if params.Platform.Id == 2 {
+	if params.Platform == gex.MICROARRAY_PLATFORM {
 		// microarray
-		ret, err := gexdbcache.MicroarrayValues(gexGenes,
-			params.Platform,
-			params.GexValueType, params.Datasets)
+		ret, err := gexdbcache.FindMicroarrayValues(params.Datasets, params.Genes)
 
 		if err != nil {
 			c.Error(err)
@@ -107,10 +104,7 @@ func GexGeneExpRoute(c *gin.Context) {
 		web.MakeDataResp(c, "", ret)
 	} else {
 		// default to rna-seq
-		ret, err := gexdbcache.RNASeqValues(gexGenes,
-			params.Platform,
-			params.GexValueType,
-			params.Datasets)
+		ret, err := gexdbcache.FindRNASeqValues(params.Datasets, params.GexType, params.Genes)
 
 		if err != nil {
 			c.Error(err)

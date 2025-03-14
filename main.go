@@ -399,9 +399,16 @@ func main() {
 	)
 
 	gexGroup := moduleGroup.Group("/gex")
+	gexGroup.GET("/species", gexroutes.SpeciesRoute)
 	gexGroup.GET("/platforms", gexroutes.PlaformsRoute)
 	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
-	gexGroup.POST("/datasets", gexroutes.GexDatasetsRoute)
+
+	gexGroup.GET("/datasets/:species/:platform",
+		jwtUserMiddleWare,
+		accessTokenMiddleware,
+		rdfRoleMiddleware,
+		gexroutes.GexDatasetsRoute)
+
 	gexGroup.POST("/exp",
 		jwtUserMiddleWare,
 		accessTokenMiddleware,
