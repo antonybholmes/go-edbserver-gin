@@ -8,6 +8,7 @@ import (
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/userdbcache"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 type UserListReq struct {
@@ -72,6 +73,8 @@ func UpdateUserRoute(c *gin.Context) {
 
 	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().LoadAuthUserFromUuid().Success(func(validator *authenticationroutes.Validator) {
 
+		log.Debug().Msgf("roles here")
+
 		//db, err := userdbcache.NewConn()
 
 		// if err != nil {
@@ -118,6 +121,8 @@ func UpdateUserRoute(c *gin.Context) {
 				return
 			}
 		}
+
+		log.Debug().Msgf("roles %s %v", authUser.Email, validator.LoginBodyReq.Roles)
 
 		// set roles
 		err = userdbcache.SetUserRoles(authUser,

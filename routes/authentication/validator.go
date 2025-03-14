@@ -9,6 +9,7 @@ import (
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/userdbcache"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 //
@@ -85,6 +86,8 @@ func (validator *Validator) CheckUsernameIsWellFormed() *Validator {
 	}
 
 	//address, err := auth.CheckEmailIsWellFormed(validator.Req.Email)
+
+	log.Debug().Msgf("beep %s", validator.LoginBodyReq.Username)
 
 	err := auth.CheckUsername(validator.LoginBodyReq.Username)
 
