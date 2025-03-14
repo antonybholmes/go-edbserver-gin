@@ -33,14 +33,14 @@ replace github.com/antonybholmes/go-beds => ../go-beds
 replace github.com/antonybholmes/go-hubs => ../go-hubs
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20250303144104-ebe30afaed11 // indirect
+	github.com/antonybholmes/go-basemath v0.0.0-20250307171544-f522e91d1448 // indirect
 	github.com/antonybholmes/go-dna v0.0.0-20250303144059-1a25bc721b7e
 
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20250304154943-58f0bcc07ad8
-	github.com/antonybholmes/go-web v0.0.0-20250303144059-9470a443b48a
+	github.com/antonybholmes/go-web v0.0.0-20250308190514-6ef3b330bb1d
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.24
