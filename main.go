@@ -400,10 +400,10 @@ func main() {
 
 	gexGroup := moduleGroup.Group("/gex")
 	gexGroup.GET("/species", gexroutes.SpeciesRoute)
-	gexGroup.GET("/platforms", gexroutes.PlaformsRoute)
+	gexGroup.GET("/technologies", gexroutes.TechnologiesRoute)
 	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
 
-	gexGroup.GET("/datasets/:species/:platform",
+	gexGroup.GET("/datasets/:species/:technology",
 		jwtUserMiddleWare,
 		accessTokenMiddleware,
 		rdfRoleMiddleware,

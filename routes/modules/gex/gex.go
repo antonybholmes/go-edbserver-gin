@@ -8,11 +8,11 @@ import (
 )
 
 type GexParams struct {
-	Species  string   `json:"species"`
-	Platform string   `json:"platform"`
-	GexType  string   `json:"gexType"`
-	Genes    []string `json:"genes"`
-	Datasets []string `json:"datasets"`
+	Species    string   `json:"species"`
+	Technology string   `json:"technology"`
+	GexType    string   `json:"gexType"`
+	Genes      []string `json:"genes"`
+	Datasets   []string `json:"datasets"`
 }
 
 func parseParamsFromPost(c *gin.Context) (*GexParams, error) {
@@ -40,11 +40,11 @@ func SpeciesRoute(c *gin.Context) {
 	web.MakeDataResp(c, "", types)
 }
 
-func PlaformsRoute(c *gin.Context) {
+func TechnologiesRoute(c *gin.Context) {
 
 	//species := c.Param("species")
 
-	platforms := gexdbcache.Platforms() //species)
+	platforms := gexdbcache.Technologies() //species)
 
 	web.MakeDataResp(c, "", platforms)
 }
@@ -72,9 +72,9 @@ func GexDatasetsRoute(c *gin.Context) {
 
 	species := c.Param("species")
 
-	platform := c.Param("platform")
+	technology := c.Param("technology")
 
-	datasets, err := gexdbcache.Datasets(species, platform)
+	datasets, err := gexdbcache.Datasets(species, technology)
 
 	if err != nil {
 		c.Error(err)
@@ -92,7 +92,7 @@ func GexGeneExpRoute(c *gin.Context) {
 		return
 	}
 
-	if params.Platform == gex.MICROARRAY_PLATFORM {
+	if params.Technology == gex.MICROARRAY_TECHNOLOGY {
 		// microarray
 		ret, err := gexdbcache.FindMicroarrayValues(params.Datasets, params.Genes)
 
