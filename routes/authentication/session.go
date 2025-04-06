@@ -129,7 +129,7 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	roleClaim := auth.MakeClaim(roles)
 
 	if !auth.CanSignin(roleClaim) {
-		web.UserNotAllowedToSignIn(c)
+		web.UserNotAllowedToSignInErrorResp(c)
 		return
 	}
 
@@ -193,7 +193,7 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	roleClaim := auth.MakeClaim(roles)
 
 	if !auth.CanSignin(roleClaim) {
-		web.UserNotAllowedToSignIn(c)
+		web.UserNotAllowedToSignInErrorResp(c)
 		return
 	}
 
@@ -263,7 +263,60 @@ func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
 	//log.Debug().Msgf("user %v", authUser)
 
 	if !auth.CanSignin(roleClaim) {
-		web.UserNotAllowedToSignIn(c)
+		web.UserNotAllowedToSignInErrorResp(c)
+	}
+
+	err = sr.initSession(c, authUser) // roleClaim)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	UserSignedInResp(c)
+}
+
+func (sr *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context) {
+	user, ok := c.Get("user")
+
+	for key := range c.Keys {
+		log.Debug().Msgf("key %s", key)
+	}
+
+	if !ok {
+		web.TokenErrorResp(c)
+
+		return
+	}
+
+	tokenClaims := user.(*auth.ClerkTokenClaims)
+
+	email, err := mail.ParseAddress(tokenClaims.Email)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	authUser, err := userdbcache.CreateUserFromAuth0(tokenClaims.Name, email)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	roles, err := userdbcache.UserRoleList(authUser)
+
+	if err != nil {
+		web.ErrorResp(c, "user roles not found")
+	}
+
+	roleClaim := auth.MakeClaim(roles)
+
+	//log.Debug().Msgf("user %v", authUser)
+
+	if !auth.CanSignin(roleClaim) {
+		web.UserNotAllowedToSignInErrorResp(c)
 	}
 
 	err = sr.initSession(c, authUser) // roleClaim)
@@ -302,7 +355,7 @@ func (sr *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) 
 		//log.Debug().Msgf("user %v", authUser)
 
 		if !auth.CanSignin(roleClaim) {
-			web.UserNotAllowedToSignIn(c)
+			web.UserNotAllowedToSignInErrorResp(c)
 			return
 		}
 

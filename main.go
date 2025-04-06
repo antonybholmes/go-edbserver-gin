@@ -180,6 +180,9 @@ func main() {
 	jwtAuth0UserMiddleware := middleware.JwtAuth0UserMiddleware(
 		middleware.JwtClaimsParser(consts.JWT_AUTH0_RSA_PUBLIC_KEY))
 
+	jwtClerkUserMiddleware := middleware.JwtClerkUserMiddleware(
+		middleware.JwtClaimsParser(consts.JWT_CLERK_RSA_PUBLIC_KEY))
+
 	sessionMiddleware := middleware.SessionIsValidMiddleware()
 
 	accessTokenMiddleware := middleware.JwtIsAccessTokenMiddleware()
@@ -331,6 +334,10 @@ func main() {
 	sessionGroup.POST("/auth0/signin",
 		jwtAuth0UserMiddleware,
 		sessionRoutes.SessionSignInUsingAuth0Route)
+
+	sessionGroup.POST("/oauth2/clerk/signin",
+		jwtClerkUserMiddleware,
+		sessionRoutes.SessionSignInUsingClerkRoute)
 
 	sessionGroup.POST("/auth/signin",
 		sessionRoutes.SessionUsernamePasswordSignInRoute)

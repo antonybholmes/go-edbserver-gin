@@ -24,6 +24,7 @@ var VERSION string
 var JWT_RSA_PRIVATE_KEY *rsa.PrivateKey //[]byte
 var JWT_RSA_PUBLIC_KEY *rsa.PublicKey   //[]byte
 var JWT_AUTH0_RSA_PUBLIC_KEY *rsa.PublicKey
+var JWT_CLERK_RSA_PUBLIC_KEY *rsa.PublicKey
 var SESSION_NAME string
 var SESSION_KEY string
 var SESSION_ENCRYPTION_KEY string
@@ -94,6 +95,16 @@ func init() {
 	}
 
 	JWT_AUTH0_RSA_PUBLIC_KEY, err = jwt.ParseRSAPublicKeyFromPEM(bytes)
+	if err != nil {
+		log.Fatal().Msgf("%s", err)
+	}
+
+	bytes, err = os.ReadFile("clerk.key.pem")
+	if err != nil {
+		log.Fatal().Msgf("%s", err)
+	}
+
+	JWT_CLERK_RSA_PUBLIC_KEY, err = jwt.ParseRSAPublicKeyFromPEM(bytes)
 	if err != nil {
 		log.Fatal().Msgf("%s", err)
 	}

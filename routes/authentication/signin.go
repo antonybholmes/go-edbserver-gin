@@ -51,7 +51,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 		roleClaim := auth.MakeClaim(roles)
 
 		if !auth.CanSignin(roleClaim) {
-			web.UserNotAllowedToSignIn(c)
+			web.UserNotAllowedToSignInErrorResp(c)
 			return
 		}
 
@@ -158,7 +158,7 @@ func PasswordlessSignInRoute(c *gin.Context) {
 		roleClaim := auth.MakeClaim(roles)
 
 		if !auth.CanSignin(roleClaim) {
-			web.UserNotAllowedToSignIn(c)
+			web.UserNotAllowedToSignInErrorResp(c)
 			return
 		}
 

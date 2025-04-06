@@ -34,3 +34,4 @@ tests.sh
 jwtRS256.key
 jwtRS256.key.pub
 auth0.key.pub
+clerk.key.pem
