@@ -68,7 +68,7 @@ func SearchRoute(c *gin.Context) {
 		return
 	}
 
-	log.Debug().Msgf("motif %v", params)
+	//log.Debug().Msgf("motif %v", params)
 
 	// Don't care about the errors, just plug empty list into failures
 	motifs, err := motifsdb.Search(search, params.Reverse, params.Complement)
