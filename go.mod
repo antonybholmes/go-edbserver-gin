@@ -33,14 +33,14 @@ replace github.com/antonybholmes/go-beds => ../go-beds
 replace github.com/antonybholmes/go-hubs => ../go-hubs
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20250307171544-f522e91d1448 // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20250405224421-32db60060b39
+	github.com/antonybholmes/go-basemath v0.0.0-20250416150928-5a7b42705292 // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20250416150924-f0155aed2a7f
 
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20250326211422-64d18aac02e1
-	github.com/antonybholmes/go-web v0.0.0-20250406182715-ae03f89de1f3
+	github.com/antonybholmes/go-web v0.0.0-20250416150925-cc625e4092c1
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.28
@@ -49,7 +49,7 @@ require (
 
 require (
 	github.com/antonybholmes/go-mailer v0.0.0-20250326211424-cc7dd35c3d80
-	github.com/antonybholmes/go-sys v0.0.0-20250407123533-c0a150855656
+	github.com/antonybholmes/go-sys v0.0.0-20250416150929-65c6bca5e1ff
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -90,7 +90,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.5 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.9 // indirect
 	github.com/gin-contrib/sse v1.1.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
