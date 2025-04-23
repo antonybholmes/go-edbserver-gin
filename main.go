@@ -329,19 +329,20 @@ func main() {
 
 	sessionGroup := r.Group("/sessions")
 
-	//sessionAuthGroup := sessionGroup.Group("/auth")
+	sessionAuthGroup := sessionGroup.Group("/auth")
+	sessionOAuth2Group := sessionAuthGroup.Group("/oauth2")
 
-	sessionGroup.POST("/auth0/signin",
+	sessionOAuth2Group.POST("/auth0/signin",
 		jwtAuth0UserMiddleware,
 		sessionRoutes.SessionSignInUsingAuth0Route)
 
-	sessionGroup.POST("/oauth2/clerk/signin",
+	sessionOAuth2Group.POST("/clerk/signin",
 		jwtClerkUserMiddleware,
 		sessionRoutes.SessionSignInUsingClerkRoute)
 
-	sessionGroup.POST("/auth/signin",
+	sessionAuthGroup.POST("/signin",
 		sessionRoutes.SessionUsernamePasswordSignInRoute)
-	sessionGroup.POST("/auth/passwordless/validate",
+	sessionAuthGroup.POST("/passwordless/validate",
 		jwtUserMiddleWare,
 		sessionRoutes.SessionPasswordlessValidateSignInRoute)
 
