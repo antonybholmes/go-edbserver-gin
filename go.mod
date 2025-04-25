@@ -34,7 +34,7 @@ replace github.com/antonybholmes/go-hubs => ../go-hubs
 
 require (
 	github.com/antonybholmes/go-basemath v0.0.0-20250416150928-5a7b42705292 // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20250416150924-f0155aed2a7f
+	github.com/antonybholmes/go-dna v0.0.0-20250423134333-fd8285fbd577
 
 )
 

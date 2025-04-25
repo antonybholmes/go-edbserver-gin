@@ -73,7 +73,7 @@ func UpdateUserRoute(c *gin.Context) {
 
 	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().LoadAuthUserFromUuid().Success(func(validator *authenticationroutes.Validator) {
 
-		log.Debug().Msgf("roles here")
+		//log.Debug().Msgf("roles here")
 
 		//db, err := userdbcache.NewConn()
 

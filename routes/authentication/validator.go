@@ -52,6 +52,7 @@ func (validator *Validator) Ok() (*Validator, error) {
 func (validator *Validator) Success(success func(validator *Validator)) {
 
 	if validator.Err != nil {
+		validator.c.Error(validator.Err)
 		return
 	}
 
@@ -85,13 +86,12 @@ func (validator *Validator) CheckUsernameIsWellFormed() *Validator {
 		return validator
 	}
 
-	//address, err := auth.CheckEmailIsWellFormed(validator.Req.Email)
-
-	log.Debug().Msgf("beep %s", validator.LoginBodyReq.Username)
+	//log.Debug().Msgf("check username well formed %s", validator.LoginBodyReq.Username)
 
 	err := auth.CheckUsername(validator.LoginBodyReq.Username)
 
 	if err != nil {
+		log.Debug().Msgf("check user name err %s", err)
 		validator.Err = err
 	}
 

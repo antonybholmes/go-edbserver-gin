@@ -12,7 +12,6 @@ import (
 	"github.com/antonybholmes/go-dna/dnadbcache"
 	"github.com/antonybholmes/go-edb-server-gin/consts"
 	adminroutes "github.com/antonybholmes/go-edb-server-gin/routes/admin"
-	auth0routes "github.com/antonybholmes/go-edb-server-gin/routes/auth0"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
 	authorizationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authorization"
 	bedroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/beds"
@@ -262,10 +261,11 @@ func main() {
 	//
 
 	authGroup := r.Group("/auth")
-	auth0Group := authGroup.Group("/auth0")
-	auth0Group.POST("/validate",
-		jwtAuth0UserMiddleware,
-		auth0routes.ValidateAuth0TokenRoute)
+
+	// auth0Group := authGroup.Group("/auth0")
+	// auth0Group.POST("/validate",
+	// 	jwtAuth0UserMiddleware,
+	// 	auth0routes.ValidateAuth0TokenRoute)
 
 	authGroup.POST("/signin", authenticationroutes.UsernamePasswordSignInRoute)
 
@@ -330,6 +330,7 @@ func main() {
 	sessionGroup := r.Group("/sessions")
 
 	sessionAuthGroup := sessionGroup.Group("/auth")
+
 	sessionOAuth2Group := sessionAuthGroup.Group("/oauth2")
 
 	sessionOAuth2Group.POST("/auth0/signin",
