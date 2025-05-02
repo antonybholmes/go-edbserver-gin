@@ -40,7 +40,7 @@ require (
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20250326211422-64d18aac02e1
-	github.com/antonybholmes/go-web v0.0.0-20250416150925-cc625e4092c1
+	github.com/antonybholmes/go-web v0.0.0-20250425145854-ad4c091471d0
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.28
@@ -65,7 +65,7 @@ require (
 	github.com/gin-contrib/cors v1.7.5
 	github.com/gin-contrib/sessions v1.0.2
 	github.com/gin-gonic/gin v1.10.0
-	github.com/redis/go-redis/v9 v9.7.3
+	github.com/redis/go-redis/v9 v9.8.0
 )
 
 require (
