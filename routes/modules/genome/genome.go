@@ -135,7 +135,10 @@ func GeneInfoRoute(c *gin.Context) {
 
 	if search == "" {
 		web.ErrorResp(c, "search cannot be empty")
+		return
 	}
+
+	fuzzyMode := c.Query("mode") == "fuzzy"
 
 	query, err := parseGeneQuery(c, c.Param("assembly"))
 
@@ -144,7 +147,7 @@ func GeneInfoRoute(c *gin.Context) {
 		return
 	}
 
-	features, _ := query.Db.GeneInfo(search, query.Level)
+	features, _ := query.Db.GeneInfo(search, query.Level, fuzzyMode)
 
 	// if err != nil {
 	// 	return web.ErrorReq(err)
