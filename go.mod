@@ -34,7 +34,7 @@ replace github.com/antonybholmes/go-hubs => ../go-hubs
 
 require (
 	github.com/antonybholmes/go-basemath v0.0.0-20250507224209-326910455aee // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20250508201820-47a1045684e9
+	github.com/antonybholmes/go-dna v0.0.0-20250509222604-3dd9e6aa9ab6
 
 )
 
@@ -49,7 +49,7 @@ require (
 
 require (
 	github.com/antonybholmes/go-mailer v0.0.0-20250326211424-cc7dd35c3d80
-	github.com/antonybholmes/go-sys v0.0.0-20250507224210-db245e1b7761
+	github.com/antonybholmes/go-sys v0.0.0-20250512211932-464c953347d7
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -105,7 +105,6 @@ require (
 	github.com/matoous/go-nanoid/v2 v2.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
