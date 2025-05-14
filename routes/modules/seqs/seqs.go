@@ -134,7 +134,6 @@ func BinsRoute(c *gin.Context) {
 		resp := SeqResp{Location: location, BinCounts: make([]*seq.BinCounts, 0, len(params.Tracks))}
 
 		for _, track := range params.Tracks {
-
 			reader, err := seqsdbcache.ReaderFromId(track,
 				params.BinSizes[li],
 				params.Scale)
