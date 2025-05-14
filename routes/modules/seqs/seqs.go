@@ -24,8 +24,8 @@ type SeqParams struct {
 }
 
 type SeqResp struct {
-	Location  *dna.Location    `json:"location"`
-	BinCounts []*seq.BinCounts `json:"binCounts"`
+	Location *dna.Location         `json:"location"`
+	Tracks   []*seq.TrackBinCounts `json:"tracks"`
 }
 
 func ParseSeqParamsFromPost(c *gin.Context) (*SeqParams, error) {
@@ -131,7 +131,7 @@ func BinsRoute(c *gin.Context) {
 	ret := make([]*SeqResp, 0, len(params.Locations)) //make([]*seq.BinCounts, 0, len(params.Tracks))
 
 	for li, location := range params.Locations {
-		resp := SeqResp{Location: location, BinCounts: make([]*seq.BinCounts, 0, len(params.Tracks))}
+		resp := SeqResp{Location: location, Tracks: make([]*seq.TrackBinCounts, 0, len(params.Tracks))}
 
 		for _, track := range params.Tracks {
 			reader, err := seqsdbcache.ReaderFromId(track,
@@ -147,13 +147,13 @@ func BinsRoute(c *gin.Context) {
 			// guarantees something is returned even with error
 			// so we can ignore the errors for now to make the api
 			// more robus
-			binCounts, _ := reader.BinCounts(location)
+			trackBinCounts, _ := reader.TrackBinCounts(location)
 
 			// if err != nil {
 			// 	return web.ErrorReq(err)
 			// }
 
-			resp.BinCounts = append(resp.BinCounts, binCounts)
+			resp.Tracks = append(resp.Tracks, trackBinCounts)
 		}
 
 		ret = append(ret, &resp)
