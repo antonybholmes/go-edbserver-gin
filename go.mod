@@ -40,7 +40,7 @@ require (
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20250326211422-64d18aac02e1
-	github.com/antonybholmes/go-web v0.0.0-20250508201820-dfe610123531
+	github.com/antonybholmes/go-web v0.0.0-20250513135653-c491eaeedab6
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.28
@@ -109,7 +109,7 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
-	github.com/segmentio/kafka-go v0.4.47 // indirect
+	github.com/segmentio/kafka-go v0.4.48 // indirect
 	github.com/tiendc/go-deepcopy v1.6.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
