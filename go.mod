@@ -64,8 +64,8 @@ require (
 	github.com/antonybholmes/go-seqs v0.0.0-20250326211425-a6dc0f9f73fe
 	github.com/gin-contrib/cors v1.7.5
 	github.com/gin-contrib/sessions v1.0.2
-	github.com/gin-gonic/gin v1.10.0
-	github.com/redis/go-redis/v9 v9.8.0
+	github.com/gin-gonic/gin v1.10.1
+	github.com/redis/go-redis/v9 v9.9.0
 )
 
 require (
@@ -112,7 +112,7 @@ require (
 	github.com/segmentio/kafka-go v0.4.48 // indirect
 	github.com/tiendc/go-deepcopy v1.6.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
-	github.com/ugorji/go/codec v1.2.12 // indirect
+	github.com/ugorji/go/codec v1.2.14 // indirect
 	github.com/xuri/efp v0.0.1 // indirect
 	github.com/xuri/excelize/v2 v2.9.1 // indirect
 	github.com/xuri/nfp v0.0.1 // indirect
