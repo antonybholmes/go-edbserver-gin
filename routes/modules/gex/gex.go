@@ -44,9 +44,16 @@ func TechnologiesRoute(c *gin.Context) {
 
 	//species := c.Param("species")
 
-	platforms := gexdbcache.Technologies() //species)
+	// technologies, err := gexdbcache.AllTechnologies() //gexdbcache.Technologies() //species)
 
-	web.MakeDataResp(c, "", platforms)
+	// if err != nil {
+	// 	c.Error(err)
+	// 	return
+	// }
+
+	technologies := gexdbcache.Technologies() //gexdbcache.Technologies()
+
+	web.MakeDataResp(c, "", technologies)
 }
 
 // func GexValueTypesRoute(c *gin.Context) {
