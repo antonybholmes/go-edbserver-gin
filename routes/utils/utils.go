@@ -15,11 +15,12 @@ import (
 )
 
 type XlsxReq struct {
-	Sheet    string `json:"sheet"`
-	Headers  int    `json:"headers"`
-	Indexes  int    `json:"indexes"`
-	SkipRows int    `json:"skipRows"`
-	Xlsx     string `json:"b64xlsx"`
+	Sheet          string `json:"sheet"`
+	Headers        int    `json:"headers"`
+	Indexes        int    `json:"indexes"`
+	SkipRows       int    `json:"skipRows"`
+	TrimWhitespace bool   `json:"trimWhitespace"`
+	Xlsx           string `json:"b64xlsx"`
 }
 
 type XlsxResp struct {
@@ -115,7 +116,8 @@ func XlsxToRoute(c *gin.Context) {
 		req.Sheet,
 		req.Indexes,
 		req.Headers,
-		req.SkipRows)
+		req.SkipRows,
+		req.TrimWhitespace)
 
 	if err != nil {
 		c.Error(err)
