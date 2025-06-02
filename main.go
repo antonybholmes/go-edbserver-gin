@@ -24,6 +24,7 @@ import (
 	motifroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/motifs"
 	mutationroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/mutation"
 	pathwayroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/pathway"
+	scrnaroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/scrna"
 	seqroutes "github.com/antonybholmes/go-edb-server-gin/routes/modules/seqs"
 	"github.com/antonybholmes/go-hubs/hubsdbcache"
 	"github.com/antonybholmes/go-web"
@@ -48,6 +49,7 @@ import (
 	"github.com/antonybholmes/go-motifs/motifsdb"
 	"github.com/antonybholmes/go-mutations/mutationdbcache"
 	"github.com/antonybholmes/go-pathway/pathwaydbcache"
+	"github.com/antonybholmes/go-scrna/scrnadbcache"
 	"github.com/antonybholmes/go-seqs/seqsdbcache"
 	"github.com/antonybholmes/go-sys/env"
 	_ "github.com/mattn/go-sqlite3"
@@ -96,6 +98,8 @@ func init() {
 	//microarraydb.InitDB("data/microarray")
 
 	gexdbcache.InitCache("data/modules/gex")
+
+	scrnadbcache.InitCache("data/modules/scrna")
 
 	mutationdbcache.InitCache("data/modules/mutations")
 
@@ -423,6 +427,24 @@ func main() {
 		accessTokenMiddleware,
 		rdfRoleMiddleware,
 		gexroutes.GexGeneExpRoute,
+	)
+
+	scrnaGroup := moduleGroup.Group("/scrna")
+	scrnaGroup.GET("/species", scrnaroutes.ScrnaSpeciesRoute)
+	scrnaGroup.GET("/assemblies/:species", scrnaroutes.ScrnaAssembliesRoute)
+	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
+
+	scrnaGroup.GET("/datasets/:species/:assembly",
+		jwtUserMiddleWare,
+		accessTokenMiddleware,
+		rdfRoleMiddleware,
+		scrnaroutes.ScrnaDatasetsRoute)
+
+	scrnaGroup.POST("/exp",
+		jwtUserMiddleWare,
+		accessTokenMiddleware,
+		rdfRoleMiddleware,
+		scrnaroutes.ScrnaGeneExpRoute,
 	)
 
 	hubsGroup := moduleGroup.Group("/hubs")

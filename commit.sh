@@ -1,10 +1,15 @@
 msg=$1 #"Bug fixes and updates."
-type="fix"
+type=$2
 branch=`git branch --show-current`
 
 if [[ -z "${msg}" ]]
 then
 	msg="Bug fixes and updates."
+fi
+
+if [[ -z "${type}" ]]
+then
+	type="Fixed"
 fi
 
 OPTSTRING="t:m:b:"

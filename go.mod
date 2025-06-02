@@ -32,6 +32,8 @@ replace github.com/antonybholmes/go-beds => ../go-beds
 
 replace github.com/antonybholmes/go-hubs => ../go-hubs
 
+replace github.com/antonybholmes/go-scrna => ../go-scrna
+
 require (
 	github.com/antonybholmes/go-basemath v0.0.0-20250507224209-326910455aee // indirect
 	github.com/antonybholmes/go-dna v0.0.0-20250509222604-3dd9e6aa9ab6
@@ -61,6 +63,7 @@ require (
 	github.com/antonybholmes/go-motifs v0.0.0-20250326211428-91561de16b6d
 	github.com/antonybholmes/go-mutations v0.0.0-20250326211428-0c2813bd22dc
 	github.com/antonybholmes/go-pathway v0.0.0-20250326211422-45d0c93b0e39
+	github.com/antonybholmes/go-scrna v0.0.0-00010101000000-000000000000
 	github.com/antonybholmes/go-seqs v0.0.0-20250326211425-a6dc0f9f73fe
 	github.com/gin-contrib/cors v1.7.5
 	github.com/gin-contrib/sessions v1.0.2
