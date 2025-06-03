@@ -461,7 +461,7 @@ func main() {
 		scrnaroutes.ScrnaSearchGenesRoute,
 	)
 
-	scrnaGroup.POST("/gex",
+	scrnaGroup.POST("/gex/:id",
 		jwtUserMiddleWare,
 		accessTokenMiddleware,
 		rdfRoleMiddleware,

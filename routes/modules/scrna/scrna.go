@@ -18,14 +18,13 @@ func sanitize(input string) string {
 	return ALLOWED_CHARS_REGEX.ReplaceAllString(input, "")
 }
 
-type Scrna struct {
-	Genes   []string `json:"genes"`
-	Dataset string   `json:"dataset"`
+type ScrnaParams struct {
+	Genes []string `json:"genes"`
 }
 
-func parseParamsFromPost(c *gin.Context) (*Scrna, error) {
+func parseParamsFromPost(c *gin.Context) (*ScrnaParams, error) {
 
-	var params Scrna
+	var params ScrnaParams
 
 	err := c.Bind(&params)
 
@@ -103,7 +102,15 @@ func ScrnaDatasetsRoute(c *gin.Context) {
 	web.MakeDataResp(c, "", datasets)
 }
 
+// Gets expression data from a given dataset
 func ScrnaGexRoute(c *gin.Context) {
+	publicId := c.Param("id")
+
+	if publicId == "" {
+		c.Error(fmt.Errorf("missing id"))
+		return
+	}
+
 	params, err := parseParamsFromPost(c)
 
 	if err != nil {
@@ -112,7 +119,7 @@ func ScrnaGexRoute(c *gin.Context) {
 	}
 
 	// default to rna-seq
-	ret, err := scrnadbcache.Gex(params.Dataset, params.Genes)
+	ret, err := scrnadbcache.Gex(publicId, params.Genes)
 
 	if err != nil {
 		c.Error(err)
