@@ -1,14 +1,26 @@
 package scrna
 
 import (
+	"fmt"
+	"regexp"
+	"strconv"
+
 	"github.com/antonybholmes/go-scrna/scrnadbcache"
 	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 )
 
+var ALLOWED_CHARS_REGEX = regexp.MustCompile(`[^a-zA-Z0-9,\+\ ]+`)
+
+const DEFAULT_LIMIT = 20
+
+func sanitize(input string) string {
+	return ALLOWED_CHARS_REGEX.ReplaceAllString(input, "")
+}
+
 type Scrna struct {
-	Genes    []string `json:"genes"`
-	Datasets []string `json:"datasets"`
+	Genes   []string `json:"genes"`
+	Dataset string   `json:"dataset"`
 }
 
 func parseParamsFromPost(c *gin.Context) (*Scrna, error) {
@@ -79,9 +91,9 @@ func ScrnaAssembliesRoute(c *gin.Context) {
 func ScrnaDatasetsRoute(c *gin.Context) {
 
 	species := c.Param("species")
-	technology := c.Param("technology")
+	assembly := c.Param("assembly")
 
-	datasets, err := scrnadbcache.Datasets(species, technology)
+	datasets, err := scrnadbcache.Datasets(species, assembly)
 
 	if err != nil {
 		c.Error(err)
@@ -91,7 +103,7 @@ func ScrnaDatasetsRoute(c *gin.Context) {
 	web.MakeDataResp(c, "", datasets)
 }
 
-func ScrnaGeneExpRoute(c *gin.Context) {
+func ScrnaGexRoute(c *gin.Context) {
 	params, err := parseParamsFromPost(c)
 
 	if err != nil {
@@ -100,7 +112,7 @@ func ScrnaGeneExpRoute(c *gin.Context) {
 	}
 
 	// default to rna-seq
-	ret, err := scrnadbcache.FindGexValues(params.Datasets, params.Genes)
+	ret, err := scrnadbcache.Gex(params.Dataset, params.Genes)
 
 	if err != nil {
 		c.Error(err)
@@ -108,7 +120,83 @@ func ScrnaGeneExpRoute(c *gin.Context) {
 	}
 
 	web.MakeDataResp(c, "", ret)
+}
 
+func ScrnaMetadataRoute(c *gin.Context) {
+	publicId := c.Param("id")
+
+	if publicId == "" {
+		c.Error(fmt.Errorf("missing id"))
+		return
+	}
+
+	ret, err := scrnadbcache.Metadata(publicId)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	web.MakeDataResp(c, "", ret)
+}
+
+func ScrnaGenesRoute(c *gin.Context) {
+	publicId := c.Param("id")
+
+	if publicId == "" {
+		c.Error(fmt.Errorf("missing id"))
+		return
+	}
+
+	ret, err := scrnadbcache.Genes(publicId)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	web.MakeDataResp(c, "", ret)
+}
+
+func ScrnaSearchGenesRoute(c *gin.Context) {
+	publicId := c.Param("id")
+
+	if publicId == "" {
+		c.Error(fmt.Errorf("id missing"))
+		return
+	}
+
+	query := c.Query("q")
+
+	if query == "" {
+		c.Error(fmt.Errorf("query missing"))
+		return
+	}
+
+	limitQuery := c.Query("limit")
+
+	if limitQuery == "" {
+		limitQuery = fmt.Sprintf("%d", DEFAULT_LIMIT)
+	}
+
+	limit, err := strconv.ParseUint(limitQuery, 10, 16)
+
+	if err != nil {
+		// ignore errors and use a default
+		limit = DEFAULT_LIMIT
+		return
+	}
+
+	safeQuery := sanitize(query)
+
+	ret, err := scrnadbcache.SearchGenes(publicId, safeQuery, uint16(limit))
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	web.MakeDataResp(c, "", ret)
 }
 
 // func GexRoute(c *gin.Context) {

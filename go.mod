@@ -51,7 +51,7 @@ require (
 
 require (
 	github.com/antonybholmes/go-mailer v0.0.0-20250326211424-cc7dd35c3d80
-	github.com/antonybholmes/go-sys v0.0.0-20250512211932-464c953347d7
+	github.com/antonybholmes/go-sys v0.0.0-20250530200903-de9311aa2093
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -120,7 +120,7 @@ require (
 	github.com/xuri/excelize/v2 v2.9.1 // indirect
 	github.com/xuri/nfp v0.0.1 // indirect
 	golang.org/x/arch v0.17.0 // indirect
-	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6 // indirect
+	golang.org/x/exp v0.0.0-20250531010427-b6e5de432a8b // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

@@ -440,11 +440,32 @@ func main() {
 		rdfRoleMiddleware,
 		scrnaroutes.ScrnaDatasetsRoute)
 
-	scrnaGroup.POST("/exp",
+	scrnaGroup.GET("/metadata/:id",
 		jwtUserMiddleWare,
 		accessTokenMiddleware,
 		rdfRoleMiddleware,
-		scrnaroutes.ScrnaGeneExpRoute,
+		scrnaroutes.ScrnaMetadataRoute,
+	)
+
+	scrnaGroup.GET("/genes/:id",
+		jwtUserMiddleWare,
+		accessTokenMiddleware,
+		rdfRoleMiddleware,
+		scrnaroutes.ScrnaGenesRoute,
+	)
+
+	scrnaGroup.GET("/genes/search/:id",
+		jwtUserMiddleWare,
+		accessTokenMiddleware,
+		rdfRoleMiddleware,
+		scrnaroutes.ScrnaSearchGenesRoute,
+	)
+
+	scrnaGroup.POST("/gex",
+		jwtUserMiddleWare,
+		accessTokenMiddleware,
+		rdfRoleMiddleware,
+		scrnaroutes.ScrnaGexRoute,
 	)
 
 	hubsGroup := moduleGroup.Group("/hubs")
