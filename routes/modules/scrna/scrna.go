@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const DEFAULT_LIMIT = 20
+const DEFAULT_LIMIT uint16 = 20
 
 type ScrnaParams struct {
 	Genes []string `json:"genes"`
@@ -173,23 +173,19 @@ func ScrnaSearchGenesRoute(c *gin.Context) {
 		return
 	}
 
-	limitQuery := c.Query("limit")
+	limit := DEFAULT_LIMIT
 
-	if limitQuery == "" {
-		limitQuery = fmt.Sprintf("%d", DEFAULT_LIMIT)
-	}
+	if c.Query("limit") != "" {
+		v, err := strconv.ParseUint(c.Query("limit"), 10, 16)
 
-	limit, err := strconv.ParseUint(limitQuery, 10, 16)
-
-	if err != nil {
-		// ignore errors and use a default
-		limit = DEFAULT_LIMIT
-		return
+		if err == nil {
+			limit = uint16(v)
+		}
 	}
 
 	safeQuery := web.SanitizeQuery(query)
 
-	ret, err := scrnadbcache.SearchGenes(publicId, safeQuery, uint16(limit))
+	ret, err := scrnadbcache.SearchGenes(publicId, safeQuery, limit)
 
 	if err != nil {
 		c.Error(err)
