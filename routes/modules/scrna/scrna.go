@@ -2,7 +2,6 @@ package scrna
 
 import (
 	"fmt"
-	"regexp"
 	"strconv"
 
 	"github.com/antonybholmes/go-scrna/scrnadbcache"
@@ -10,13 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var ALLOWED_CHARS_REGEX = regexp.MustCompile(`[^a-zA-Z0-9,\+\ ]+`)
-
 const DEFAULT_LIMIT = 20
-
-func sanitize(input string) string {
-	return ALLOWED_CHARS_REGEX.ReplaceAllString(input, "")
-}
 
 type ScrnaParams struct {
 	Genes []string `json:"genes"`
@@ -194,7 +187,7 @@ func ScrnaSearchGenesRoute(c *gin.Context) {
 		return
 	}
 
-	safeQuery := sanitize(query)
+	safeQuery := web.SanitizeQuery(query)
 
 	ret, err := scrnadbcache.SearchGenes(publicId, safeQuery, uint16(limit))
 
