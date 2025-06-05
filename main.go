@@ -440,18 +440,18 @@ func main() {
 		rdfRoleMiddleware,
 		scrnaroutes.ScrnaDatasetsRoute)
 
-	scrnaGroup.GET("/clusters/:id",
-		jwtUserMiddleWare,
-		accessTokenMiddleware,
-		rdfRoleMiddleware,
-		scrnaroutes.ScrnaClustersRoute,
-	)
+	// scrnaGroup.GET("/clusters/:id",
+	// 	jwtUserMiddleWare,
+	// 	accessTokenMiddleware,
+	// 	rdfRoleMiddleware,
+	// 	scrnaroutes.ScrnaClustersRoute,
+	// )
 
-	scrnaGroup.GET("/cells/:id",
+	scrnaGroup.GET("/metadata/:id",
 		jwtUserMiddleWare,
 		accessTokenMiddleware,
 		rdfRoleMiddleware,
-		scrnaroutes.ScrnaCellsRoute,
+		scrnaroutes.ScrnaMetadataRoute,
 	)
 
 	scrnaGroup.GET("/genes/:id",

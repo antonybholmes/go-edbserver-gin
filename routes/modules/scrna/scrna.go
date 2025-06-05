@@ -122,7 +122,25 @@ func ScrnaGexRoute(c *gin.Context) {
 	web.MakeDataResp(c, "", ret)
 }
 
-func ScrnaClustersRoute(c *gin.Context) {
+// func ScrnaMetadataRoute(c *gin.Context) {
+// 	publicId := c.Param("id")
+
+// 	if publicId == "" {
+// 		c.Error(fmt.Errorf("missing id"))
+// 		return
+// 	}
+
+// 	ret, err := scrnadbcache.Metadata(publicId)
+
+// 	if err != nil {
+// 		c.Error(err)
+// 		return
+// 	}
+
+// 	web.MakeDataResp(c, "", ret)
+// }
+
+func ScrnaMetadataRoute(c *gin.Context) {
 	publicId := c.Param("id")
 
 	if publicId == "" {
@@ -130,25 +148,7 @@ func ScrnaClustersRoute(c *gin.Context) {
 		return
 	}
 
-	ret, err := scrnadbcache.Clusters(publicId)
-
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
-	web.MakeDataResp(c, "", ret)
-}
-
-func ScrnaCellsRoute(c *gin.Context) {
-	publicId := c.Param("id")
-
-	if publicId == "" {
-		c.Error(fmt.Errorf("missing id"))
-		return
-	}
-
-	ret, err := scrnadbcache.Cells(publicId)
+	ret, err := scrnadbcache.Metadata(publicId)
 
 	if err != nil {
 		c.Error(err)
