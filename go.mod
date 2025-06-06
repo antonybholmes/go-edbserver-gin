@@ -35,14 +35,14 @@ replace github.com/antonybholmes/go-hubs => ../go-hubs
 replace github.com/antonybholmes/go-scrna => ../go-scrna
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20250507224209-326910455aee // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20250509222604-3dd9e6aa9ab6
+	github.com/antonybholmes/go-basemath v0.0.0-20250603204422-af3eff854e10 // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20250603204418-b939561ebadd
 
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20250326211422-64d18aac02e1
-	github.com/antonybholmes/go-web v0.0.0-20250513135653-c491eaeedab6
+	github.com/antonybholmes/go-web v0.0.0-20250606160256-46c704145081
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.28
@@ -68,7 +68,7 @@ require (
 	github.com/gin-contrib/cors v1.7.5
 	github.com/gin-contrib/sessions v1.0.2
 	github.com/gin-gonic/gin v1.10.1
-	github.com/redis/go-redis/v9 v9.9.0
+	github.com/redis/go-redis/v9 v9.10.0
 )
 
 require (
@@ -88,7 +88,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.30.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.19 // indirect
 	github.com/aws/smithy-go v1.22.3 // indirect
-	github.com/bytedance/sonic v1.13.2 // indirect
+	github.com/bytedance/sonic v1.13.3 // indirect
 	github.com/bytedance/sonic/loader v0.2.4 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.5 // indirect
@@ -119,8 +119,8 @@ require (
 	github.com/xuri/efp v0.0.1 // indirect
 	github.com/xuri/excelize/v2 v2.9.1 // indirect
 	github.com/xuri/nfp v0.0.1 // indirect
-	golang.org/x/arch v0.17.0 // indirect
-	golang.org/x/exp v0.0.0-20250531010427-b6e5de432a8b // indirect
+	golang.org/x/arch v0.18.0 // indirect
+	golang.org/x/exp v0.0.0-20250606033433-dcc06ee1d476 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
@@ -134,9 +134,9 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/xyproto/randomstring v1.2.0 // indirect
-	golang.org/x/crypto v0.38.0 // indirect
-	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/crypto v0.39.0 // indirect
+	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/text v0.25.0 // indirect
+	golang.org/x/text v0.26.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
