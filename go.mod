@@ -35,14 +35,14 @@ replace github.com/antonybholmes/go-hubs => ../go-hubs
 replace github.com/antonybholmes/go-scrna => ../go-scrna
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20250603204422-af3eff854e10 // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20250603204418-b939561ebadd
+	github.com/antonybholmes/go-basemath v0.0.0-20250606171604-5853de3754da // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20250606171555-80d2c61ab8da
 
 )
 
 require (
-	github.com/antonybholmes/go-genome v0.0.0-20250326211422-64d18aac02e1
-	github.com/antonybholmes/go-web v0.0.0-20250606160256-46c704145081
+	github.com/antonybholmes/go-genome v0.0.0-20250606171547-b52cfc3a1fa1
+	github.com/antonybholmes/go-web v0.0.0-20250606171556-2e45aaa13f77
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.28
@@ -50,23 +50,23 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-mailer v0.0.0-20250326211424-cc7dd35c3d80
-	github.com/antonybholmes/go-sys v0.0.0-20250530200903-de9311aa2093
+	github.com/antonybholmes/go-mailer v0.0.0-20250606171552-7c08a9479c50
+	github.com/antonybholmes/go-sys v0.0.0-20250606171605-31639110750b
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
 require (
-	github.com/antonybholmes/go-beds v0.0.0-20250326211424-2f11e9fe884e
-	github.com/antonybholmes/go-geneconv v0.0.0-20250326211432-83664704cef7
+	github.com/antonybholmes/go-beds v0.0.0-20250606171551-8661cae8ced9
+	github.com/antonybholmes/go-geneconv v0.0.0-20250606171606-e65caa62f8db
 	github.com/antonybholmes/go-hubs v0.0.0-00010101000000-000000000000
-	github.com/antonybholmes/go-math v0.0.0-20250307171544-f522e91d1448
-	github.com/antonybholmes/go-motifs v0.0.0-20250326211428-91561de16b6d
-	github.com/antonybholmes/go-mutations v0.0.0-20250326211428-0c2813bd22dc
-	github.com/antonybholmes/go-pathway v0.0.0-20250326211422-45d0c93b0e39
-	github.com/antonybholmes/go-scrna v0.0.0-00010101000000-000000000000
-	github.com/antonybholmes/go-seqs v0.0.0-20250326211425-a6dc0f9f73fe
+	github.com/antonybholmes/go-math v0.0.0-20250606171604-5853de3754da
+	github.com/antonybholmes/go-motifs v0.0.0-20250606171559-5a90b23136d7
+	github.com/antonybholmes/go-mutations v0.0.0-20250606171558-b181833245ac
+	github.com/antonybholmes/go-pathway v0.0.0-20250606171548-ce8aebd7de15
+	github.com/antonybholmes/go-scrna v0.0.0-20250606171553-36fd03e6ed51
+	github.com/antonybholmes/go-seqs v0.0.0-20250606171554-8409a199278b
 	github.com/gin-contrib/cors v1.7.5
-	github.com/gin-contrib/sessions v1.0.2
+	github.com/gin-contrib/sessions v1.0.4
 	github.com/gin-gonic/gin v1.10.1
 	github.com/redis/go-redis/v9 v9.10.0
 )
@@ -74,8 +74,8 @@ require (
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.36.3 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.29.14 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.67 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.29.15 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.68 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.30 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.34 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.34 // indirect
@@ -86,7 +86,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.45.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.25.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.30.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.33.19 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.33.20 // indirect
 	github.com/aws/smithy-go v1.22.3 // indirect
 	github.com/bytedance/sonic v1.13.3 // indirect
 	github.com/bytedance/sonic/loader v0.2.4 // indirect
@@ -126,8 +126,8 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-cytobands v0.0.0-20250326211423-94b98ba66052
-	github.com/antonybholmes/go-gex v0.0.0-20250328152020-67df8035632d
+	github.com/antonybholmes/go-cytobands v0.0.0-20250606171549-5392011a60f4
+	github.com/antonybholmes/go-gex v0.0.0-20250528204356-0bcd3ac6073d
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/context v1.1.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
