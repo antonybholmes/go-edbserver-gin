@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/antonybholmes/go-scrna/scrnadbcache"
+	"github.com/antonybholmes/go-sys"
 	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 )
@@ -201,7 +202,7 @@ func ScrnaSearchGenesRoute(c *gin.Context) {
 		}
 	}
 
-	safeQuery := web.SanitizeQuery(query)
+	safeQuery := sys.SanitizeQuery(query)
 
 	ret, err := scrnadbcache.SearchGenes(publicId, safeQuery, limit)
 
