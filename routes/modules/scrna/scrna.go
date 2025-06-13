@@ -8,6 +8,7 @@ import (
 	"github.com/antonybholmes/go-sys"
 	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 const DEFAULT_LIMIT uint16 = 20
@@ -203,6 +204,8 @@ func ScrnaSearchGenesRoute(c *gin.Context) {
 	}
 
 	safeQuery := sys.SanitizeQuery(query)
+
+	log.Debug().Msgf("safe %s", safeQuery)
 
 	ret, err := scrnadbcache.SearchGenes(publicId, safeQuery, limit)
 
