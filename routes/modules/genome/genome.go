@@ -135,7 +135,7 @@ func OverlappingGenesRoute(c *gin.Context) {
 	web.MakeDataResp(c, "", &ret)
 }
 
-func GeneInfoRoute(c *gin.Context) {
+func SearchForGeneByNameRoute(c *gin.Context) {
 	search := c.Query("search") // dnaroutes.ParseLocationsFromPost(c)
 
 	if search == "" {
@@ -154,7 +154,9 @@ func GeneInfoRoute(c *gin.Context) {
 		return
 	}
 
-	features, _ := query.Db.SearchForGeneByName(search, query.Level, n, fuzzyMode)
+	canonical := strings.HasPrefix(strings.ToLower(c.Query("canonical")), "t")
+
+	features, _ := query.Db.SearchForGeneByName(search, query.Level, n, fuzzyMode, canonical, c.Query("type"))
 
 	// if err != nil {
 	// 	return web.ErrorReq(err)
