@@ -15,6 +15,7 @@ import (
 	basemath "github.com/antonybholmes/go-math"
 	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 )
 
 const DEFAULT_LEVEL genome.Level = genome.LEVEL_GENE
@@ -119,6 +120,8 @@ func OverlappingGenesRoute(c *gin.Context) {
 	}
 
 	ret := make([]*GenesResp, 0, len(locations))
+
+	log.Debug().Msgf("sadasdasd")
 
 	for _, location := range locations {
 		features, err := query.Db.OverlappingGenes(location, query.Canonical)
