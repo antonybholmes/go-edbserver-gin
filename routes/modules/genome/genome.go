@@ -17,7 +17,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const DEFAULT_LEVEL = genome.LEVEL_GENE
+const DEFAULT_LEVEL genome.Level = genome.LEVEL_GENE
 
 const DEFAULT_CLOSEST_N uint16 = 5
 
@@ -43,12 +43,17 @@ type AnnotationResponse struct {
 }
 
 func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
-	level := genome.LEVEL_GENE
 
-	v := c.Query("level")
+	var level genome.Level = DEFAULT_LEVEL
 
-	if v != "" {
-		level = genome.ParseLevel(v)
+	switch c.Query("level") {
+	case "exon":
+		level = genome.LEVEL_EXON
+	case "transcript":
+		level = genome.LEVEL_TRANSCRIPT
+	default:
+		level = genome.LEVEL_GENE
+
 	}
 
 	canonical := strings.HasPrefix(strings.ToLower(c.Query("canonical")), "t")
@@ -149,7 +154,7 @@ func GeneInfoRoute(c *gin.Context) {
 		return
 	}
 
-	features, _ := query.Db.GeneInfo(search, query.Level, n, fuzzyMode)
+	features, _ := query.Db.SearchForGeneByName(search, query.Level, n, fuzzyMode)
 
 	// if err != nil {
 	// 	return web.ErrorReq(err)
