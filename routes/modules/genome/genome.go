@@ -69,8 +69,6 @@ func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 		geneType = ""
 	}
 
-	geneType = ""
-
 	db, err := genomedbcache.GeneDB(assembly)
 
 	if err != nil {
