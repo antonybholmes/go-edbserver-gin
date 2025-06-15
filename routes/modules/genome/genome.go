@@ -15,7 +15,6 @@ import (
 	basemath "github.com/antonybholmes/go-math"
 	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
 
 const DEFAULT_LEVEL genome.Level = genome.LEVEL_GENE
@@ -27,6 +26,7 @@ type GeneQuery struct {
 	Level    genome.Level
 	Db       *genome.GeneDB
 	Assembly string
+	GeneType string // e.g. "protein_coding", "non_coding", etc.
 	// only show canonical genes
 	Canonical bool
 }
@@ -59,6 +59,18 @@ func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 
 	canonical := strings.HasPrefix(strings.ToLower(c.Query("canonical")), "t")
 
+	geneType := c.Query("type")
+
+	// user can specify gene type in query string, but we sanitize it
+	switch {
+	case strings.Contains(geneType, "protein"):
+		geneType = "protein_coding"
+	default:
+		geneType = ""
+	}
+
+	geneType = ""
+
 	db, err := genomedbcache.GeneDB(assembly)
 
 	if err != nil {
@@ -67,6 +79,7 @@ func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 
 	return &GeneQuery{
 			Assembly:  assembly,
+			GeneType:  geneType,
 			Db:        db,
 			Level:     level,
 			Canonical: canonical},
@@ -121,10 +134,8 @@ func OverlappingGenesRoute(c *gin.Context) {
 
 	ret := make([]*GenesResp, 0, len(locations))
 
-	log.Debug().Msgf("sadasdasd")
-
 	for _, location := range locations {
-		features, err := query.Db.OverlappingGenes(location, query.Canonical)
+		features, err := query.Db.OverlappingGenes(location, query.Canonical, query.GeneType)
 
 		if err != nil {
 			c.Error(err)
