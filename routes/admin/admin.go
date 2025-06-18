@@ -171,9 +171,9 @@ func AddUserRoute(c *gin.Context) {
 }
 
 func DeleteUserRoute(c *gin.Context) {
-	uuid := c.Param("uuid")
+	publicId := c.Param("publicId")
 
-	err := userdbcache.DeleteUser(uuid)
+	err := userdbcache.DeleteUser(publicId)
 
 	if err != nil {
 		c.Error(err)

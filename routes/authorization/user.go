@@ -26,7 +26,7 @@ func UpdateUserRoute(c *gin.Context) {
 
 		uuid := validator.Claims.UserId
 
-		authUser, err := userdbcache.FindUserByUuid(uuid)
+		authUser, err := userdbcache.FindUserByPublicId(uuid)
 
 		if err != nil {
 			c.Error(err)
@@ -47,7 +47,7 @@ func UpdateUserRoute(c *gin.Context) {
 		//return SendUserInfoUpdatedEmail(c, authUser)
 
 		// reload user details
-		authUser, err = userdbcache.FindUserByUuid(uuid)
+		authUser, err = userdbcache.FindUserByPublicId(uuid)
 
 		if err != nil {
 			c.Error(err)

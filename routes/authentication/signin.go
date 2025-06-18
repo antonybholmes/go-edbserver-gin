@@ -69,7 +69,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		accessToken, err := tokengen.AccessToken(c, authUser.Uuid, roleClaim) //auth.MakeClaim(authUser.Roles))
+		accessToken, err := tokengen.AccessToken(c, authUser.PublicId, roleClaim) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			web.TokenErrorResp(c)
@@ -93,7 +93,7 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 		authUser := validator.AuthUser
 
 		passwordlessToken, err := tokengen.PasswordlessToken(c,
-			authUser.Uuid,
+			authUser.PublicId,
 			validator.LoginBodyReq.RedirectUrl)
 
 		if err != nil {

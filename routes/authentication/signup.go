@@ -77,7 +77,7 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 			web.MakeOkResp(c, "")
 		}
 
-		err := userdbcache.SetIsVerified(authUser.Uuid)
+		err := userdbcache.SetIsVerified(authUser.PublicId)
 
 		if err != nil {
 			web.MakeSuccessResp(c, "unable to verify user", false)

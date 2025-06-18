@@ -245,35 +245,14 @@ func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
 		return
 	}
 
-	authUser, err := userdbcache.CreateUserFromAuth0(tokenClaims.Name, email)
+	authUser, err := userdbcache.CreateUserFromOAuth2(tokenClaims.Name, email)
 
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	roles, err := userdbcache.UserRoleList(authUser)
-
-	if err != nil {
-		web.ErrorResp(c, "user roles not found")
-	}
-
-	roleClaim := auth.MakeClaim(roles)
-
-	//log.Debug().Msgf("user %v", authUser)
-
-	if !auth.CanSignin(roleClaim) {
-		web.UserNotAllowedToSignInErrorResp(c)
-	}
-
-	err = sr.initSession(c, authUser) // roleClaim)
-
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
-	UserSignedInResp(c)
+	sr.sessionSignInUsingOAuth2(c, authUser)
 }
 
 func (sr *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context) {
@@ -298,12 +277,49 @@ func (sr *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context) {
 		return
 	}
 
-	authUser, err := userdbcache.CreateUserFromAuth0(tokenClaims.Name, email)
+	authUser, err := userdbcache.CreateUserFromOAuth2(tokenClaims.Name, email)
 
 	if err != nil {
 		c.Error(err)
 		return
 	}
+
+	sr.sessionSignInUsingOAuth2(c, authUser)
+}
+
+func (sr *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Context) {
+	user, ok := c.Get("user")
+
+	for key := range c.Keys {
+		log.Debug().Msgf("key %s", key)
+	}
+
+	if !ok {
+		web.TokenErrorResp(c)
+
+		return
+	}
+
+	tokenClaims := user.(*auth.SupabaseTokenClaims)
+
+	email, err := mail.ParseAddress(tokenClaims.Email)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	authUser, err := userdbcache.CreateUserFromOAuth2(tokenClaims.Email, email)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	sr.sessionSignInUsingOAuth2(c, authUser)
+}
+
+func (sr *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, authUser *auth.AuthUser) {
 
 	roles, err := userdbcache.UserRoleList(authUser)
 
@@ -472,7 +488,7 @@ func NewAccessTokenFromSessionRoute(c *gin.Context) {
 	// }
 
 	// generate a new token from what is stored in the sesssion
-	t, err := tokengen.AccessToken(c, authUser.Uuid, auth.MakeClaim(authUser.Roles))
+	t, err := tokengen.AccessToken(c, authUser.PublicId, auth.MakeClaim(authUser.Roles))
 
 	if err != nil {
 		web.TokenErrorResp(c)

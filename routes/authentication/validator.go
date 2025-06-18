@@ -125,7 +125,7 @@ func (validator *Validator) LoadAuthUserFromUuid() *Validator {
 		return validator
 	}
 
-	authUser, err := userdbcache.FindUserByUuid(validator.LoginBodyReq.Uuid)
+	authUser, err := userdbcache.FindUserByPublicId(validator.LoginBodyReq.Uuid)
 
 	if err != nil {
 		validator.Err = fmt.Errorf(web.ERROR_USER_DOES_NOT_EXIST)
@@ -252,7 +252,7 @@ func (validator *Validator) LoadAuthUserFromToken() *Validator {
 		return validator
 	}
 
-	authUser, err := userdbcache.FindUserByUuid(validator.Claims.UserId)
+	authUser, err := userdbcache.FindUserByPublicId(validator.Claims.UserId)
 
 	if err != nil {
 		validator.Err = fmt.Errorf(web.ERROR_USER_DOES_NOT_EXIST)

@@ -8,36 +8,36 @@ DROP TABLE IF EXISTS users;
 
 CREATE TABLE permissions (
     id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, 
-    uuid VARCHAR(255) NOT NULL UNIQUE,
+    public_id VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL UNIQUE,
     description VARCHAR(255) NOT NULL DEFAULT "",
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL);
 CREATE INDEX roles_name_idx ON permissions (name);
 
-INSERT INTO permissions (uuid, name, description) VALUES('uwkrk2ljj387', 'Super', 'Superuser');
-INSERT INTO permissions (uuid, name, description) VALUES('iz4kbfy3z0a3', 'Admin', 'Administrator');
-INSERT INTO permissions (uuid, name, description) VALUES('loq75e7zqcbl', 'User', 'User');
-INSERT INTO permissions (uuid, name, description) VALUES('kflynb03pxbj', 'Login', 'Can login');
-INSERT INTO permissions (uuid, name, description) VALUES('og1o5d0p0mjy', 'RDF', 'Can view RDF lab data');
+INSERT INTO permissions (public_id, name, description) VALUES('uwkrk2ljj387', 'Super', 'Superuser');
+INSERT INTO permissions (public_id, name, description) VALUES('iz4kbfy3z0a3', 'Admin', 'Administrator');
+INSERT INTO permissions (public_id, name, description) VALUES('loq75e7zqcbl', 'User', 'User');
+INSERT INTO permissions (public_id, name, description) VALUES('kflynb03pxbj', 'Login', 'Can login');
+INSERT INTO permissions (public_id, name, description) VALUES('og1o5d0p0mjy', 'RDF', 'Can view RDF lab data');
 
 
 
 CREATE TABLE roles (
     id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, 
-    uuid VARCHAR(255) NOT NULL UNIQUE, 
+    public_id VARCHAR(255) NOT NULL UNIQUE, 
     name VARCHAR(255) NOT NULL UNIQUE,
     description VARCHAR(255) NOT NULL DEFAULT "",
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL);
 CREATE INDEX roles_name_idx ON roles (name);
 
-INSERT INTO roles (uuid, name) VALUES('p1gbjods0h90', 'Super');
-INSERT INTO roles (uuid, name) VALUES('mk4bgg4w43fp', 'Admin');
-INSERT INTO roles (uuid, name) VALUES('3xvte0ik4aq4', 'User');
--- INSERT INTO roles (uuid, name) VALUES('UZuAVHDGToa4F786IPTijA==', 'GetDNA');
-INSERT INTO roles (uuid, name) VALUES('x4ewk9papip2', 'Signin');
-INSERT INTO roles (uuid, name) VALUES('kh2yynyheqhv', 'RDF');
+INSERT INTO roles (public_id, name) VALUES('p1gbjods0h90', 'Super');
+INSERT INTO roles (public_id, name) VALUES('mk4bgg4w43fp', 'Admin');
+INSERT INTO roles (public_id, name) VALUES('3xvte0ik4aq4', 'User');
+-- INSERT INTO roles (public_id, name) VALUES('UZuAVHDGToa4F786IPTijA==', 'GetDNA');
+INSERT INTO roles (public_id, name) VALUES('x4ewk9papip2', 'Signin');
+INSERT INTO roles (public_id, name) VALUES('kh2yynyheqhv', 'RDF');
 
 
 CREATE TABLE roles_permissions (
@@ -72,7 +72,7 @@ INSERT INTO roles_permissions (role_id, permission_id) VALUES(5, 5);
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, 
-    uuid VARCHAR(255) NOT NULL UNIQUE,
+    public_id VARCHAR(255) NOT NULL UNIQUE,
     username VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL DEFAULT '',
@@ -82,7 +82,7 @@ CREATE TABLE users (
     email_verified_at DATETIME DEFAULT '1000-01-01' NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL);
-CREATE INDEX users_uuid_idx ON users (uuid);
+CREATE INDEX users_public_id_idx ON users (public_id);
 -- CREATE INDEX name ON users (first_name, last_name);
 CREATE INDEX users_username_idx ON users (username);
 CREATE INDEX users_email_idx ON users (email);
@@ -113,7 +113,7 @@ CREATE INDEX api_keys_api_key_idx ON api_keys (api_key);
  
 
 -- the superuser me --
-INSERT INTO users (uuid, username, email, is_locked, email_verified_at) VALUES (
+INSERT INTO users (public_id, username, email, is_locked, email_verified_at) VALUES (
     '25bhmb459eg7',
     'root',
     'edb-root@antonyholmes.dev',
@@ -121,7 +121,7 @@ INSERT INTO users (uuid, username, email, is_locked, email_verified_at) VALUES (
     now()
 );
 
-INSERT INTO users (uuid, username, email, password, is_locked, email_verified_at) VALUES (
+INSERT INTO users (public_id, username, email, password, is_locked, email_verified_at) VALUES (
     'fr87kybn5q14',
     'rdf',
     'rdf@antonyholmes.dev',

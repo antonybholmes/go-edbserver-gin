@@ -25,6 +25,7 @@ var JWT_RSA_PRIVATE_KEY *rsa.PrivateKey //[]byte
 var JWT_RSA_PUBLIC_KEY *rsa.PublicKey   //[]byte
 var JWT_AUTH0_RSA_PUBLIC_KEY *rsa.PublicKey
 var JWT_CLERK_RSA_PUBLIC_KEY *rsa.PublicKey
+var JWT_SUPABASE_SECRET_KEY string
 var SESSION_NAME string
 var SESSION_KEY string
 var SESSION_ENCRYPTION_KEY string
@@ -68,6 +69,8 @@ func init() {
 	ACCESS_TOKEN_TTL_MINS = env.GetMin("ACCESS_TOKEN_TTL_MINS", auth.TTL_15_MINS)
 	OTP_TOKEN_TTL_MINS = env.GetMin("OTP_TOKEN_TTL_MINS", auth.TTL_20_MINS)
 	SHORT_TTL_MINS = env.GetMin("SHORT_TTL_MINS", auth.TTL_10_MINS)
+
+	JWT_SUPABASE_SECRET_KEY = os.Getenv("JWT_SUPABASE_SECRET_KEY")
 
 	bytes, err := os.ReadFile("jwtRS256.key")
 	if err != nil {

@@ -178,13 +178,13 @@ func main() {
 
 	// all subsequent middleware is reliant on this to function
 	jwtUserMiddleWare := middleware.JwtUserMiddleware(
-		middleware.JwtClaimsParser(consts.JWT_RSA_PUBLIC_KEY))
+		middleware.JwtClaimsRSAParser(consts.JWT_RSA_PUBLIC_KEY))
 
-	jwtAuth0UserMiddleware := middleware.JwtAuth0UserMiddleware(
-		middleware.JwtClaimsParser(consts.JWT_AUTH0_RSA_PUBLIC_KEY))
+	jwtAuth0Middleware := middleware.JwtAuth0Middleware(consts.JWT_AUTH0_RSA_PUBLIC_KEY)
 
-	jwtClerkUserMiddleware := middleware.JwtClerkUserMiddleware(
-		middleware.JwtClaimsParser(consts.JWT_CLERK_RSA_PUBLIC_KEY))
+	jwtClerkMiddleware := middleware.JwtClerkMiddleware(consts.JWT_CLERK_RSA_PUBLIC_KEY)
+
+	jwtSupabaseMiddleware := middleware.JwtSupabaseMiddleware(consts.JWT_SUPABASE_SECRET_KEY)
 
 	sessionMiddleware := middleware.SessionIsValidMiddleware()
 
@@ -318,7 +318,7 @@ func main() {
 	tokenGroup.POST("/access", authorizationroutes.NewAccessTokenRoute)
 
 	usersGroup := authGroup.Group("/users",
-		jwtAuth0UserMiddleware,
+		jwtAuth0Middleware,
 		accessTokenMiddleware)
 
 	usersGroup.POST("", authorizationroutes.UserRoute)
@@ -338,12 +338,16 @@ func main() {
 	sessionOAuth2Group := sessionAuthGroup.Group("/oauth2")
 
 	sessionOAuth2Group.POST("/auth0/signin",
-		jwtAuth0UserMiddleware,
+		jwtAuth0Middleware,
 		sessionRoutes.SessionSignInUsingAuth0Route)
 
 	sessionOAuth2Group.POST("/clerk/signin",
-		jwtClerkUserMiddleware,
+		jwtClerkMiddleware,
 		sessionRoutes.SessionSignInUsingClerkRoute)
+
+	sessionOAuth2Group.POST("/supabase/signin",
+		jwtSupabaseMiddleware,
+		sessionRoutes.SessionSignInUsingSupabaseRoute)
 
 	sessionAuthGroup.POST("/signin",
 		sessionRoutes.SessionUsernamePasswordSignInRoute)
