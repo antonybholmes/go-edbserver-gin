@@ -3,6 +3,7 @@ package authorization
 import (
 	"github.com/antonybholmes/go-mailer/queue"
 	"github.com/antonybholmes/go-web/userdbcache"
+	"github.com/rs/zerolog/log"
 
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
 	"github.com/antonybholmes/go-mailer"
@@ -24,9 +25,11 @@ func UpdateUserRoute(c *gin.Context) {
 
 		//db, err := userdbcache.AutoConn(nil) //not clear on what is needed for the user and password
 
-		uuid := validator.Claims.UserId
+		publicId := validator.Claims.UserId
 
-		authUser, err := userdbcache.FindUserByPublicId(uuid)
+		log.Debug().Msgf("UpdateUserRoute: publicId: %s ", publicId)
+
+		authUser, err := userdbcache.FindUserByPublicId(publicId)
 
 		if err != nil {
 			c.Error(err)
@@ -47,7 +50,7 @@ func UpdateUserRoute(c *gin.Context) {
 		//return SendUserInfoUpdatedEmail(c, authUser)
 
 		// reload user details
-		authUser, err = userdbcache.FindUserByPublicId(uuid)
+		authUser, err = userdbcache.FindUserByPublicId(publicId)
 
 		if err != nil {
 			c.Error(err)

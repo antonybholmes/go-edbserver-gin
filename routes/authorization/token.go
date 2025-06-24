@@ -12,7 +12,7 @@ import (
 )
 
 // func RenewTokenRoute(c *gin.Context) {
-// 	user := c.Get("user").(*jwt.Token)
+// 	user := c.Get(middleware.SESSION_USER).(*jwt.Token)
 // 	claims := user.Claims.(*auth.JwtCustomClaims)
 
 // 	// Throws unauthorized error

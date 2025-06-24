@@ -2,6 +2,7 @@ package authentication
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/mail"
 	"os"
@@ -216,7 +217,7 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 }
 
 func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
-	user, ok := c.Get("user")
+	user, ok := c.Get(middleware.SESSION_USER)
 
 	for key := range c.Keys {
 		log.Debug().Msgf("key %s", key)
@@ -256,7 +257,7 @@ func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
 }
 
 func (sr *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context) {
-	user, ok := c.Get("user")
+	user, ok := c.Get(middleware.SESSION_USER)
 
 	for key := range c.Keys {
 		log.Debug().Msgf("key %s", key)
@@ -288,7 +289,7 @@ func (sr *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context) {
 }
 
 func (sr *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Context) {
-	user, ok := c.Get("user")
+	user, ok := c.Get(middleware.SESSION_USER)
 
 	for key := range c.Keys {
 		log.Debug().Msgf("key %s", key)
@@ -416,7 +417,7 @@ func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 }
 
 func (sr *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
-	user, ok := c.Get("authUser")
+	user, ok := c.Get(middleware.SESSION_USER)
 
 	if !ok {
 		web.ErrorResp(c, "no auth user")
@@ -458,48 +459,64 @@ func (sr *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 
 }
 
-func NewAccessTokenFromSessionRoute(c *gin.Context) {
-	// sess, _ := session.Get(consts.SESSION_NAME, c)
+// func NewAccessTokenFromSessionRoute(c *gin.Context) {
 
-	// userData, ok := sess.Values["user"].(string)
+// 	user, _ := c.Get(middleware.SESSION_USER)
 
-	// if !ok {
-	// 	web.ErrorReq(fmt.Errorf("malformed user info"))
-	// }
+// 	authUser := user.(*auth.AuthUser)
 
-	// var user auth.AuthUser
-	// if err := json.Unmarshal([]byte(userData), &user); err != nil {
-	// 	web.ErrorReq(err)
-	// }
+// 	t, err := tokengen.AccessToken(c, authUser.PublicId, auth.MakeClaim(authUser.Roles))
 
-	user, ok := c.Get("authUser")
+// 	if err != nil {
+// 		web.TokenErrorResp(c)
+// 		return
+// 	}
 
-	if !ok {
-		web.ErrorResp(c, "no auth user")
-		return
-	}
+// 	web.MakeDataResp(c, "", &web.AccessTokenResp{AccessToken: t})
+// }
+
+func CreateTokenFromSessionRoute(c *gin.Context) {
+
+	tokenType := c.Param("type")
+
+	// user must exist or middleware would have failed
+	user, _ := c.Get(middleware.SESSION_USER)
 
 	authUser := user.(*auth.AuthUser)
-	//publicId, _ := sess.Values[SESSION_PUBLICID].(string)
-	//r//oles, _ := sess.Values[SESSION_ROLES].(string)
 
-	// if publicId == "" {
-	// 	web.ErrorReq(fmt.Errorf("public id cannot be empty"))
-	// }
+	var token string
+	var err error
 
-	// generate a new token from what is stored in the sesssion
-	t, err := tokengen.AccessToken(c, authUser.PublicId, auth.MakeClaim(authUser.Roles))
+	switch tokenType {
+	case "access":
+		// Generate encoded token and send it as response.
+		token, err = tokengen.AccessToken(c, authUser.PublicId, auth.MakeClaim(authUser.Roles))
+
+		if err != nil {
+			err = fmt.Errorf("error creating access token: %w", err)
+		}
+	case "update":
+		// Generate encoded token and send it as response.
+		token, err = tokengen.UpdateToken(c, authUser.PublicId, auth.MakeClaim(authUser.Roles))
+
+		if err != nil {
+			err = fmt.Errorf("error creating update token: %w", err)
+		}
+	default:
+		err = fmt.Errorf("unknown token type")
+	}
 
 	if err != nil {
-		web.TokenErrorResp(c)
+		web.BaseErrorResp(c, err)
 		return
 	}
 
-	web.MakeDataResp(c, "", &web.AccessTokenResp{AccessToken: t})
+	web.MakeDataResp(c, "", &web.TokenResp{Token: token})
+
 }
 
 func UserFromSessionRoute(c *gin.Context) {
-	user, ok := c.Get("authUser")
+	user, ok := c.Get(middleware.SESSION_USER)
 
 	if !ok {
 		web.ErrorResp(c, "no auth user")

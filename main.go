@@ -190,6 +190,8 @@ func main() {
 
 	accessTokenMiddleware := middleware.JwtIsAccessTokenMiddleware()
 
+	updateTokenMiddleware := middleware.JwtIsUpdateTokenMiddleware()
+
 	rdfRoleMiddleware := middleware.JwtHasRDFRoleMiddleware()
 
 	sessionRoutes := authenticationroutes.NewSessionRoutes()
@@ -318,12 +320,13 @@ func main() {
 	tokenGroup.POST("/access", authorizationroutes.NewAccessTokenRoute)
 
 	usersGroup := authGroup.Group("/users",
-		jwtAuth0Middleware,
-		accessTokenMiddleware)
+		jwtUserMiddleWare)
 
-	usersGroup.POST("", authorizationroutes.UserRoute)
+	//usersGroup.POST("", authorizationroutes.UserRoute)
 
-	usersGroup.POST("/update", authorizationroutes.UpdateUserRoute)
+	// we do not use an id parameter here as the user is derived from the token
+	// for security reasons. User can be updated using an update token
+	usersGroup.POST("/update", updateTokenMiddleware, authorizationroutes.UpdateUserRoute)
 
 	//usersGroup.POST("/passwords/update", authentication.UpdatePasswordRoute)
 
@@ -363,10 +366,16 @@ func main() {
 	sessionGroup.POST("/signout",
 		authenticationroutes.SessionSignOutRoute)
 
-	sessionGroup.POST("/tokens/access",
-		sessionMiddleware,
-		authenticationroutes.NewAccessTokenFromSessionRoute)
+	sessionTokensGroup := sessionGroup.Group("/tokens", sessionMiddleware)
 
+	//sessionTokensGroup.POST("/access",
+	//		authenticationroutes.NewAccessTokenFromSessionRoute)
+
+	// issue tokens
+	sessionTokensGroup.GET("/create/:type",
+		authenticationroutes.CreateTokenFromSessionRoute)
+
+	// update session info
 	sessionGroup.POST("/refresh",
 		sessionMiddleware,
 		sessionRoutes.SessionRefreshRoute)
