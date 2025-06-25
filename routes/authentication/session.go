@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/antonybholmes/go-edb-server-gin/consts"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/middleware"
@@ -50,13 +51,21 @@ func NewSessionRoutes() *SessionRoutes {
 }
 
 // initialize a session with default age and ids
-func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) error {
+func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) (string, error) {
 
 	userData, err := json.Marshal(authUser)
 
 	if err != nil {
-		return err
+		return "", err
 	}
+
+	token, err := web.GenerateCSRFToken()
+
+	if err != nil {
+		return "", fmt.Errorf("failed to generate CSRF token: %w", err)
+	}
+
+	log.Debug().Msgf("GenerateCSRFToken %s", token)
 
 	sess := sessions.Default(c) // .Get(consts.SESSION_NAME, c)
 
@@ -65,31 +74,45 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) er
 
 	//sess.Values[SESSION_PUBLICID] = authUser.PublicId
 	//sess.Values[SESSION_ROLES] = roles //auth.MakeClaim(authUser.Roles)
-	sess.Set(middleware.SESSION_USER, string(userData))
+	sess.Set(web.SESSION_USER, string(userData))
+	sess.Set(web.SESSION_CSRF_TOKEN, token)
 
 	now := time.Now().UTC()
-	sess.Set(middleware.SESSION_CREATED_AT, now.Format(time.RFC3339))
-	sess.Set(middleware.SESSION_EXPIRES_AT, now.Add(time.Duration(sr.sessionOptions.MaxAge)*time.Second).Format(time.RFC3339))
+	sess.Set(web.SESSION_CREATED_AT, now.Format(time.RFC3339))
+	sess.Set(web.SESSION_EXPIRES_AT, now.Add(time.Duration(sr.sessionOptions.MaxAge)*time.Second).Format(time.RFC3339))
 
 	err = sess.Save() //c.Request(), c.Response())
 
 	if err != nil {
 		c.Error(err)
-		return err
+		return "", err
 	}
 
-	return nil
+	// Also send it to the client in a readable cookie
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:  consts.CSRF_COOKIE_NAME,
+		Value: token,
+		Path:  "/",
+		//Domain:   "ed.site.com", // or leave empty if called via ed.site.com
+		Secure:   true,
+		HttpOnly: false, // must be readable from JS!
+		SameSite: http.SameSiteNoneMode,
+	})
+
+	return token, nil
 }
 
 // create empty session for testing
 func (sr *SessionRoutes) InitSessionRoute(c *gin.Context) {
 
-	err := sr.initSession(c, &auth.AuthUser{})
+	token, err := sr.initSession(c, &auth.AuthUser{})
 
 	if err != nil {
 		c.Error(err)
 		return
 	}
+
+	UserSignedInResp(c, token)
 
 }
 
@@ -141,6 +164,20 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 		return
 	}
 
+	token, err := web.GenerateCSRFToken()
+
+	if err != nil {
+		c.Error(fmt.Errorf("failed to generate CSRF token: %w", err))
+		return
+	}
+
+	userData, err := json.Marshal(authUser)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
 	sess := sessions.Default(c) //Key(consts.SESSION_NAME)
 
 	// set session options
@@ -149,6 +186,13 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	} else {
 		sess.Options(middleware.SESSION_OPT_ZERO)
 	}
+
+	sess.Set(web.SESSION_USER, string(userData))
+	sess.Set(web.SESSION_CSRF_TOKEN, token)
+
+	now := time.Now().UTC()
+	sess.Set(web.SESSION_CREATED_AT, now.Format(time.RFC3339))
+	sess.Set(web.SESSION_EXPIRES_AT, now.Add(time.Duration(sr.sessionOptions.MaxAge)*time.Second).Format(time.RFC3339))
 
 	//sess.Values[SESSION_PUBLICID] = authUser.PublicId
 	//sess.Values[SESSION_ROLES] = roleClaim //auth.MakeClaim(authUser.Roles)
@@ -160,7 +204,7 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 		return
 	}
 
-	UserSignedInResp(c)
+	UserSignedInResp(c, token)
 	//return c.NoContent(http.StatusOK)
 }
 
@@ -198,14 +242,14 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 		return
 	}
 
-	err = sr.initSession(c, authUser) //, roleClaim)
+	token, err := sr.initSession(c, authUser) //, roleClaim)
 
 	if err != nil {
 		web.ErrorResp(c, middleware.ERROR_CREATING_SESSION)
 		return
 	}
 
-	c.String(http.StatusOK, "session created")
+	UserSignedInResp(c, token)
 
 	// resp, err := readSession(c)
 
@@ -217,7 +261,7 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 }
 
 func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
-	user, ok := c.Get(middleware.SESSION_USER)
+	user, ok := c.Get(web.SESSION_USER)
 
 	for key := range c.Keys {
 		log.Debug().Msgf("key %s", key)
@@ -257,7 +301,7 @@ func (sr *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
 }
 
 func (sr *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context) {
-	user, ok := c.Get(middleware.SESSION_USER)
+	user, ok := c.Get(web.SESSION_USER)
 
 	for key := range c.Keys {
 		log.Debug().Msgf("key %s", key)
@@ -289,7 +333,7 @@ func (sr *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context) {
 }
 
 func (sr *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Context) {
-	user, ok := c.Get(middleware.SESSION_USER)
+	user, ok := c.Get(web.SESSION_USER)
 
 	for key := range c.Keys {
 		log.Debug().Msgf("key %s", key)
@@ -336,14 +380,14 @@ func (sr *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, authUser *auth
 		web.UserNotAllowedToSignInErrorResp(c)
 	}
 
-	err = sr.initSession(c, authUser) // roleClaim)
+	token, err := sr.initSession(c, authUser) // roleClaim)
 
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	UserSignedInResp(c)
+	UserSignedInResp(c, token)
 }
 
 // Validate the passwordless token we generated and create
@@ -376,14 +420,14 @@ func (sr *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) 
 			return
 		}
 
-		err = sr.initSession(c, authUser) //, roleClaim)
+		token, err := sr.initSession(c, authUser) //, roleClaim)
 
 		if err != nil {
 			c.Error(err)
 			return
 		}
 
-		UserSignedInResp(c)
+		UserSignedInResp(c, token)
 	})
 }
 
@@ -393,10 +437,10 @@ func SessionSignOutRoute(c *gin.Context) {
 	//log.Debug().Msgf("invalidate session")
 
 	// invalidate by time
-	sess.Set(middleware.SESSION_USER, "")
+	sess.Set(web.SESSION_USER, "")
 	//sess.Values[SESSION_ROLES] = ""
-	sess.Set(middleware.SESSION_CREATED_AT, "")
-	sess.Set(middleware.SESSION_EXPIRES_AT, "")
+	sess.Set(web.SESSION_CREATED_AT, "")
+	sess.Set(web.SESSION_EXPIRES_AT, "")
 	sess.Options(middleware.SESSION_OPT_ZERO)
 
 	sess.Save() //c.Request(), c.Response())
@@ -417,7 +461,7 @@ func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 }
 
 func (sr *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
-	user, ok := c.Get(middleware.SESSION_USER)
+	user, ok := c.Get(web.SESSION_USER)
 
 	if !ok {
 		web.ErrorResp(c, "no auth user")
@@ -448,7 +492,7 @@ func (sr *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 
 	log.Debug().Msgf("saving %s", string(userData))
 
-	sess.Set(middleware.SESSION_USER, string(userData))
+	sess.Set(web.SESSION_USER, string(userData))
 
 	err = sess.Save() //c.Request(), c.Response())
 
@@ -480,7 +524,7 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 	tokenType := c.Param("type")
 
 	// user must exist or middleware would have failed
-	user, _ := c.Get(middleware.SESSION_USER)
+	user, _ := c.Get(web.SESSION_USER)
 
 	authUser := user.(*auth.AuthUser)
 
@@ -516,7 +560,7 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 }
 
 func UserFromSessionRoute(c *gin.Context) {
-	user, ok := c.Get(middleware.SESSION_USER)
+	user, ok := c.Get(web.SESSION_USER)
 
 	if !ok {
 		web.ErrorResp(c, "no auth user")

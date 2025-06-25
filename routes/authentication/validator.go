@@ -230,7 +230,7 @@ func (validator *Validator) LoadTokenClaims() *Validator {
 	}
 
 	if validator.Claims == nil {
-		user, ok := validator.c.Get(middleware.SESSION_USER)
+		user, ok := validator.c.Get(web.SESSION_USER)
 
 		if ok {
 			validator.Claims = user.(*auth.TokenClaims)

@@ -13,8 +13,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UserSignedInResp(c *gin.Context) {
-	web.MakeOkResp(c, "user signed in")
+type SignInResp struct {
+	CsrfToken string `json:"csrfToken"`
+}
+
+func UserSignedInResp(c *gin.Context, csrfToken string) {
+	web.MakeDataResp(c, "user signed in", &SignInResp{
+		CsrfToken: csrfToken,
+	})
 }
 
 func PasswordlessEmailSentResp(c *gin.Context) {

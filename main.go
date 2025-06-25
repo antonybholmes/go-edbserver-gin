@@ -186,6 +186,8 @@ func main() {
 
 	jwtSupabaseMiddleware := middleware.JwtSupabaseMiddleware(consts.JWT_SUPABASE_SECRET_KEY)
 
+	//csrfMiddleware := middleware.CSRFMiddleware()
+
 	sessionMiddleware := middleware.SessionIsValidMiddleware()
 
 	accessTokenMiddleware := middleware.JwtIsAccessTokenMiddleware()
@@ -212,7 +214,7 @@ func main() {
 			"https://edb-client-astro.pages.dev",
 			"https://edb-client-next.pages.dev"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Authorization", "X-CSRF-Token"},
 		//AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, "Set-Cookie"},
 		// for sharing session cookie for validating logins etc
 		AllowCredentials: true,      // Allow credentials (cookies, HTTP authentication)
