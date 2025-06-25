@@ -41,7 +41,7 @@ func NewSessionRoutes() *SessionRoutes {
 		Path: "/",
 		//Domain:   consts.APP_DOMAIN,
 		MaxAge:   maxAge,
-		HttpOnly: false, //false,
+		HttpOnly: true, //false,
 		Secure:   true,
 		SameSite: http.SameSiteNoneMode,
 	}
@@ -390,7 +390,7 @@ func (sr *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) 
 func SessionSignOutRoute(c *gin.Context) {
 	sess := sessions.Default(c) //.Get(consts.SESSION_NAME, c)
 
-	log.Debug().Msgf("invalidate session")
+	//log.Debug().Msgf("invalidate session")
 
 	// invalidate by time
 	sess.Set(middleware.SESSION_USER, "")
