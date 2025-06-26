@@ -186,7 +186,7 @@ func main() {
 
 	jwtSupabaseMiddleware := middleware.JwtSupabaseMiddleware(consts.JWT_SUPABASE_SECRET_KEY)
 
-	//csrfMiddleware := middleware.CSRFMiddleware()
+	csrfMiddleware := middleware.CSRFMiddleware()
 
 	sessionMiddleware := middleware.SessionIsValidMiddleware()
 
@@ -201,8 +201,9 @@ func main() {
 	//r := gin.Default()
 	r := gin.New()
 
-	r.Use(middleware.LoggingMiddleware(logger))
 	r.Use(gin.Recovery())
+	r.Use(middleware.LoggingMiddleware(logger))
+	r.Use(middleware.ErrorHandlerMiddleware())
 
 	r.Use(cors.New(cors.Config{
 		//AllowAllOrigins: true,
@@ -220,8 +221,6 @@ func main() {
 		AllowCredentials: true,      // Allow credentials (cookies, HTTP authentication)
 		MaxAge:           12 * 3600, // Cache preflight response for 12 hours
 	}))
-
-	r.Use(middleware.ErrorHandlerMiddleware())
 
 	store = cookie.NewStore([]byte(consts.SESSION_KEY),
 		[]byte(consts.SESSION_ENCRYPTION_KEY))
@@ -368,13 +367,15 @@ func main() {
 	sessionGroup.POST("/signout",
 		authenticationroutes.SessionSignOutRoute)
 
-	sessionTokensGroup := sessionGroup.Group("/tokens", sessionMiddleware)
+	sessionTokensGroup := sessionGroup.Group("/tokens",
+		csrfMiddleware,
+		sessionMiddleware)
 
 	//sessionTokensGroup.POST("/access",
 	//		authenticationroutes.NewAccessTokenFromSessionRoute)
 
 	// issue tokens
-	sessionTokensGroup.GET("/create/:type",
+	sessionTokensGroup.POST("/create/:type",
 		authenticationroutes.CreateTokenFromSessionRoute)
 
 	// update session info
