@@ -119,13 +119,13 @@ func (validator *Validator) CheckEmailIsWellFormed() *Validator {
 	return validator
 }
 
-func (validator *Validator) LoadAuthUserFromUuid() *Validator {
+func (validator *Validator) LoadAuthUserFromPublicId() *Validator {
 
 	if validator.Err != nil {
 		return validator
 	}
 
-	authUser, err := userdbcache.FindUserByPublicId(validator.UserBodyReq.Uuid)
+	authUser, err := userdbcache.FindUserByPublicId(validator.UserBodyReq.PublicId)
 
 	if err != nil {
 		validator.Err = fmt.Errorf(web.ERROR_USER_DOES_NOT_EXIST)

@@ -71,7 +71,7 @@ func RolesRoute(c *gin.Context) {
 
 func UpdateUserRoute(c *gin.Context) {
 
-	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().LoadAuthUserFromUuid().Success(func(validator *authenticationroutes.Validator) {
+	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().LoadAuthUserFromPublicId().Success(func(validator *authenticationroutes.Validator) {
 
 		//log.Debug().Msgf("roles here")
 
