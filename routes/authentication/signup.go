@@ -14,7 +14,7 @@ import (
 
 func SignupRoute(c *gin.Context) {
 	NewValidator(c).CheckEmailIsWellFormed().Success(func(validator *Validator) {
-		req := validator.LoginBodyReq
+		req := validator.UserBodyReq
 
 		authUser, err := userdbcache.CreateUserFromSignup(req)
 

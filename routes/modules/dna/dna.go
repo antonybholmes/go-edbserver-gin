@@ -88,7 +88,7 @@ func ParseLocationsFromPost(c *gin.Context) ([]*dna.Location, error) {
 
 	var locs ReqLocs
 
-	err := c.Bind(&locs)
+	err := c.ShouldBindJSON(&locs)
 
 	if err != nil {
 		return nil, err

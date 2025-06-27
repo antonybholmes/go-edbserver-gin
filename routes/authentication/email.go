@@ -20,7 +20,7 @@ import (
 func SendResetEmailEmailRoute(c *gin.Context) {
 	NewValidator(c).ParseLoginRequestBody().LoadAuthUserFromToken().Success(func(validator *Validator) {
 		authUser := validator.AuthUser
-		req := validator.LoginBodyReq
+		req := validator.UserBodyReq
 
 		newEmail, err := mail.ParseAddress(req.Email)
 

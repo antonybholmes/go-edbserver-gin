@@ -21,6 +21,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+const MAX_AGE_ONE_YEAR_SECS = 31536000 // 60 * 60 * 24 * 365
+
 type SessionRoutes struct {
 	sessionOptions sessions.Options
 }
@@ -94,6 +96,7 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) (s
 		Value: token,
 		Path:  "/",
 		//Domain:   "ed.site.com", // or leave empty if called via ed.site.com
+		MaxAge:   MAX_AGE_ONE_YEAR_SECS, // 0 means until browser closes
 		Secure:   true,
 		HttpOnly: false, // must be readable from JS!
 		SameSite: http.SameSiteNoneMode,
@@ -124,12 +127,12 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 		return
 	}
 
-	if validator.LoginBodyReq.Password == "" {
+	if validator.UserBodyReq.Password == "" {
 		PasswordlessSigninEmailRoute(c, validator)
 		return
 	}
 
-	user := validator.LoginBodyReq.Username
+	user := validator.UserBodyReq.Username
 
 	authUser, err := userdbcache.FindUserByUsername(user)
 
@@ -146,7 +149,7 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	roles, err := userdbcache.UserRoleList(authUser)
 
 	if err != nil {
-		web.AuthErrorResp(c, "could not get user roles")
+		web.ForbiddenResp(c, "could not get user roles")
 		return
 	}
 
@@ -157,7 +160,7 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 		return
 	}
 
-	err = authUser.CheckPasswordsMatch(validator.LoginBodyReq.Password)
+	err = authUser.CheckPasswordsMatch(validator.UserBodyReq.Password)
 
 	if err != nil {
 		c.Error(err)
@@ -181,7 +184,7 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	sess := sessions.Default(c) //Key(consts.SESSION_NAME)
 
 	// set session options
-	if validator.LoginBodyReq.StaySignedIn {
+	if validator.UserBodyReq.StaySignedIn {
 		sess.Options(sr.sessionOptions)
 	} else {
 		sess.Options(middleware.SESSION_OPT_ZERO)
@@ -216,7 +219,7 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 		return
 	}
 
-	authUser, err := userdbcache.FindUserByApiKey(validator.LoginBodyReq.ApiKey)
+	authUser, err := userdbcache.FindUserByApiKey(validator.UserBodyReq.ApiKey)
 
 	if err != nil {
 		web.UserDoesNotExistResp(c)
@@ -231,7 +234,7 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	roles, err := userdbcache.UserRoleList(authUser)
 
 	if err != nil {
-		web.AuthErrorResp(c, "could not get user roles")
+		web.ForbiddenResp(c, "could not get user roles")
 		return
 	}
 
@@ -442,8 +445,18 @@ func SessionSignOutRoute(c *gin.Context) {
 	sess.Set(web.SESSION_CREATED_AT, "")
 	sess.Set(web.SESSION_EXPIRES_AT, "")
 	sess.Options(middleware.SESSION_OPT_ZERO)
-
 	sess.Save() //c.Request(), c.Response())
+
+	// Also send it to the client in a readable cookie
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     consts.CSRF_COOKIE_NAME,
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1, // 0 means until browser closes
+		Secure:   true,
+		HttpOnly: false, // must be readable from JS!
+		SameSite: http.SameSiteNoneMode,
+	})
 
 	web.MakeOkResp(c, "user has been signed out")
 }
@@ -453,7 +466,7 @@ func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 	sessionInfo, err := middleware.ReadSessionInfo(c)
 
 	if err != nil {
-		c.Error(err)
+		web.UnauthorizedResp(c, "session not found or expired")
 		return
 	}
 
@@ -464,7 +477,7 @@ func (sr *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 	user, ok := c.Get(web.SESSION_USER)
 
 	if !ok {
-		web.ErrorResp(c, "no auth user")
+		web.UnauthorizedResp(c, "no auth user")
 		return
 	}
 
@@ -472,7 +485,7 @@ func (sr *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 	authUser, err := userdbcache.FindUserById(user.(*auth.AuthUser).Id)
 
 	if err != nil {
-		c.Error(err)
+		web.UnauthorizedResp(c, "user not found")
 		return
 	}
 
@@ -489,8 +502,6 @@ func (sr *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 		c.Error(err)
 		return
 	}
-
-	log.Debug().Msgf("saving %s", string(userData))
 
 	sess.Set(web.SESSION_USER, string(userData))
 

@@ -2,6 +2,8 @@ package authorization
 
 import (
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
+	"github.com/antonybholmes/go-web"
+	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/userdbcache"
 
@@ -9,6 +11,17 @@ import (
 	"github.com/antonybholmes/go-mailer/queue"
 	"github.com/gin-gonic/gin"
 )
+
+// type UserUpdateReq struct {
+// 	Username  string `json:"password"`
+// 	FirstName string `json:"firstName"`
+// 	LastName  string `json:"lastName"`
+// }
+
+type PasswordUpdateReq struct {
+	Password    string `json:"password"`
+	NewPassword string `json:"newPassword"`
+}
 
 func SessionUpdateUserRoute(c *gin.Context) {
 	sessionData, err := middleware.ReadSessionInfo(c)
@@ -20,12 +33,12 @@ func SessionUpdateUserRoute(c *gin.Context) {
 
 	authUser := sessionData.AuthUser
 
-	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().Success(func(validator *authenticationroutes.Validator) {
+	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().Success(func(validator *authenticationroutes.Validator) {
 
 		err = userdbcache.SetUserInfo(authUser,
-			validator.LoginBodyReq.Username,
-			validator.LoginBodyReq.FirstName,
-			validator.LoginBodyReq.LastName,
+			validator.UserBodyReq.Username,
+			validator.UserBodyReq.FirstName,
+			validator.UserBodyReq.LastName,
 			false)
 
 		if err != nil {
@@ -47,4 +60,50 @@ func SessionUpdateUserRoute(c *gin.Context) {
 
 		queue.PublishEmail(&email)
 	})
+}
+
+func SessionUpdatePasswordRoute(c *gin.Context) {
+	user, _ := c.Get(web.SESSION_USER)
+
+	authUser := user.(*auth.AuthUser)
+
+	// use current session user
+	authUser, err := userdbcache.FindUserByPublicId(authUser.PublicId)
+
+	if err != nil {
+		web.ErrorResp(c, "user not found")
+		return
+	}
+
+	var req PasswordUpdateReq
+
+	err = c.ShouldBindJSON(&req)
+
+	if err != nil {
+		web.ErrorResp(c, "invalid request body")
+		return
+	}
+
+	err = auth.CheckPassword(req.Password)
+
+	if err != nil {
+		web.ErrorResp(c, "password does not meet requirements")
+		return
+	}
+
+	err = authUser.CheckPasswordsMatch(req.Password)
+
+	if err != nil {
+		web.ErrorResp(c, "current and new password do not match")
+		return
+	}
+
+	err = userdbcache.SetPassword(authUser, req.NewPassword)
+
+	if err != nil {
+		web.ErrorResp(c, "could not update password")
+		return
+	}
+
+	web.MakeOkResp(c, "password updated successfully")
 }

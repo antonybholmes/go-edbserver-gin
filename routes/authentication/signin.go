@@ -30,12 +30,12 @@ func PasswordlessEmailSentResp(c *gin.Context) {
 func UsernamePasswordSignInRoute(c *gin.Context) {
 	NewValidator(c).ParseLoginRequestBody().Success(func(validator *Validator) {
 
-		if validator.LoginBodyReq.Password == "" {
+		if validator.UserBodyReq.Password == "" {
 			PasswordlessSigninEmailRoute(c, validator)
 			return
 		}
 
-		authUser, err := userdbcache.FindUserByUsername(validator.LoginBodyReq.Username)
+		authUser, err := userdbcache.FindUserByUsername(validator.UserBodyReq.Username)
 
 		if err != nil {
 			web.UserDoesNotExistResp(c)
@@ -50,7 +50,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 		roles, err := userdbcache.UserRoleList(authUser)
 
 		if err != nil {
-			web.AuthErrorResp(c, "could not get user roles")
+			web.ForbiddenResp(c, "could not get user roles")
 			return
 		}
 
@@ -61,7 +61,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		err = authUser.CheckPasswordsMatch(validator.LoginBodyReq.Password)
+		err = authUser.CheckPasswordsMatch(validator.UserBodyReq.Password)
 
 		if err != nil {
 			c.Error(err)
@@ -100,7 +100,7 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 
 		passwordlessToken, err := tokengen.PasswordlessToken(c,
 			authUser.PublicId,
-			validator.LoginBodyReq.RedirectUrl)
+			validator.UserBodyReq.RedirectUrl)
 
 		if err != nil {
 			c.Error(err)
@@ -157,7 +157,7 @@ func PasswordlessSignInRoute(c *gin.Context) {
 		roles, err := userdbcache.UserRoleList(authUser)
 
 		if err != nil {
-			web.AuthErrorResp(c, "could not get user roles")
+			web.ForbiddenResp(c, "could not get user roles")
 			return
 		}
 

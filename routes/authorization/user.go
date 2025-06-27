@@ -37,9 +37,9 @@ func UpdateUserRoute(c *gin.Context) {
 		}
 
 		err = userdbcache.SetUserInfo(authUser,
-			validator.LoginBodyReq.Username,
-			validator.LoginBodyReq.FirstName,
-			validator.LoginBodyReq.LastName,
+			validator.UserBodyReq.Username,
+			validator.UserBodyReq.FirstName,
+			validator.UserBodyReq.LastName,
 			false)
 
 		if err != nil {

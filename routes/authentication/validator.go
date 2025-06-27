@@ -18,9 +18,9 @@ import (
 //
 
 type Validator struct {
-	c            *gin.Context
-	Address      *mail.Address
-	LoginBodyReq *auth.LoginBodyReq
+	c           *gin.Context
+	Address     *mail.Address
+	UserBodyReq *auth.UserBodyReq
 
 	AuthUser *auth.AuthUser
 	Claims   *auth.TokenClaims
@@ -29,12 +29,12 @@ type Validator struct {
 
 func NewValidator(c *gin.Context) *Validator {
 	return &Validator{
-		c:            c,
-		Address:      nil,
-		LoginBodyReq: nil,
-		AuthUser:     nil,
-		Claims:       nil,
-		Err:          nil}
+		c:           c,
+		Address:     nil,
+		UserBodyReq: nil,
+		AuthUser:    nil,
+		Claims:      nil,
+		Err:         nil}
 
 }
 
@@ -64,15 +64,15 @@ func (validator *Validator) ParseLoginRequestBody() *Validator {
 		return validator
 	}
 
-	if validator.LoginBodyReq == nil {
-		var req auth.LoginBodyReq
+	if validator.UserBodyReq == nil {
+		var req auth.UserBodyReq
 
 		err := validator.c.ShouldBindJSON(&req)
 
 		if err != nil {
 			validator.Err = err
 		} else {
-			validator.LoginBodyReq = &req
+			validator.UserBodyReq = &req
 		}
 	}
 
@@ -88,7 +88,7 @@ func (validator *Validator) CheckUsernameIsWellFormed() *Validator {
 
 	//log.Debug().Msgf("check username well formed %s", validator.LoginBodyReq.Username)
 
-	err := auth.CheckUsername(validator.LoginBodyReq.Username)
+	err := auth.CheckUsername(validator.UserBodyReq.Username)
 
 	if err != nil {
 		log.Debug().Msgf("check user name err %s", err)
@@ -108,7 +108,7 @@ func (validator *Validator) CheckEmailIsWellFormed() *Validator {
 
 	//address, err := auth.CheckEmailIsWellFormed(validator.Req.Email)
 
-	address, err := mail.ParseAddress(validator.LoginBodyReq.Email)
+	address, err := mail.ParseAddress(validator.UserBodyReq.Email)
 
 	if err != nil {
 		validator.Err = err
@@ -125,7 +125,7 @@ func (validator *Validator) LoadAuthUserFromUuid() *Validator {
 		return validator
 	}
 
-	authUser, err := userdbcache.FindUserByPublicId(validator.LoginBodyReq.Uuid)
+	authUser, err := userdbcache.FindUserByPublicId(validator.UserBodyReq.Uuid)
 
 	if err != nil {
 		validator.Err = fmt.Errorf(web.ERROR_USER_DOES_NOT_EXIST)
@@ -163,7 +163,7 @@ func (validator *Validator) LoadAuthUserFromUsername() *Validator {
 		return validator
 	}
 
-	authUser, err := userdbcache.FindUserByUsername(validator.LoginBodyReq.Username)
+	authUser, err := userdbcache.FindUserByUsername(validator.UserBodyReq.Username)
 
 	//log.Debug().Msgf("beep2 %s", authUser.Username)
 

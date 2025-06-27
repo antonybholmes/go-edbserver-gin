@@ -362,7 +362,8 @@ func main() {
 	sessionGroup.POST("/api/keys/signin",
 		sessionRoutes.SessionApiKeySignInRoute)
 
-	sessionGroup.GET("/info", sessionRoutes.SessionInfoRoute)
+	sessionGroup.GET("/info",
+		sessionRoutes.SessionInfoRoute)
 
 	sessionGroup.POST("/signout",
 		authenticationroutes.SessionSignOutRoute)
@@ -380,13 +381,19 @@ func main() {
 
 	// update session info
 	sessionGroup.POST("/refresh",
+		csrfMiddleware,
 		sessionMiddleware,
 		sessionRoutes.SessionRefreshRoute)
 
 	sessionUserGroup := sessionGroup.Group("/user",
+		csrfMiddleware,
 		sessionMiddleware)
 	sessionUserGroup.GET("", authenticationroutes.UserFromSessionRoute)
-	sessionUserGroup.POST("/update", authorizationroutes.SessionUpdateUserRoute)
+	sessionUserGroup.POST("/update",
+		authorizationroutes.SessionUpdateUserRoute)
+
+	sessionUserGroup.POST("/passwords/update",
+		authorizationroutes.SessionUpdatePasswordRoute)
 
 	//
 	// module groups: start
