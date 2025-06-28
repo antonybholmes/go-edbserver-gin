@@ -36,13 +36,13 @@ replace github.com/antonybholmes/go-scrna => ../go-scrna
 
 require (
 	github.com/antonybholmes/go-basemath v0.0.0-20250624151228-caf01bd5c078 // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20250624151218-bda84c67e34d
+	github.com/antonybholmes/go-dna v0.0.0-20250624211229-30aae256862b
 
 )
 
 require (
-	github.com/antonybholmes/go-genome v0.0.0-20250616145827-b7b513c3fcea
-	github.com/antonybholmes/go-web v0.0.0-20250619034023-548c1b5d9ff6
+	github.com/antonybholmes/go-genome v0.0.0-20250624211225-358f1d2ad8fc
+	github.com/antonybholmes/go-web v0.0.0-20250625150934-0c339b564bc2
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.28
@@ -50,22 +50,22 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-mailer v0.0.0-20250614051407-27c93d1faa35
+	github.com/antonybholmes/go-mailer v0.0.0-20250624151215-6958a0d6a9b4
 	github.com/antonybholmes/go-sys v0.0.0-20250616145834-7aeb8359e265
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
 require (
-	github.com/antonybholmes/go-beds v0.0.0-20250614034241-6c6f20668a8f
-	github.com/antonybholmes/go-geneconv v0.0.0-20250610175055-84d9aaf25d83
+	github.com/antonybholmes/go-beds v0.0.0-20250624211227-242c0e590405
+	github.com/antonybholmes/go-geneconv v0.0.0-20250619034020-b20066d1d221
 	github.com/antonybholmes/go-hubs v0.0.0-00010101000000-000000000000
-	github.com/antonybholmes/go-math v0.0.0-20250606171809-0a0e36ed782e
-	github.com/antonybholmes/go-motifs v0.0.0-20250610175051-3aad979ca593
-	github.com/antonybholmes/go-mutations v0.0.0-20250608024408-2a36c5eec178
-	github.com/antonybholmes/go-pathway v0.0.0-20250610175046-339f48986462
-	github.com/antonybholmes/go-scrna v0.0.0-20250616145829-f9672ea57a26
-	github.com/antonybholmes/go-seqs v0.0.0-20250616145830-ac430982c823
-	github.com/gin-contrib/cors v1.7.5
+	github.com/antonybholmes/go-math v0.0.0-20250624151228-caf01bd5c078
+	github.com/antonybholmes/go-motifs v0.0.0-20250619034025-7a5469188a05
+	github.com/antonybholmes/go-mutations v0.0.0-20250624211231-32aa6f543e2a
+	github.com/antonybholmes/go-pathway v0.0.0-20250624211226-b78d0ba51d9e
+	github.com/antonybholmes/go-scrna v0.0.0-20250619034018-9304f1f0da33
+	github.com/antonybholmes/go-seqs v0.0.0-20250624211229-fc0b8ae2c235
+	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/sessions v1.0.4
 	github.com/gin-gonic/gin v1.10.1
 	github.com/redis/go-redis/v9 v9.11.0
@@ -83,7 +83,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.3.36 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.12.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.17 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.45.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.46.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.25.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.30.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.34.0 // indirect
@@ -102,7 +102,7 @@ require (
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
-	github.com/klauspost/cpuid/v2 v2.2.10 // indirect
+	github.com/klauspost/cpuid/v2 v2.2.11 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/matoous/go-nanoid/v2 v2.1.0 // indirect
@@ -126,7 +126,7 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-cytobands v0.0.0-20250608024415-5398d8955522
+	github.com/antonybholmes/go-cytobands v0.0.0-20250624211227-66f9d432ecd8
 	github.com/antonybholmes/go-gex v0.0.0-20250616000835-fb5846709bab
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/context v1.1.2 // indirect
