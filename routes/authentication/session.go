@@ -440,12 +440,13 @@ func SessionSignOutRoute(c *gin.Context) {
 	//log.Debug().Msgf("invalidate session")
 
 	// invalidate by time
-	sess.Set(web.SESSION_USER, "")
+	//sess.Set(web.SESSION_USER, "")
 	//sess.Values[SESSION_ROLES] = ""
-	sess.Set(web.SESSION_CREATED_AT, "")
-	sess.Set(web.SESSION_EXPIRES_AT, "")
-	sess.Options(middleware.SESSION_OPT_ZERO)
-	sess.Save() //c.Request(), c.Response())
+	//sess.Set(web.SESSION_CREATED_AT, "")
+	//sess.Set(web.SESSION_EXPIRES_AT, "")
+	sess.Clear()
+	sess.Options(middleware.SESSION_OPT_CLEAR) //.SESSION_OPT_ZERO)
+	sess.Save()                                //c.Request(), c.Response())
 
 	// Also send it to the client in a readable cookie
 	http.SetCookie(c.Writer, &http.Cookie{

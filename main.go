@@ -366,6 +366,8 @@ func main() {
 		sessionRoutes.SessionInfoRoute)
 
 	sessionGroup.POST("/signout",
+		//csrfMiddleware,
+		sessionMiddleware,
 		authenticationroutes.SessionSignOutRoute)
 
 	sessionTokensGroup := sessionGroup.Group("/tokens",
