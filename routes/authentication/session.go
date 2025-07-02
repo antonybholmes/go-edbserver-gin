@@ -97,7 +97,7 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) (s
 		Path:  "/",
 		//Domain:   "ed.site.com", // or leave empty if called via ed.site.com
 		MaxAge:   MAX_AGE_ONE_YEAR_SECS, // 0 means until browser closes
-		Secure:   true,
+		Secure:   false,
 		HttpOnly: false, // must be readable from JS!
 		SameSite: http.SameSiteNoneMode,
 	})
@@ -454,7 +454,7 @@ func SessionSignOutRoute(c *gin.Context) {
 		Value:    "",
 		Path:     "/",
 		MaxAge:   -1, // 0 means until browser closes
-		Secure:   true,
+		Secure:   false,
 		HttpOnly: false, // must be readable from JS!
 		SameSite: http.SameSiteNoneMode,
 	})
