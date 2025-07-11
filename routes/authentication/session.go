@@ -390,6 +390,8 @@ func (sr *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, authUser *auth
 		return
 	}
 
+	log.Debug().Msgf("token %s", token)
+
 	UserSignedInResp(c, token)
 }
 
