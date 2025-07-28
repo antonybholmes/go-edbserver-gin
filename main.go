@@ -211,7 +211,6 @@ func main() {
 			"http://localhost:3000",
 			"http://localhost:8000",
 			"https://edb.rdf-lab.org",
-			"https://dev.edb-app-astro.pages.dev",
 			"https://edb-client-astro.pages.dev",
 			"https://edb-client-next.pages.dev",
 			"https://edb-client-next.vercel.app"},
