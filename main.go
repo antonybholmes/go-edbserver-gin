@@ -363,9 +363,11 @@ func main() {
 		sessionRoutes.SessionApiKeySignInRoute)
 
 	sessionGroup.GET("/info",
+		sessionMiddleware,
 		sessionRoutes.SessionInfoRoute)
 
 	sessionGroup.GET("/csrf-token",
+		sessionMiddleware,
 		sessionRoutes.SessionCsrfTokenRoute)
 
 	sessionGroup.POST("/signout",
