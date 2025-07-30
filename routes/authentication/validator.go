@@ -8,6 +8,7 @@ import (
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/userdbcache"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
@@ -184,7 +185,9 @@ func (validator *Validator) LoadAuthUserFromSession() *Validator {
 		return validator
 	}
 
-	sessionData, err := middleware.ReadSessionInfo(validator.c)
+	session := sessions.Default(validator.c)
+
+	sessionData, err := middleware.ReadSessionInfo(validator.c, session)
 
 	if err != nil {
 		validator.Err = fmt.Errorf("user not in session")

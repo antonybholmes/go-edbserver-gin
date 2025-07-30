@@ -365,6 +365,9 @@ func main() {
 	sessionGroup.GET("/info",
 		sessionRoutes.SessionInfoRoute)
 
+	sessionGroup.GET("/csrf-token",
+		sessionRoutes.SessionCsrfTokenRoute)
+
 	sessionGroup.POST("/signout",
 		//csrfMiddleware,
 		sessionMiddleware,

@@ -6,6 +6,7 @@ import (
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/userdbcache"
+	"github.com/gin-contrib/sessions"
 
 	"github.com/antonybholmes/go-mailer"
 	"github.com/antonybholmes/go-mailer/queue"
@@ -24,7 +25,10 @@ type PasswordUpdateReq struct {
 }
 
 func SessionUpdateUserRoute(c *gin.Context) {
-	sessionData, err := middleware.ReadSessionInfo(c)
+	session := sessions.Default(c)
+	// Read the session info, which includes the AuthUser
+
+	sessionData, err := middleware.ReadSessionInfo(c, session)
 
 	if err != nil {
 		c.Error(err)

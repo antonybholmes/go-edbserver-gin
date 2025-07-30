@@ -13,12 +13,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type SignInResp struct {
+type CsrfTokenResp struct {
 	CsrfToken string `json:"csrfToken"`
 }
 
-func UserSignedInResp(c *gin.Context, csrfToken string) {
-	web.MakeDataResp(c, "user signed in", &SignInResp{
+func MakeCsrfTokenResp(c *gin.Context, csrfToken string) {
+	web.MakeDataResp(c, "user signed in", &CsrfTokenResp{
 		CsrfToken: csrfToken,
 	})
 }

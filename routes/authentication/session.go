@@ -61,13 +61,13 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) (s
 		return "", err
 	}
 
-	token, err := web.GenerateCSRFToken()
+	csrfToken, err := web.GenerateCSRFToken()
 
 	if err != nil {
 		return "", fmt.Errorf("failed to generate CSRF token: %w", err)
 	}
 
-	log.Debug().Msgf("GenerateCSRFToken %s", token)
+	log.Debug().Msgf("GenerateCSRFToken %s", csrfToken)
 
 	sess := sessions.Default(c) // .Get(consts.SESSION_NAME, c)
 
@@ -77,7 +77,7 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) (s
 	//sess.Values[SESSION_PUBLICID] = authUser.PublicId
 	//sess.Values[SESSION_ROLES] = roles //auth.MakeClaim(authUser.Roles)
 	sess.Set(web.SESSION_USER, string(userData))
-	sess.Set(web.SESSION_CSRF_TOKEN, token)
+	sess.Set(web.SESSION_CSRF_TOKEN, csrfToken)
 
 	now := time.Now().UTC()
 	sess.Set(web.SESSION_CREATED_AT, now.Format(time.RFC3339))
@@ -93,7 +93,7 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) (s
 	// Also send it to the client in a readable cookie
 	http.SetCookie(c.Writer, &http.Cookie{
 		Name:  consts.CSRF_COOKIE_NAME,
-		Value: token,
+		Value: csrfToken,
 		Path:  "/",
 		//Domain:   "ed.site.com", // or leave empty if called via ed.site.com
 		MaxAge:   MAX_AGE_ONE_YEAR_SECS, // 0 means until browser closes
@@ -102,20 +102,20 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) (s
 		SameSite: http.SameSiteNoneMode,
 	})
 
-	return token, nil
+	return csrfToken, nil
 }
 
 // create empty session for testing
 func (sr *SessionRoutes) InitSessionRoute(c *gin.Context) {
 
-	token, err := sr.initSession(c, &auth.AuthUser{})
+	csrfToken, err := sr.initSession(c, &auth.AuthUser{})
 
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	UserSignedInResp(c, token)
+	MakeCsrfTokenResp(c, csrfToken)
 
 }
 
@@ -207,7 +207,7 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 		return
 	}
 
-	UserSignedInResp(c, token)
+	MakeCsrfTokenResp(c, token)
 	//return c.NoContent(http.StatusOK)
 }
 
@@ -252,7 +252,7 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 		return
 	}
 
-	UserSignedInResp(c, token)
+	MakeCsrfTokenResp(c, token)
 
 	// resp, err := readSession(c)
 
@@ -392,7 +392,7 @@ func (sr *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, authUser *auth
 
 	log.Debug().Msgf("token %s", token)
 
-	UserSignedInResp(c, token)
+	MakeCsrfTokenResp(c, token)
 }
 
 // Validate the passwordless token we generated and create
@@ -432,7 +432,7 @@ func (sr *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) 
 			return
 		}
 
-		UserSignedInResp(c, token)
+		MakeCsrfTokenResp(c, token)
 	})
 }
 
@@ -466,7 +466,9 @@ func SessionSignOutRoute(c *gin.Context) {
 
 // Read the user session. Can also be used to determin if session is valid
 func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
-	sessionInfo, err := middleware.ReadSessionInfo(c)
+	session := sessions.Default(c)
+
+	sessionInfo, err := middleware.ReadSessionInfo(c, session)
 
 	if err != nil {
 		web.UnauthorizedResp(c, "session not found or expired")
@@ -474,6 +476,31 @@ func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 	}
 
 	web.MakeDataResp(c, "", sessionInfo)
+}
+
+func (sr *SessionRoutes) SessionCsrfTokenRoute(c *gin.Context) {
+	session := sessions.Default(c)
+
+	sessionInfo, err := middleware.ReadSessionInfo(c, session)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	if sessionInfo.CsrfToken == "" {
+		sessionInfo.CsrfToken, err = web.GenerateCSRFToken()
+
+		if err != nil {
+			web.ErrorResp(c, fmt.Sprintf("failed to generate CSRF token: %v", err))
+			return
+		}
+
+		session.Set(web.SESSION_CSRF_TOKEN, sessionInfo.CsrfToken)
+		session.Save()
+	}
+
+	MakeCsrfTokenResp(c, sessionInfo.CsrfToken)
 }
 
 func (sr *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
