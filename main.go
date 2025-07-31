@@ -186,7 +186,7 @@ func main() {
 
 	jwtSupabaseMiddleware := middleware.JwtSupabaseMiddleware(consts.JWT_SUPABASE_SECRET_KEY)
 
-	csrfMiddleware := middleware.CSRFMiddleware()
+	csrfMiddleware := middleware.CSRFValidateMiddleware()
 
 	sessionMiddleware := middleware.SessionIsValidMiddleware()
 
@@ -204,6 +204,7 @@ func main() {
 	r.Use(gin.Recovery())
 	r.Use(middleware.LoggingMiddleware(logger))
 	r.Use(middleware.ErrorHandlerMiddleware())
+	//r.Use(middleware.CSRFCookieMiddleware())
 
 	r.Use(cors.New(cors.Config{
 		//AllowAllOrigins: true,
@@ -367,7 +368,6 @@ func main() {
 		sessionRoutes.SessionInfoRoute)
 
 	sessionGroup.GET("/csrf-token",
-		sessionMiddleware,
 		sessionRoutes.SessionCsrfTokenRoute)
 
 	sessionGroup.POST("/signout",

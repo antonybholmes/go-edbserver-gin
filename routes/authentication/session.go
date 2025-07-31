@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/antonybholmes/go-edb-server-gin/consts"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/middleware"
@@ -53,21 +52,21 @@ func NewSessionRoutes() *SessionRoutes {
 }
 
 // initialize a session with default age and ids
-func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) (string, error) {
+func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) error {
 
 	userData, err := json.Marshal(authUser)
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	csrfToken, err := web.GenerateCSRFToken()
+	//csrfToken, err := web.GenerateCSRFToken()
 
-	if err != nil {
-		return "", fmt.Errorf("failed to generate CSRF token: %w", err)
-	}
+	// if err != nil {
+	// 	return "", fmt.Errorf("failed to generate CSRF token: %w", err)
+	// }
 
-	log.Debug().Msgf("GenerateCSRFToken %s", csrfToken)
+	// log.Debug().Msgf("GenerateCSRFToken %s", csrfToken)
 
 	sess := sessions.Default(c) // .Get(consts.SESSION_NAME, c)
 
@@ -77,7 +76,7 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) (s
 	//sess.Values[SESSION_PUBLICID] = authUser.PublicId
 	//sess.Values[SESSION_ROLES] = roles //auth.MakeClaim(authUser.Roles)
 	sess.Set(web.SESSION_USER, string(userData))
-	sess.Set(web.SESSION_CSRF_TOKEN, csrfToken)
+	//sess.Set(web.SESSION_CSRF_TOKEN, csrfToken)
 
 	now := time.Now().UTC()
 	sess.Set(web.SESSION_CREATED_AT, now.Format(time.RFC3339))
@@ -87,37 +86,44 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) (s
 
 	if err != nil {
 		c.Error(err)
-		return "", err
+		return err
 	}
 
-	// Also send it to the client in a readable cookie
-	http.SetCookie(c.Writer, &http.Cookie{
-		Name:  consts.CSRF_COOKIE_NAME,
-		Value: csrfToken,
-		Path:  "/",
-		//Domain:   "ed.site.com", // or leave empty if called via ed.site.com
-		MaxAge:   MAX_AGE_ONE_YEAR_SECS, // 0 means until browser closes
-		Secure:   true,
-		HttpOnly: false, // must be readable from JS!
-		SameSite: http.SameSiteNoneMode,
-	})
+	// csrfToken, err := middleware.CreateCSRFTokenCookie(c)
 
-	return csrfToken, nil
+	// if err != nil {
+	// 	//c.Error(err)
+	// 	return "", err
+	// }
+
+	// Also send it to the client in a readable cookie
+	// http.SetCookie(c.Writer, &http.Cookie{
+	// 	Name:  consts.CSRF_COOKIE_NAME,
+	// 	Value: csrfToken,
+	// 	Path:  "/",
+	// 	//Domain:   "ed.site.com", // or leave empty if called via ed.site.com
+	// 	MaxAge:   MAX_AGE_ONE_YEAR_SECS, // 0 means until browser closes
+	// 	Secure:   true,
+	// 	HttpOnly: false, // must be readable from JS!
+	// 	SameSite: http.SameSiteNoneMode,
+	// })
+
+	return nil
 }
 
 // create empty session for testing
-func (sr *SessionRoutes) InitSessionRoute(c *gin.Context) {
+// func (sr *SessionRoutes) InitSessionRoute(c *gin.Context) {
 
-	csrfToken, err := sr.initSession(c, &auth.AuthUser{})
+// 	  err := sr.initSession(c, &auth.AuthUser{})
 
-	if err != nil {
-		c.Error(err)
-		return
-	}
+// 	if err != nil {
+// 		c.Error(err)
+// 		return
+// 	}
 
-	MakeCsrfTokenResp(c, csrfToken)
+// 	MakeCsrfTokenResp(c, csrfToken)
 
-}
+// }
 
 func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	validator, err := NewValidator(c).ParseLoginRequestBody().Ok()
@@ -245,14 +251,16 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 		return
 	}
 
-	token, err := sr.initSession(c, authUser) //, roleClaim)
+	err = sr.initSession(c, authUser) //, roleClaim)
 
 	if err != nil {
 		web.ErrorResp(c, middleware.ERROR_CREATING_SESSION)
 		return
 	}
 
-	MakeCsrfTokenResp(c, token)
+	//MakeCsrfTokenResp(c, token)
+
+	web.MakeOkResp(c, "user has been signed in")
 
 	// resp, err := readSession(c)
 
@@ -383,16 +391,18 @@ func (sr *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, authUser *auth
 		web.UserNotAllowedToSignInErrorResp(c)
 	}
 
-	token, err := sr.initSession(c, authUser) // roleClaim)
+	err = sr.initSession(c, authUser) // roleClaim)
 
 	if err != nil {
-		c.Error(err)
+		web.BaseUnauthorizedResp(c, err)
 		return
 	}
 
-	log.Debug().Msgf("token %s", token)
+	//log.Debug().Msgf("token %s", token)
 
-	MakeCsrfTokenResp(c, token)
+	//MakeCsrfTokenResp(c, token)
+
+	web.MakeOkResp(c, "user has been signed in")
 }
 
 // Validate the passwordless token we generated and create
@@ -425,14 +435,14 @@ func (sr *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) 
 			return
 		}
 
-		token, err := sr.initSession(c, authUser) //, roleClaim)
+		err = sr.initSession(c, authUser) //, roleClaim)
 
 		if err != nil {
-			c.Error(err)
+			web.BaseUnauthorizedResp(c, err)
 			return
 		}
 
-		MakeCsrfTokenResp(c, token)
+		web.MakeOkResp(c, "user has signed in") //MakeCsrfTokenResp(c, token)
 	})
 }
 
@@ -451,15 +461,15 @@ func SessionSignOutRoute(c *gin.Context) {
 	sess.Save()                                //c.Request(), c.Response())
 
 	// Also send it to the client in a readable cookie
-	http.SetCookie(c.Writer, &http.Cookie{
-		Name:     consts.CSRF_COOKIE_NAME,
-		Value:    "",
-		Path:     "/",
-		MaxAge:   -1, // 0 means until browser closes
-		Secure:   true,
-		HttpOnly: false, // must be readable from JS!
-		SameSite: http.SameSiteNoneMode,
-	})
+	// http.SetCookie(c.Writer, &http.Cookie{
+	// 	Name:     web.CSRF_COOKIE_NAME,
+	// 	Value:    "",
+	// 	Path:     "/",
+	// 	MaxAge:   -1, // 0 means until browser closes
+	// 	Secure:   true,
+	// 	HttpOnly: false, // must be readable from JS!
+	// 	SameSite: http.SameSiteNoneMode,
+	// })
 
 	web.MakeOkResp(c, "user has been signed out")
 }
@@ -479,28 +489,15 @@ func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 }
 
 func (sr *SessionRoutes) SessionCsrfTokenRoute(c *gin.Context) {
-	session := sessions.Default(c)
 
-	sessionInfo, err := middleware.ReadSessionInfo(c, session)
+	token, err := middleware.CreateCSRFTokenCookie(c)
 
 	if err != nil {
-		c.Error(err)
+
 		return
 	}
 
-	if sessionInfo.CsrfToken == "" {
-		sessionInfo.CsrfToken, err = web.GenerateCSRFToken()
-
-		if err != nil {
-			web.ErrorResp(c, fmt.Sprintf("failed to generate CSRF token: %v", err))
-			return
-		}
-
-		session.Set(web.SESSION_CSRF_TOKEN, sessionInfo.CsrfToken)
-		session.Save()
-	}
-
-	MakeCsrfTokenResp(c, sessionInfo.CsrfToken)
+	MakeCsrfTokenResp(c, token)
 }
 
 func (sr *SessionRoutes) SessionRefreshRoute(c *gin.Context) {

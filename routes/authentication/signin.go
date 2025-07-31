@@ -18,7 +18,7 @@ type CsrfTokenResp struct {
 }
 
 func MakeCsrfTokenResp(c *gin.Context, csrfToken string) {
-	web.MakeDataResp(c, "user signed in", &CsrfTokenResp{
+	web.MakeDataResp(c, "", &CsrfTokenResp{
 		CsrfToken: csrfToken,
 	})
 }

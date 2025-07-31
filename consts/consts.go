@@ -17,8 +17,6 @@ const NAME = "Experiments Server"
 const APP_NAME = "edb-server"
 const COPYRIGHT = "Copyright (C) 2024-2025 Antony Holmes"
 
-const CSRF_COOKIE_NAME = APP_NAME + "-csrf-token"
-
 var APP_URL string
 var APP_DOMAIN string
 var VERSION string
