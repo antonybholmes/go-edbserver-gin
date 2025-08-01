@@ -66,7 +66,7 @@ func SearchBedsRoute(c *gin.Context) {
 	genome := c.Param("assembly")
 
 	if genome == "" {
-		web.ErrorResp(c, "must supply a genome")
+		web.BadReqResp(c, "must supply a genome")
 	}
 
 	query := c.Query("search")
@@ -91,7 +91,7 @@ func BedRegionsRoute(c *gin.Context) {
 	}
 
 	if len(params.Beds) == 0 {
-		web.ErrorResp(c, "at least 1 bed id must be supplied")
+		web.BadReqResp(c, "at least 1 bed id must be supplied")
 	}
 
 	ret := make([][]*beds.BedRegion, 0, len(params.Beds))

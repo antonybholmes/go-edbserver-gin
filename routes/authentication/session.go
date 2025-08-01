@@ -173,13 +173,6 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 		return
 	}
 
-	token, err := web.GenerateCSRFToken()
-
-	if err != nil {
-		c.Error(fmt.Errorf("failed to generate CSRF token: %w", err))
-		return
-	}
-
 	userData, err := json.Marshal(authUser)
 
 	if err != nil {
@@ -197,7 +190,6 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	}
 
 	sess.Set(web.SESSION_USER, string(userData))
-	sess.Set(web.SESSION_CSRF_TOKEN, token)
 
 	now := time.Now().UTC()
 	sess.Set(web.SESSION_CREATED_AT, now.Format(time.RFC3339))
@@ -213,7 +205,7 @@ func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 		return
 	}
 
-	MakeCsrfTokenResp(c, token)
+	web.MakeCsrfTokenResp(c)
 	//return c.NoContent(http.StatusOK)
 }
 
@@ -254,7 +246,7 @@ func (sr *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	err = sr.initSession(c, authUser) //, roleClaim)
 
 	if err != nil {
-		web.ErrorResp(c, middleware.ERROR_CREATING_SESSION)
+		web.BadReqResp(c, middleware.ERROR_CREATING_SESSION)
 		return
 	}
 
@@ -380,7 +372,7 @@ func (sr *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, authUser *auth
 	roles, err := userdbcache.UserRoleList(authUser)
 
 	if err != nil {
-		web.ErrorResp(c, "user roles not found")
+		web.BadReqResp(c, "user roles not found")
 	}
 
 	roleClaim := auth.MakeClaim(roles)
@@ -400,9 +392,9 @@ func (sr *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, authUser *auth
 
 	//log.Debug().Msgf("token %s", token)
 
-	//MakeCsrfTokenResp(c, token)
+	web.MakeCsrfTokenResp(c)
 
-	web.MakeOkResp(c, "user has been signed in")
+	//web.MakeOkResp(c, "user has been signed in")
 }
 
 // Validate the passwordless token we generated and create
@@ -489,15 +481,7 @@ func (sr *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 }
 
 func (sr *SessionRoutes) SessionCsrfTokenRoute(c *gin.Context) {
-
-	token, err := middleware.CreateCSRFTokenCookie(c)
-
-	if err != nil {
-
-		return
-	}
-
-	MakeCsrfTokenResp(c, token)
+	web.MakeCsrfTokenResp(c)
 }
 
 func (sr *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
@@ -589,7 +573,7 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 	}
 
 	if err != nil {
-		web.BaseErrorResp(c, err)
+		web.BaseBadReqResp(c, err)
 		return
 	}
 
@@ -601,7 +585,7 @@ func UserFromSessionRoute(c *gin.Context) {
 	user, ok := c.Get(web.SESSION_USER)
 
 	if !ok {
-		web.ErrorResp(c, "no auth user")
+		web.BadReqResp(c, "no auth user")
 		return
 	}
 

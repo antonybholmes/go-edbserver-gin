@@ -100,7 +100,7 @@ func SearchSeqRoute(c *gin.Context) {
 	genome := c.Param("assembly")
 
 	if genome == "" {
-		web.ErrorResp(c, "must supply a genome")
+		web.BadReqResp(c, "must supply a genome")
 		return
 	}
 

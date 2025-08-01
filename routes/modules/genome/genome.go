@@ -127,7 +127,7 @@ func OverlappingGenesRoute(c *gin.Context) {
 	}
 
 	if len(locations) == 0 {
-		web.ErrorResp(c, "must supply at least 1 location")
+		web.BadReqResp(c, "must supply at least 1 location")
 	}
 
 	ret := make([]*GenesResp, 0, len(locations))
@@ -151,7 +151,7 @@ func SearchForGeneByNameRoute(c *gin.Context) {
 	search := c.Query("search") // dnaroutes.ParseLocationsFromPost(c)
 
 	if search == "" {
-		web.ErrorResp(c, "search cannot be empty")
+		web.BadReqResp(c, "search cannot be empty")
 		return
 	}
 

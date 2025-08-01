@@ -79,7 +79,7 @@ func NewAccessTokenRoute(c *gin.Context) {
 			validator.Claims.Roles)
 
 		if err != nil {
-			web.ErrorResp(c, "error creating access token")
+			web.BadReqResp(c, "error creating access token")
 		}
 
 		web.MakeDataResp(c, "", &web.AccessTokenResp{AccessToken: accessToken})

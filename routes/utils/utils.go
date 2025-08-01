@@ -150,7 +150,7 @@ func HashedPasswordRoute(c *gin.Context) {
 	password := c.Query("password")
 
 	if len(password) == 0 {
-		web.ErrorResp(c, "password cannot be empty")
+		web.BadReqResp(c, "password cannot be empty")
 		return
 	}
 
@@ -166,7 +166,7 @@ func RandomKeyRoute(c *gin.Context) {
 	l, err := strconv.Atoi(c.Query("l"))
 
 	if err != nil || l < 1 {
-		web.ErrorResp(c, "length cannot be zero")
+		web.BadReqResp(c, "length cannot be zero")
 		return
 	}
 

@@ -64,7 +64,7 @@ func SearchRoute(c *gin.Context) {
 	search := params.Search
 
 	if len(search) < MIN_SEARCH_LEN {
-		web.ErrorResp(c, "Search too short")
+		web.BadReqResp(c, "Search too short")
 		return
 	}
 

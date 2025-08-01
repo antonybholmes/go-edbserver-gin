@@ -13,16 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CsrfTokenResp struct {
-	CsrfToken string `json:"csrfToken"`
-}
-
-func MakeCsrfTokenResp(c *gin.Context, csrfToken string) {
-	web.MakeDataResp(c, "", &CsrfTokenResp{
-		CsrfToken: csrfToken,
-	})
-}
-
 func PasswordlessEmailSentResp(c *gin.Context) {
 	web.MakeOkResp(c, "passwordless email sent")
 }

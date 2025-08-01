@@ -67,7 +67,7 @@ func UpdatePasswordRoute(c *gin.Context) {
 	NewValidator(c).ParseLoginRequestBody().LoadAuthUserFromToken().Success(func(validator *Validator) {
 
 		if validator.Claims.Type != auth.RESET_PASSWORD_TOKEN {
-			web.ErrorResp(c, web.ERROR_WRONG_TOKEN_TYPE)
+			web.BadReqResp(c, web.ERROR_WRONG_TOKEN_TYPE)
 			return
 		}
 
@@ -83,7 +83,7 @@ func UpdatePasswordRoute(c *gin.Context) {
 		err = userdbcache.SetPassword(authUser, validator.UserBodyReq.Password)
 
 		if err != nil {
-			web.ErrorResp(c, web.ERROR_WRONG_TOKEN_TYPE)
+			web.BadReqResp(c, web.ERROR_WRONG_TOKEN_TYPE)
 			return
 		}
 
