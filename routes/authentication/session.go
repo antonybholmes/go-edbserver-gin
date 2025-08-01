@@ -430,7 +430,7 @@ func (sr *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) 
 		err = sr.initSession(c, authUser) //, roleClaim)
 
 		if err != nil {
-			web.BaseUnauthorizedResp(c, err)
+			web.BaseInternalErrorResp(c, err)
 			return
 		}
 
@@ -519,7 +519,7 @@ func (sr *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 	err = sess.Save() //c.Request(), c.Response())
 
 	if err != nil {
-		c.Error(err)
+		web.InternalErrorResp(c, "error saving session")
 		return
 	}
 
@@ -573,7 +573,7 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 	}
 
 	if err != nil {
-		web.BaseBadReqResp(c, err)
+		web.BaseInternalErrorResp(c, err)
 		return
 	}
 
