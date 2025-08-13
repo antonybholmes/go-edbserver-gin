@@ -1,6 +1,6 @@
 module github.com/antonybholmes/go-edb-server-gin
 
-go 1.24
+go 1.25
 
 replace github.com/antonybholmes/go-web => ../go-web
 
@@ -35,14 +35,13 @@ replace github.com/antonybholmes/go-hubs => ../go-hubs
 replace github.com/antonybholmes/go-scrna => ../go-scrna
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20250718220222-02e267b47e76 // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20250731210107-8a77962e05e0
-
+	github.com/antonybholmes/go-basemath v0.0.0-20250812213434-6cf4f7c1176d // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20250812213427-91ff8602981d
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20250624211225-358f1d2ad8fc
-	github.com/antonybholmes/go-web v0.0.0-20250801154256-fdaebb9a12cc
+	github.com/antonybholmes/go-web v0.0.0-20250812213429-b293f1af00e1
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.31
@@ -51,7 +50,7 @@ require (
 
 require (
 	github.com/antonybholmes/go-mailer v0.0.0-20250624151215-6958a0d6a9b4
-	github.com/antonybholmes/go-sys v0.0.0-20250711230729-977770033804
+	github.com/antonybholmes/go-sys v0.0.0-20250812213435-bed670f8992a
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -122,7 +121,7 @@ require (
 	github.com/xuri/excelize/v2 v2.9.1 // indirect
 	github.com/xuri/nfp v0.0.1 // indirect
 	golang.org/x/arch v0.20.0 // indirect
-	golang.org/x/exp v0.0.0-20250811191247-51f88131bc50 // indirect
+	golang.org/x/exp v0.0.0-20250813145105-42675adae3e6 // indirect
 	google.golang.org/protobuf v1.36.7 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
