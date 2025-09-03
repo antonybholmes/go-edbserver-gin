@@ -17,13 +17,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const DEFAULT_LEVEL genome.Level = genome.LEVEL_GENE
+const DEFAULT_LEVEL genome.Feature = genome.FEATURE_GENE
 
 const DEFAULT_CLOSEST_N uint16 = 5
 
 // A GeneQuery contains info from query params.
 type GeneQuery struct {
-	Level    genome.Level
+	Feature  genome.Feature
 	Db       *genome.GeneDB
 	Assembly string
 	GeneType string // e.g. "protein_coding", "non_coding", etc.
@@ -45,15 +45,15 @@ type AnnotationResponse struct {
 
 func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 
-	var level genome.Level = DEFAULT_LEVEL
+	var feature genome.Feature = DEFAULT_LEVEL
 
 	switch c.Query("level") {
 	case "exon":
-		level = genome.LEVEL_EXON
+		feature = genome.FEATURE_EXON
 	case "transcript":
-		level = genome.LEVEL_TRANSCRIPT
+		feature = genome.FEATURE_TRANSCRIPT
 	default:
-		level = genome.LEVEL_GENE
+		feature = genome.FEATURE_GENE
 
 	}
 
@@ -79,7 +79,7 @@ func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 			Assembly:  assembly,
 			GeneType:  geneType,
 			Db:        db,
-			Level:     level,
+			Feature:   feature,
 			Canonical: canonical},
 		nil
 }
@@ -168,7 +168,7 @@ func SearchForGeneByNameRoute(c *gin.Context) {
 
 	canonical := strings.HasPrefix(strings.ToLower(c.Query("canonical")), "t")
 
-	features, _ := query.Db.SearchForGeneByName(search, query.Level, n, fuzzyMode, canonical, c.Query("type"))
+	features, _ := query.Db.SearchForGeneByName(search, query.Feature, n, fuzzyMode, canonical, c.Query("type"))
 
 	// if err != nil {
 	// 	return web.ErrorReq(err)
@@ -195,7 +195,7 @@ func WithinGenesRoute(c *gin.Context) {
 	data := make([]*genome.GenomicFeatures, len(locations))
 
 	for li, location := range locations {
-		genes, err := query.Db.WithinGenes(location, query.Level)
+		genes, err := query.Db.WithinGenes(location, query.Feature)
 
 		if err != nil {
 			c.Error(err)
@@ -224,12 +224,12 @@ func ClosestGeneRoute(c *gin.Context) {
 		return
 	}
 
-	n := web.ParseN(c, DEFAULT_CLOSEST_N)
+	closestN := web.ParseN(c, DEFAULT_CLOSEST_N)
 
 	data := make([]*genome.GenomicFeatures, len(locations))
 
 	for li, location := range locations {
-		genes, err := query.Db.ClosestGenes(location, n, query.Level)
+		genes, err := query.Db.ClosestGenes(location, uint8(closestN), query.Feature)
 
 		if err != nil {
 			c.Error(err)
@@ -285,13 +285,13 @@ func AnnotateRoute(c *gin.Context) {
 		return
 	}
 
-	n := web.ParseN(c, DEFAULT_CLOSEST_N)
+	closestN := web.ParseN(c, DEFAULT_CLOSEST_N)
 
 	tssRegion := ParseTSSRegion(c)
 
 	output := web.ParseOutput(c)
 
-	annotationDb := genome.NewAnnotateDb(query.Db, tssRegion, n)
+	annotationDb := genome.NewAnnotateDb(query.Db, tssRegion, uint8(closestN))
 
 	data := make([]*genome.GeneAnnotation, len(locations))
 
@@ -332,21 +332,21 @@ func MakeGeneTable(
 
 	closestN := len(data[0].ClosestGenes)
 
-	headers := make([]string, 6+5*closestN)
+	headers := make([]string, 5+4*closestN)
 
 	headers[0] = "Location"
-	headers[1] = "ID"
-	headers[2] = "Gene Symbol"
+	headers[1] = "Gene Id"
+	headers[2] = "Gene Name"
 	headers[3] = fmt.Sprintf(
 		"Relative To Gene (prom=-%d/+%dkb)",
 		ts.Offset5P()/1000,
 		ts.Offset3P()/1000)
 	headers[4] = "TSS Distance"
-	headers[5] = "Gene Location"
+	//headers[5] = "Gene Location"
 
 	idx := 6
 	for i := 1; i <= closestN; i++ {
-		headers[idx] = fmt.Sprintf("#%d Closest ID", i)
+		headers[idx] = fmt.Sprintf("#%d Closest Id", i)
 		headers[idx] = fmt.Sprintf("#%d Closest Gene Symbols", i)
 		headers[idx] = fmt.Sprintf(
 			"#%d Relative To Closet Gene (prom=-%d/+%dkb)",
@@ -364,19 +364,32 @@ func MakeGeneTable(
 	}
 
 	for _, annotation := range data {
+		n := len(annotation.WithinGenes)
+		geneIds := make([]string, n)
+		geneNames := make([]string, n)
+		promLabels := make([]string, n)
+		tssDists := make([]string, n)
+
+		for i, gene := range annotation.WithinGenes {
+			geneIds[i] = gene.GeneId
+			geneNames[i] = gene.GeneName
+			promLabels[i] = gene.PromLabel
+			tssDists[i] = strconv.Itoa(gene.TssDist)
+
+		}
+
 		row := []string{annotation.Location.String(),
-			annotation.GeneIds,
-			annotation.GeneSymbols,
-			annotation.PromLabels,
-			annotation.TSSDists,
-			annotation.Locations}
+			strings.Join(geneIds, genome.OUTPUT_FEATURE_SEP),
+			strings.Join(geneNames, genome.OUTPUT_FEATURE_SEP),
+			strings.Join(promLabels, genome.OUTPUT_FEATURE_SEP),
+			strings.Join(tssDists, genome.OUTPUT_FEATURE_SEP)}
 
 		for _, closestGene := range annotation.ClosestGenes {
 			row = append(row, closestGene.GeneId)
-			row = append(row, genome.GeneWithStrandLabel(closestGene.GeneSymbol, closestGene.Strand))
+			row = append(row, genome.GeneWithStrandLabel(closestGene.GeneName, closestGene.Strand))
 			row = append(row, closestGene.PromLabel)
 			row = append(row, strconv.Itoa(closestGene.TssDist))
-			row = append(row, closestGene.Location.String())
+			//row = append(row, closestGene.Location.String())
 		}
 
 		err := wtr.Write(row)
