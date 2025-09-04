@@ -17,9 +17,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const DEFAULT_LEVEL genome.Feature = genome.FEATURE_GENE
-
-const DEFAULT_CLOSEST_N uint16 = 5
+const DEFAULT_CLOSEST_N uint = 5
 
 // A GeneQuery contains info from query params.
 type GeneQuery struct {
@@ -45,9 +43,9 @@ type AnnotationResponse struct {
 
 func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 
-	var feature genome.Feature = DEFAULT_LEVEL
+	var feature genome.Feature = genome.FEATURE_GENE
 
-	switch c.Query("level") {
+	switch c.Query("feature") {
 	case "exon":
 		feature = genome.FEATURE_EXON
 	case "transcript":
@@ -168,7 +166,12 @@ func SearchForGeneByNameRoute(c *gin.Context) {
 
 	canonical := strings.HasPrefix(strings.ToLower(c.Query("canonical")), "t")
 
-	features, _ := query.Db.SearchForGeneByName(search, query.Feature, n, fuzzyMode, canonical, c.Query("type"))
+	features, _ := query.Db.SearchForGeneByName(search,
+		query.Feature,
+		uint16(n),
+		fuzzyMode,
+		canonical,
+		c.Query("type"))
 
 	// if err != nil {
 	// 	return web.ErrorReq(err)
@@ -224,7 +227,7 @@ func ClosestGeneRoute(c *gin.Context) {
 		return
 	}
 
-	closestN := web.ParseN(c, DEFAULT_CLOSEST_N)
+	closestN := web.ParseNumParam(c, "closest", DEFAULT_CLOSEST_N)
 
 	data := make([]*genome.GenomicFeatures, len(locations))
 
@@ -242,12 +245,12 @@ func ClosestGeneRoute(c *gin.Context) {
 	web.MakeDataResp(c, "", &data)
 }
 
-func ParseTSSRegion(c *gin.Context) *dna.TSSRegion {
+func ParsePromoterRegion(c *gin.Context) *dna.PromoterRegion {
 
-	v := c.Query("tss")
+	v := c.Query("promoter")
 
 	if v == "" {
-		return dna.NewTSSRegion(2000, 1000)
+		return &dna.DEFAULT_PROMOTER_REGION
 	}
 
 	tokens := strings.Split(v, ",")
@@ -255,16 +258,16 @@ func ParseTSSRegion(c *gin.Context) *dna.TSSRegion {
 	s, err := strconv.ParseUint(tokens[0], 10, 0)
 
 	if err != nil {
-		return dna.NewTSSRegion(2000, 1000)
+		return &dna.DEFAULT_PROMOTER_REGION
 	}
 
 	e, err := strconv.ParseUint(tokens[1], 10, 0)
 
 	if err != nil {
-		return dna.NewTSSRegion(2000, 1000)
+		return &dna.DEFAULT_PROMOTER_REGION
 	}
 
-	return dna.NewTSSRegion(uint(s), uint(e))
+	return dna.NewPromoterRegion(uint(s), uint(e))
 }
 
 func AnnotateRoute(c *gin.Context) {
@@ -285,9 +288,9 @@ func AnnotateRoute(c *gin.Context) {
 		return
 	}
 
-	closestN := web.ParseN(c, DEFAULT_CLOSEST_N)
+	closestN := web.ParseNumParam(c, "closest", DEFAULT_CLOSEST_N)
 
-	tssRegion := ParseTSSRegion(c)
+	tssRegion := ParsePromoterRegion(c)
 
 	output := web.ParseOutput(c)
 
@@ -296,7 +299,7 @@ func AnnotateRoute(c *gin.Context) {
 	data := make([]*genome.GeneAnnotation, len(locations))
 
 	for li, location := range locations {
-
+		//log.Debug().Msgf("Annotating location %s", location)
 		annotations, err := annotationDb.Annotate(location)
 
 		if err != nil {
@@ -324,7 +327,7 @@ func AnnotateRoute(c *gin.Context) {
 
 func MakeGeneTable(
 	data []*genome.GeneAnnotation,
-	ts *dna.TSSRegion,
+	ts *dna.PromoterRegion,
 ) (string, error) {
 	var buffer bytes.Buffer
 	wtr := csv.NewWriter(&buffer)
