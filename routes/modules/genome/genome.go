@@ -229,14 +229,14 @@ func ClosestGeneRoute(c *gin.Context) {
 	data := make([]*genome.GenomicFeatures, len(locations))
 
 	for li, location := range locations {
-		genes, err := query.Db.ClosestGenes(location, uint16(closestN), query.Feature)
+		genes, err := query.Db.ClosestGenes(location, uint16(closestN))
 
 		if err != nil {
 			c.Error(err)
 			return
 		}
 
-		data[li] = genes
+		data[li] = &genome.GenomicFeatures{Location: location, Feature: genome.FEATURE_GENE, Features: genes}
 	}
 
 	web.MakeDataResp(c, "", &data)
