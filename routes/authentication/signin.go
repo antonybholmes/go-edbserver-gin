@@ -119,7 +119,7 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 			To:        authUser.Email,
 			Token:     passwordlessToken,
 			EmailType: mailer.QUEUE_EMAIL_TYPE_PASSWORDLESS,
-			Ttl:       fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
+			TTL:       fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
 			//LinkUrl:   consts.URL_SIGN_IN,
 			//VisitUrl:    validator.Req.VisitUrl
 		}

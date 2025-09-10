@@ -126,7 +126,7 @@ func (sr *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) er
 // }
 
 func (sr *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
-	validator, err := NewValidator(c).ParseLoginRequestBody().Ok()
+	validator, err := NewValidator(c).LoadAuthUserFromUsername().Ok()
 
 	if err != nil {
 		c.Error(err)

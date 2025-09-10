@@ -56,7 +56,7 @@ func SignupRoute(c *gin.Context) {
 			To:        authUser.Email,
 			Token:     token,
 			EmailType: mailer.QUEUE_EMAIL_TYPE_VERIFY,
-			Ttl:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
+			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_VERIFY_EMAIL,
 			//VisitUrl:    req.VisitUrl
 		}

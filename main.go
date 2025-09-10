@@ -246,7 +246,7 @@ func main() {
 			IpAddr: c.ClientIP()})
 	})
 
-	otp := authenticationroutes.NewOTP(rdb)
+	otpRoutes := authenticationroutes.NewOTP(rdb)
 
 	//
 	// Routes
@@ -363,10 +363,19 @@ func main() {
 	sessionAuthGroup.POST("/signin",
 		sessionRoutes.SessionUsernamePasswordSignInRoute)
 
-	sessionAuthGroup.POST("/otp/email", func(c *gin.Context) {
-		otp.Email6DigitCodeRoute(c)
+	sessionOtpGroup := sessionAuthGroup.Group("/otp")
+
+	sessionOtpGroup.POST("/totp", func(c *gin.Context) {
+		otpRoutes.Email6DigitCodeRoute(c)
 
 	})
+
+	sessionOtpGroup.POST("/signin",
+		func(c *gin.Context) {
+			// first validate otp then proceed to normal username password signin
+			otpRoutes.OTPSigninRoute(c,
+				sessionRoutes.SessionUsernamePasswordSignInRoute)
+		})
 
 	sessionAuthGroup.POST("/passwordless/validate",
 		jwtUserMiddleWare,

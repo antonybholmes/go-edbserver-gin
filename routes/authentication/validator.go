@@ -39,6 +39,8 @@ func NewValidator(c *gin.Context) *Validator {
 
 }
 
+// Returns the validator if no errors have been encountered so far
+// otherwise returns an error
 func (validator *Validator) Ok() (*Validator, error) {
 	if validator.Err != nil {
 		return nil, validator.Err

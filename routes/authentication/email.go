@@ -57,7 +57,7 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 			To:        authUser.Email,
 			Token:     otpToken,
 			EmailType: mailer.QUEUE_EMAIL_TYPE_EMAIL_RESET,
-			Ttl:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
+			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_RESET_EMAIL,
 		}
 		queue.PublishEmail(&email)
