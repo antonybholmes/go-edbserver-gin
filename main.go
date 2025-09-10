@@ -70,6 +70,8 @@ type InfoResp struct {
 // var store *sqlitestorr.SqliteStore
 var store cookie.Store
 
+var rdb *redis.Client
+
 func init() {
 
 	env.Ls()
@@ -117,14 +119,16 @@ func init() {
 
 	hubsdbcache.InitCache("data/modules/hubs/")
 
-	rdb := redis.NewClient(&redis.Options{
+	rdb = redis.NewClient(&redis.Options{
 		Addr:     consts.REDIS_ADDR,
 		Username: "edb",
 		Password: consts.REDIS_PASSWORD,
 		DB:       0, // use default DB
 	})
 
-	queue.Init(mailer.NewRedisEmailPublisher(rdb))
+	//queue.Init(mailer.NewRedisEmailQueue(rdb))
+
+	queue.Init(mailer.NewSQSEmailQueue(consts.SQS_QUEUE_URL))
 
 	// writer := kafka.NewWriter(kafka.WriterConfig{
 	// 	Brokers:  []string{"localhost:9094"}, // Kafka broker
@@ -242,6 +246,8 @@ func main() {
 			IpAddr: c.ClientIP()})
 	})
 
+	otp := authenticationroutes.NewOTP(rdb)
+
 	//
 	// Routes
 	//
@@ -356,6 +362,12 @@ func main() {
 
 	sessionAuthGroup.POST("/signin",
 		sessionRoutes.SessionUsernamePasswordSignInRoute)
+
+	sessionAuthGroup.POST("/otp/email", func(c *gin.Context) {
+		otp.Email6DigitCodeRoute(c)
+
+	})
+
 	sessionAuthGroup.POST("/passwordless/validate",
 		jwtUserMiddleWare,
 		sessionRoutes.SessionPasswordlessValidateSignInRoute)

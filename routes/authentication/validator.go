@@ -294,3 +294,17 @@ func (validator *Validator) CheckIsValidAccessToken() *Validator {
 
 	return validator
 }
+
+func ParseLoginRequestBody(c *gin.Context) (*auth.UserBodyReq, error) {
+
+	var req auth.UserBodyReq
+
+	err := c.ShouldBindJSON(&req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &req, nil
+
+}

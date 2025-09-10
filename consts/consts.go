@@ -43,6 +43,8 @@ var URL_RESET_EMAIL string
 var URL_RESET_PASSWORD string
 var URL_VERIFY_EMAIL string
 
+var SQS_QUEUE_URL string
+
 func init() {
 	env.Load("consts.env")
 	env.Load("version.env")
@@ -71,6 +73,8 @@ func init() {
 	SHORT_TTL_MINS = env.GetMin("SHORT_TTL_MINS", auth.TTL_10_MINS)
 
 	JWT_SUPABASE_SECRET_KEY = os.Getenv("JWT_SUPABASE_SECRET_KEY")
+
+	SQS_QUEUE_URL = os.Getenv("SQS_QUEUE_URL")
 
 	bytes, err := os.ReadFile("jwtRS256.key")
 	if err != nil {
