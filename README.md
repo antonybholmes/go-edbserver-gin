@@ -1,4 +1,5 @@
-# go-edb-server-gin
+# go-edbserver-gin
+
 API server
 
 ## Build Tips
@@ -13,4 +14,5 @@ API server
 ## Clean
 
 https://nicolaiarocci.com/how-to-remove-a-file-from-git-history/
-# go-edb-server-gin
+
+# go-edbserver-gin

@@ -1,12 +1,12 @@
 package beds
 
 import (
-	"github.com/antonybholmes/go-beds"
-	"github.com/antonybholmes/go-dna"
-	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 
+	"github.com/antonybholmes/go-beds"
 	"github.com/antonybholmes/go-beds/bedsdbcache"
+	"github.com/antonybholmes/go-dna"
+	"github.com/antonybholmes/go-web"
 )
 
 type ReqBedsParams struct {

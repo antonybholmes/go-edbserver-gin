@@ -3,12 +3,12 @@ package authentication
 import (
 	"fmt"
 
-	"github.com/antonybholmes/go-edb-server-gin/consts"
+	"github.com/antonybholmes/go-edbserver-gin/consts"
+	mailserver "github.com/antonybholmes/go-mailserver"
+	"github.com/antonybholmes/go-mailserver/queue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
-	mailserver "github.com/antonybholmes/go_mailserver"
-	"github.com/antonybholmes/go_mailserver/queue"
 	"github.com/gin-gonic/gin"
 )
 

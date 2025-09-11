@@ -27,7 +27,7 @@
 data
 logs
 deployments/*
-go-edb-server-gin
+go-edbserver-gin
 
 tests.sh
 

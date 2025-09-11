@@ -2,7 +2,7 @@ package mutations
 
 import (
 	"github.com/antonybholmes/go-dna"
-	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
+	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	"github.com/antonybholmes/go-mutations"
 	"github.com/antonybholmes/go-mutations/mutationdbcache"
 	"github.com/antonybholmes/go-web"

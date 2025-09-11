@@ -1,13 +1,13 @@
 package authorization
 
 import (
+	mailserver "github.com/antonybholmes/go-mailserver"
+	"github.com/antonybholmes/go-mailserver/queue"
+	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/userdbcache"
-	mailserver "github.com/antonybholmes/go_mailserver"
-	"github.com/antonybholmes/go_mailserver/queue"
 	"github.com/rs/zerolog/log"
 
-	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
-	"github.com/antonybholmes/go-web"
+	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	"github.com/gin-gonic/gin"
 )
 

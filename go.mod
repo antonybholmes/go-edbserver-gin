@@ -1,4 +1,4 @@
-module github.com/antonybholmes/go_edbserver_gin
+module github.com/antonybholmes/go-edbserver-gin
 
 go 1.25
 
@@ -14,7 +14,7 @@ replace github.com/antonybholmes/go-basemath => ../go-basemath
 
 replace github.com/antonybholmes/go-sys => ../go-sys
 
-replace github.com/antonybholmes/go_mailserver => ../go_mailserver
+replace github.com/antonybholmes/go-mailserver => ../go-mailserver
 
 replace github.com/antonybholmes/go-geneconv => ../go-geneconv
 
@@ -49,8 +49,8 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go_mailserver v0.0.0-20250624151215-6958a0d6a9b4
 	github.com/antonybholmes/go-sys v0.0.0-20250812213435-bed670f8992a
+	github.com/antonybholmes/go-mailserver v0.0.0-20250624151215-6958a0d6a9b4
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 

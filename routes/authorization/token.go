@@ -1,8 +1,8 @@
 package authorization
 
 import (
-	"github.com/antonybholmes/go-edb-server-gin/consts"
-	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
+	"github.com/antonybholmes/go-edbserver-gin/consts"
+	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/middleware"

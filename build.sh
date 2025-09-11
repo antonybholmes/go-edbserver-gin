@@ -1,1 +1,1 @@
-CGO_ENABLED=1 GIN_MODE=release BUILD=production go build -o ./deployments/go-edb-server-gin; ./deployments/go-edb-server-gin
+Cgo-ENABLED=1 GIN_MODE=release BUILD=production go build -o ./deployments/go-edbserver-gin; ./deployments/go-edbserver-gin
