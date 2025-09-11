@@ -382,7 +382,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Co
 
 	username := validator.Address.Address
 
-	otpValid, err := sessionRoutes.OTPRoutes.OTP.validate2FACode(username, validator.UserBodyReq.OTP)
+	otpValid, err := sessionRoutes.OTPRoutes.OTP.validateOTP(username, validator.UserBodyReq.OTP)
 
 	if !otpValid || err != nil {
 		web.BadReqResp(c, "invalid one time passcode")

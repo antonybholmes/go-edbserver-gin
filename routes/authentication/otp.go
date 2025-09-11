@@ -29,14 +29,14 @@ func NewOTP(rdb *redis.Client) *OTP {
 	}
 }
 
-func (otp *OTP) CacheDigitCode(username string) (string, error) {
-	code, err := auth.Generate6DigitCode()
+func (otp *OTP) CacheOTP(username string) (string, error) {
+	code, err := auth.GenerateOTP() //Generate6DigitCode()
 
 	if err != nil {
 		return "", err
 	}
 
-	err = otp.store2FACode(username, code)
+	err = otp.storeOTP(username, code)
 
 	if err != nil {
 		return "", err
@@ -45,24 +45,24 @@ func (otp *OTP) CacheDigitCode(username string) (string, error) {
 	return code, nil
 }
 
-func (otp *OTP) delete2FACode(username string) error {
+func (otp *OTP) deleteOTP(username string) error {
 	key := KEY + username
 	return otp.RedisClient.Del(otp.Context, key).Err()
 }
 
-func (otp *OTP) get2FACode(username string) (string, error) {
+func (otp *OTP) getOTP(username string) (string, error) {
 	key := KEY + username
 	return otp.RedisClient.Get(otp.Context, key).Result()
 }
 
-func (otp *OTP) store2FACode(username string, code string) error {
+func (otp *OTP) storeOTP(username string, code string) error {
 	key := KEY + username
 	return otp.RedisClient.Set(otp.Context, key, code, OTP_TTL).Err() // expires in 5 mins
 }
 
-func (otp *OTP) validate2FACode(username string, input string) (bool, error) {
+func (otp *OTP) validateOTP(username string, input string) (bool, error) {
 
-	stored, err := otp.get2FACode(username)
+	stored, err := otp.getOTP(username)
 
 	log.Debug().Msgf("validating %s %s %s", username, input, stored)
 
@@ -77,7 +77,7 @@ func (otp *OTP) validate2FACode(username string, input string) (bool, error) {
 	}
 
 	// Remove after use
-	err = otp.delete2FACode(username)
+	err = otp.deleteOTP(username)
 
 	if err != nil {
 		return false, err
@@ -112,7 +112,7 @@ func (otpRoutes *OTPRoutes) Email6DigitCodeRoute(c *gin.Context) {
 	//user := validator.AuthUser
 	address := validator.Address
 
-	code, err := otpRoutes.OTP.CacheDigitCode(address.Address)
+	code, err := otpRoutes.OTP.CacheOTP(address.Address)
 
 	if err != nil {
 		web.BaseInternalErrorResp(c, err)
