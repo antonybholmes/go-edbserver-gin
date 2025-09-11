@@ -98,10 +98,9 @@ func initLogger() {
 }
 
 func init() {
+	initLogger()
 
 	env.Ls()
-
-	initLogger()
 
 	// store = sys.Must(sqlitestorr.NewSqliteStore("data/users.db",
 	// 	"sessions",
