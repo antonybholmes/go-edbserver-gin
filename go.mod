@@ -35,13 +35,13 @@ replace github.com/antonybholmes/go-hubs => ../go-hubs
 replace github.com/antonybholmes/go-scrna => ../go-scrna
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20250812213434-6cf4f7c1176d // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20250812213427-91ff8602981d
+	github.com/antonybholmes/go-basemath v0.0.0-20250911171638-68021ab78342 // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20250911171634-8431ce734cc3
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20250624211225-358f1d2ad8fc
-	github.com/antonybholmes/go-web v0.0.0-20250812213429-b293f1af00e1
+	github.com/antonybholmes/go-web v0.0.0-20250911200714-9343967f4537
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32
@@ -49,8 +49,8 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-sys v0.0.0-20250812213435-bed670f8992a
 	github.com/antonybholmes/go-mailserver v0.0.0-20250624151215-6958a0d6a9b4
+	github.com/antonybholmes/go-sys v0.0.0-20250911204215-49e6747dc058
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
