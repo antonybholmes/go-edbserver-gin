@@ -200,7 +200,11 @@ func main() {
 
 	rdfRoleMiddleware := middleware.JwtHasRDFRoleMiddleware()
 
-	sessionRoutes := authenticationroutes.NewSessionRoutes()
+	otp := authenticationroutes.NewOTP(rdb)
+
+	otpRoutes := authenticationroutes.NewOTPRoutes(otp)
+
+	sessionRoutes := authenticationroutes.NewSessionRoutes(otpRoutes)
 
 	//r := gin.Default()
 	r := gin.New()
@@ -245,8 +249,6 @@ func main() {
 			Arch:   runtime.GOARCH,
 			IpAddr: c.ClientIP()})
 	})
-
-	otpRoutes := authenticationroutes.NewOTP(rdb)
 
 	//
 	// Routes
@@ -365,17 +367,10 @@ func main() {
 
 	sessionOtpGroup := sessionAuthGroup.Group("/otp")
 
-	sessionOtpGroup.POST("/totp", func(c *gin.Context) {
-		otpRoutes.Email6DigitCodeRoute(c)
-
-	})
+	sessionOtpGroup.POST("/send", sessionRoutes.SessionEmailOTPRoute)
 
 	sessionOtpGroup.POST("/signin",
-		func(c *gin.Context) {
-			// first validate otp then proceed to normal username password signin
-			otpRoutes.OTPSigninRoute(c,
-				sessionRoutes.SessionUsernamePasswordSignInRoute)
-		})
+		sessionRoutes.SessionSignInUsingEmailAndOTPRoute)
 
 	sessionAuthGroup.POST("/passwordless/validate",
 		jwtUserMiddleWare,

@@ -15,16 +15,17 @@ import (
 )
 
 const OTP_TTL = 10 * time.Minute
+const KEY = "otp:"
 
 type OTP struct {
-	ctx context.Context
-	rdb *redis.Client
+	Context     context.Context
+	RedisClient *redis.Client
 }
 
 func NewOTP(rdb *redis.Client) *OTP {
 	return &OTP{
-		ctx: context.Background(),
-		rdb: rdb,
+		Context:     context.Background(),
+		RedisClient: rdb,
 	}
 }
 
@@ -44,79 +45,19 @@ func (otp *OTP) CacheDigitCode(username string) (string, error) {
 	return code, nil
 }
 
-func (otp *OTP) Email6DigitCodeRoute(c *gin.Context) {
-
-	validator, err := NewValidator(c).LoadAuthUserFromUsername().CheckUserHasVerifiedEmailAddress().Ok()
-
-	if err != nil {
-		web.BaseBadReqResp(c, err)
-		return
-	}
-
-	user := validator.AuthUser
-
-	code, err := otp.CacheDigitCode(validator.UserBodyReq.Username)
-
-	if err != nil {
-		web.BaseInternalErrorResp(c, err)
-		return
-	}
-
-	email := mailer.QueueEmail{
-		Name:      user.FirstName,
-		To:        user.Email,
-		Token:     code,
-		TTL:       fmt.Sprintf("%d minutes", int(OTP_TTL.Minutes())),
-		EmailType: mailer.QUEUE_EMAIL_TYPE_TOTP}
-	err = queue.PublishEmail(&email)
-
-	if err != nil {
-		log.Debug().Msgf("error sending email %v", err)
-		web.BaseInternalErrorResp(c, err)
-		return
-	}
-
-	web.MakeOkResp(c, "6 digit code sent to email")
-
-}
-
-func (otp *OTP) OTPSigninRoute(c *gin.Context, sessionSignIn func(c *gin.Context)) {
-
-	validator, err := NewValidator(c).LoadAuthUserFromUsername().CheckUserHasVerifiedEmailAddress().Ok()
-
-	if err != nil {
-		web.BaseBadReqResp(c, err)
-		return
-	}
-
-	user := validator.AuthUser
-
-	otpValid, err := otp.validate2FACode(user.Username, validator.UserBodyReq.OTP)
-
-	if !otpValid || err != nil {
-		web.BadReqResp(c, "invalid one time passcode")
-		return
-	}
-
-	log.Debug().Msgf("otp valid for %s", user.Username)
-
-	sessionSignIn(c)
-
-}
-
 func (otp *OTP) delete2FACode(username string) error {
-	key := "2fa:" + username
-	return otp.rdb.Del(otp.ctx, key).Err()
+	key := KEY + username
+	return otp.RedisClient.Del(otp.Context, key).Err()
 }
 
 func (otp *OTP) get2FACode(username string) (string, error) {
-	key := "2fa:" + username
-	return otp.rdb.Get(otp.ctx, key).Result()
+	key := KEY + username
+	return otp.RedisClient.Get(otp.Context, key).Result()
 }
 
 func (otp *OTP) store2FACode(username string, code string) error {
-	key := "2fa:" + username
-	return otp.rdb.Set(otp.ctx, key, code, OTP_TTL).Err() // expires in 5 mins
+	key := KEY + username
+	return otp.RedisClient.Set(otp.Context, key, code, OTP_TTL).Err() // expires in 5 mins
 }
 
 func (otp *OTP) validate2FACode(username string, input string) (bool, error) {
@@ -143,4 +84,54 @@ func (otp *OTP) validate2FACode(username string, input string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+type OTPRoutes struct {
+	OTP *OTP
+}
+
+func NewOTPRoutes(otp *OTP) *OTPRoutes {
+	return &OTPRoutes{
+		OTP: otp,
+	}
+}
+
+func (otpRoutes *OTPRoutes) EmailOTPRoute(c *gin.Context) {
+	otpRoutes.Email6DigitCodeRoute(c)
+}
+
+func (otpRoutes *OTPRoutes) Email6DigitCodeRoute(c *gin.Context) {
+
+	validator, err := NewValidator(c).CheckEmailIsWellFormed().Ok()
+
+	if err != nil {
+		web.BaseBadReqResp(c, err)
+		return
+	}
+
+	//user := validator.AuthUser
+	address := validator.Address
+
+	code, err := otpRoutes.OTP.CacheDigitCode(address.Address)
+
+	if err != nil {
+		web.BaseInternalErrorResp(c, err)
+		return
+	}
+
+	email := mailer.QueueEmail{
+		Name:      address.Address,
+		To:        address.Address,
+		Token:     code,
+		TTL:       fmt.Sprintf("%d minutes", int(OTP_TTL.Minutes())),
+		EmailType: mailer.QUEUE_EMAIL_TYPE_OTP}
+	err = queue.PublishEmail(&email)
+
+	if err != nil {
+		log.Debug().Msgf("error sending email %v", err)
+		web.BaseInternalErrorResp(c, err)
+		return
+	}
+
+	web.MakeOkResp(c, "6 digit code sent to email")
 }
