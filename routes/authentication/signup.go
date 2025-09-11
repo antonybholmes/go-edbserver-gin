@@ -4,11 +4,11 @@ import (
 	"fmt"
 
 	"github.com/antonybholmes/go-edb-server-gin/consts"
-	"github.com/antonybholmes/go-mailer"
-	"github.com/antonybholmes/go-mailer/queue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
+	mailserver "github.com/antonybholmes/go_mailserver"
+	"github.com/antonybholmes/go_mailserver/queue"
 	"github.com/gin-gonic/gin"
 )
 
@@ -51,11 +51,11 @@ func SignupRoute(c *gin.Context) {
 		//	return web.ErrorReq(err)
 		//}
 
-		email := mailer.QueueEmail{
+		email := mailserver.QueueEmail{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			Token:     token,
-			EmailType: mailer.QUEUE_EMAIL_TYPE_VERIFY,
+			EmailType: mailserver.QUEUE_EMAIL_TYPE_VERIFY,
 			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_VERIFY_EMAIL,
 			//VisitUrl:    req.VisitUrl
@@ -92,10 +92,10 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 		// 	"",
 		// 	"")
 
-		email := mailer.QueueEmail{
+		email := mailserver.QueueEmail{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: mailer.QUEUE_EMAIL_TYPE_VERIFIED}
+			EmailType: mailserver.QUEUE_EMAIL_TYPE_VERIFIED}
 		queue.PublishEmail(&email)
 
 		web.MakeOkResp(c, "email address verified")

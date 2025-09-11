@@ -3,10 +3,10 @@ package admin
 import (
 	"github.com/antonybholmes/go-edb-server-gin/consts"
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
-	"github.com/antonybholmes/go-mailer"
-	"github.com/antonybholmes/go-mailer/queue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/userdbcache"
+	mailserver "github.com/antonybholmes/go_mailserver"
+	"github.com/antonybholmes/go_mailserver/queue"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
@@ -159,10 +159,10 @@ func AddUserRoute(c *gin.Context) {
 		// tell user their account was created
 		//go SendAccountCreatedEmail(authUser, validator.Address)
 
-		email := mailer.QueueEmail{
+		email := mailserver.QueueEmail{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: mailer.QUEUE_EMAIL_TYPE_ACCOUNT_CREATED,
+			EmailType: mailserver.QUEUE_EMAIL_TYPE_ACCOUNT_CREATED,
 			LinkUrl:   consts.APP_URL}
 		queue.PublishEmail(&email)
 

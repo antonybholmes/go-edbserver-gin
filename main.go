@@ -31,6 +31,7 @@ import (
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
+	mailserver "github.com/antonybholmes/go_mailserver"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -46,14 +47,13 @@ import (
 	"github.com/antonybholmes/go-geneconv/geneconvdbcache"
 	"github.com/antonybholmes/go-genome/genomedbcache"
 	"github.com/antonybholmes/go-gex/gexdbcache"
-	"github.com/antonybholmes/go-mailer"
-	"github.com/antonybholmes/go-mailer/queue"
 	"github.com/antonybholmes/go-motifs/motifsdb"
 	"github.com/antonybholmes/go-mutations/mutationdbcache"
 	"github.com/antonybholmes/go-pathway/pathwaydbcache"
 	"github.com/antonybholmes/go-scrna/scrnadbcache"
 	"github.com/antonybholmes/go-seqs/seqsdbcache"
 	"github.com/antonybholmes/go-sys/env"
+	"github.com/antonybholmes/go_mailserver/queue"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -153,17 +153,17 @@ func init() {
 		DB:       0, // use default DB
 	})
 
-	//queue.Init(mailer.NewRedisEmailQueue(rdb))
+	//queue.Init(mailserver.NewRedisEmailQueue(rdb))
 
-	queue.Init(mailer.NewSQSEmailQueue(consts.SQS_QUEUE_URL))
+	queue.Init(mailserver.NewSQSEmailQueue(consts.SQS_QUEUE_URL))
 
 	// writer := kafka.NewWriter(kafka.WriterConfig{
 	// 	Brokers:  []string{"localhost:9094"}, // Kafka broker
-	// 	Topic:    mailer.QUEUE_EMAIL_CHANNEL, // Topic name
+	// 	Topic:    mailserver.QUEUE_EMAIL_CHANNEL, // Topic name
 	// 	Balancer: &kafka.LeastBytes{},        // Balancer (optional)
 	// })
 
-	// queue.Init(mailer.NewKafkaEmailPublisher(writer))
+	// queue.Init(mailserver.NewKafkaEmailPublisher(writer))
 }
 
 func main() {
@@ -183,7 +183,7 @@ func main() {
 	//initCache()
 
 	// test redis
-	//email := gomailer.QueueEmail{To: "antony@antonybholmes.dev"}
+	//email := gomailserver.QueueEmail{To: "antony@antonybholmes.dev"}
 	//rdb.PublishEmail(&email)
 
 	//

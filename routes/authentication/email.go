@@ -10,9 +10,9 @@ import (
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
+	mailserver "github.com/antonybholmes/go_mailserver"
 
-	"github.com/antonybholmes/go-mailer"
-	"github.com/antonybholmes/go-mailer/queue"
+	"github.com/antonybholmes/go_mailserver/queue"
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,11 +52,11 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 		// 	req.CallbackUrl,
 		// 	req.VisitUrl)
 
-		email := mailer.QueueEmail{
+		email := mailserver.QueueEmail{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			Token:     otpToken,
-			EmailType: mailer.QUEUE_EMAIL_TYPE_EMAIL_RESET,
+			EmailType: mailserver.QUEUE_EMAIL_TYPE_EMAIL_RESET,
 			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_RESET_EMAIL,
 		}
@@ -106,10 +106,10 @@ func UpdateEmailRoute(c *gin.Context) {
 
 		//return SendEmailChangedEmail(c, authUser)
 
-		email := mailer.QueueEmail{
+		email := mailserver.QueueEmail{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: mailer.QUEUE_EMAIL_TYPE_EMAIL_UPDATED}
+			EmailType: mailserver.QUEUE_EMAIL_TYPE_EMAIL_UPDATED}
 		queue.PublishEmail(&email)
 
 		web.MakeOkResp(c, "email updated confirmation email sent")

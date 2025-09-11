@@ -6,10 +6,10 @@ import (
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/userdbcache"
+	mailserver "github.com/antonybholmes/go_mailserver"
 	"github.com/gin-contrib/sessions"
 
-	"github.com/antonybholmes/go-mailer"
-	"github.com/antonybholmes/go-mailer/queue"
+	"github.com/antonybholmes/go_mailserver/queue"
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,11 +52,11 @@ func SessionUpdateUserRoute(c *gin.Context) {
 
 		//SendUserInfoUpdatedEmail(c, authUser)
 
-		email := mailer.QueueEmail{
+		email := mailserver.QueueEmail{
 			Name: authUser.FirstName,
 			To:   authUser.Email,
 			//Token:     passwordlessToken,
-			EmailType: mailer.QUEUE_EMAIL_TYPE_EMAIL_UPDATED,
+			EmailType: mailserver.QUEUE_EMAIL_TYPE_EMAIL_UPDATED,
 			//Ttl:       fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
 			//LinkUrl:   consts.URL_SIGN_IN,
 			//VisitUrl:    validator.Req.VisitUrl

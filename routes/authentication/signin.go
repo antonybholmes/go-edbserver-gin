@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	"github.com/antonybholmes/go-edb-server-gin/consts"
-	"github.com/antonybholmes/go-mailer"
-	"github.com/antonybholmes/go-mailer/queue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
+	mailserver "github.com/antonybholmes/go_mailserver"
+	"github.com/antonybholmes/go_mailserver/queue"
 	"github.com/gin-gonic/gin"
 )
 
@@ -114,11 +114,11 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 
 		//log.Debug().Msgf("t %s ", passwordlessToken)
 
-		email := mailer.QueueEmail{
+		email := mailserver.QueueEmail{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			Token:     passwordlessToken,
-			EmailType: mailer.QUEUE_EMAIL_TYPE_PASSWORDLESS,
+			EmailType: mailserver.QUEUE_EMAIL_TYPE_PASSWORDLESS,
 			TTL:       fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
 			//LinkUrl:   consts.URL_SIGN_IN,
 			//VisitUrl:    validator.Req.VisitUrl

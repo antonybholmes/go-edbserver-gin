@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/antonybholmes/go-mailer"
-	"github.com/antonybholmes/go-mailer/queue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
+	mailserver "github.com/antonybholmes/go_mailserver"
+	"github.com/antonybholmes/go_mailserver/queue"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog/log"
@@ -119,12 +119,12 @@ func (otpRoutes *OTPRoutes) Email6DigitCodeRoute(c *gin.Context) {
 		return
 	}
 
-	email := mailer.QueueEmail{
+	email := mailserver.QueueEmail{
 		Name:      address.Address,
 		To:        address.Address,
 		Token:     code,
 		TTL:       fmt.Sprintf("%d minutes", int(OTP_TTL.Minutes())),
-		EmailType: mailer.QUEUE_EMAIL_TYPE_OTP}
+		EmailType: mailserver.QUEUE_EMAIL_TYPE_OTP}
 	err = queue.PublishEmail(&email)
 
 	if err != nil {

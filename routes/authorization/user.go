@@ -1,12 +1,12 @@
 package authorization
 
 import (
-	"github.com/antonybholmes/go-mailer/queue"
 	"github.com/antonybholmes/go-web/userdbcache"
+	mailserver "github.com/antonybholmes/go_mailserver"
+	"github.com/antonybholmes/go_mailserver/queue"
 	"github.com/rs/zerolog/log"
 
 	authenticationroutes "github.com/antonybholmes/go-edb-server-gin/routes/authentication"
-	"github.com/antonybholmes/go-mailer"
 	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 )
@@ -58,9 +58,9 @@ func UpdateUserRoute(c *gin.Context) {
 		}
 
 		// send email notification of change
-		email := mailer.QueueEmail{Name: authUser.FirstName,
+		email := mailserver.QueueEmail{Name: authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: mailer.QUEUE_EMAIL_TYPE_ACCOUNT_UPDATED}
+			EmailType: mailserver.QUEUE_EMAIL_TYPE_ACCOUNT_UPDATED}
 		queue.PublishEmail(&email)
 
 		// send back updated user to having to do a separate call to get the new data
