@@ -339,7 +339,7 @@ func MakeGeneTable(
 
 	headers[0] = "Location"
 	headers[1] = "Gene Id"
-	headers[2] = "Gene Name"
+	headers[2] = "Gene Symbol"
 	headers[3] = fmt.Sprintf(
 		"Relative To Gene (prom=-%d/+%dkb)",
 		ts.Offset5P()/1000,
@@ -375,7 +375,7 @@ func MakeGeneTable(
 
 		for i, gene := range annotation.WithinGenes {
 			geneIds[i] = gene.GeneId
-			geneNames[i] = gene.GeneName
+			geneNames[i] = gene.GeneSymbol
 			promLabels[i] = gene.PromLabel
 			tssDists[i] = strconv.Itoa(gene.TssDist)
 
@@ -389,7 +389,7 @@ func MakeGeneTable(
 
 		for _, closestGene := range annotation.ClosestGenes {
 			row = append(row, closestGene.GeneId)
-			row = append(row, genome.GeneWithStrandLabel(closestGene.GeneName, closestGene.Strand))
+			row = append(row, genome.GeneWithStrandLabel(closestGene.GeneSymbol, closestGene.Strand))
 			row = append(row, closestGene.PromLabel)
 			row = append(row, strconv.Itoa(closestGene.TssDist))
 			//row = append(row, closestGene.Location.String())

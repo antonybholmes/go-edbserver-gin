@@ -97,10 +97,6 @@ func NewOTPRoutes(otp *OTP) *OTPRoutes {
 }
 
 func (otpRoutes *OTPRoutes) EmailOTPRoute(c *gin.Context) {
-	otpRoutes.Email6DigitCodeRoute(c)
-}
-
-func (otpRoutes *OTPRoutes) Email6DigitCodeRoute(c *gin.Context) {
 
 	validator, err := NewValidator(c).CheckEmailIsWellFormed().Ok()
 
@@ -108,6 +104,8 @@ func (otpRoutes *OTPRoutes) Email6DigitCodeRoute(c *gin.Context) {
 		web.BaseBadReqResp(c, err)
 		return
 	}
+
+	log.Debug().Msgf("SessionSignInUsingEmailAndOTPRoute")
 
 	//user := validator.AuthUser
 	address := validator.Address

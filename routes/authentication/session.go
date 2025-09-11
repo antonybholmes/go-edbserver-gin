@@ -373,6 +373,7 @@ func (sessionRoutes *SessionRoutes) SessionEmailOTPRoute(c *gin.Context) {
 }
 
 func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Context) {
+
 	validator, err := NewValidator(c).CheckEmailIsWellFormed().Ok()
 
 	if err != nil {
