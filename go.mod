@@ -1,4 +1,4 @@
-module github.com/antonybholmes/go-edb-server-gin
+module github.com/antonybholmes/go_edbserver_gin
 
 go 1.25
 
