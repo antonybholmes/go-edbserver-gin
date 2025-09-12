@@ -91,6 +91,7 @@ func initLogger() {
 	// to see debugging work. The default is to assume production, in which case we use
 	// lumberjack
 	if os.Getenv("APP_ENV") != "development" {
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 		logger = zerolog.New(io.MultiWriter(zerolog.ConsoleWriter{Out: os.Stderr}, fileLogger)).With().Timestamp().Logger()
 	}
 
