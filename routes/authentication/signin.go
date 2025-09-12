@@ -5,7 +5,7 @@ import (
 
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	mailserver "github.com/antonybholmes/go-mailserver"
-	"github.com/antonybholmes/go-mailserver/queue"
+	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/tokengen"
@@ -114,7 +114,7 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 
 		//log.Debug().Msgf("t %s ", passwordlessToken)
 
-		email := mailserver.QueueEmail{
+		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			Token:     passwordlessToken,
@@ -124,7 +124,7 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 			//VisitUrl:    validator.Req.VisitUrl
 		}
 
-		queue.PublishEmail(&email)
+		mailqueue.SendMail(&email)
 
 		//if err != nil {
 		//	return web.ErrorReq(err)

@@ -12,7 +12,7 @@ import (
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
 
-	"github.com/antonybholmes/go-mailserver/queue"
+	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,7 +52,7 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 		// 	req.CallbackUrl,
 		// 	req.VisitUrl)
 
-		email := mailserver.QueueEmail{
+		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			Token:     otpToken,
@@ -60,7 +60,7 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_RESET_EMAIL,
 		}
-		queue.PublishEmail(&email)
+		mailqueue.SendMail(&email)
 
 		//if err != nil {
 		//	return web.ErrorReq(err)
@@ -106,11 +106,11 @@ func UpdateEmailRoute(c *gin.Context) {
 
 		//return SendEmailChangedEmail(c, authUser)
 
-		email := mailserver.QueueEmail{
+		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			EmailType: mailserver.QUEUE_EMAIL_TYPE_EMAIL_UPDATED}
-		queue.PublishEmail(&email)
+		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "email updated confirmation email sent")
 	})

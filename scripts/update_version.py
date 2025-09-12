@@ -1,25 +1,27 @@
 from dotenv import dotenv_values
 from datetime import datetime
- 
+
+INC = 2
+
 # current time and date
 # datetime object
 time = datetime.now()
 
-config = dotenv_values("version.env") 
+config = dotenv_values("version.env")
 
-#print(config)
+# print(config)
 
 major, minor, patch, build = [int(x) for x in config["VERSION"].split(".")]
 
-build += 1
-patch += 1
+build += INC
+patch += INC
 
 if patch > 9:
-    minor += 1
+    minor += INC
     patch = 0
 
 if minor > 9:
-    major += 1
+    major += INC
     minor = 0
 
 config["VERSION"] = f"{major}.{minor}.{patch}.{build}"

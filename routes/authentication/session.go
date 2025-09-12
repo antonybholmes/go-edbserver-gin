@@ -206,7 +206,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 		return
 	}
 
-	web.MakeCsrfTokenResp(c)
+	web.MakeNewCSRFTokenResp(c)
 	//return c.NoContent(http.StatusOK)
 }
 
@@ -425,7 +425,7 @@ func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, aut
 
 	//log.Debug().Msgf("token %s", token)
 
-	web.MakeCsrfTokenResp(c)
+	web.MakeNewCSRFTokenResp(c)
 
 	//web.MakeOkResp(c, "user has been signed in")
 }
@@ -513,8 +513,8 @@ func (sessionRoutes *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 	web.MakeDataResp(c, "", sessionInfo)
 }
 
-func (sessionRoutes *SessionRoutes) SessionCsrfTokenRoute(c *gin.Context) {
-	web.MakeCsrfTokenResp(c)
+func (sessionRoutes *SessionRoutes) SessionNewCSRFTokenRoute(c *gin.Context) {
+	web.MakeNewCSRFTokenResp(c)
 }
 
 func (sessionRoutes *SessionRoutes) SessionRefreshRoute(c *gin.Context) {

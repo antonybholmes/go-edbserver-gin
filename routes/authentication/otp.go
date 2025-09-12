@@ -6,7 +6,7 @@ import (
 	"time"
 
 	mailserver "github.com/antonybholmes/go-mailserver"
-	"github.com/antonybholmes/go-mailserver/queue"
+	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/gin-gonic/gin"
@@ -117,13 +117,13 @@ func (otpRoutes *OTPRoutes) EmailOTPRoute(c *gin.Context) {
 		return
 	}
 
-	email := mailserver.QueueEmail{
+	email := mailserver.MailItem{
 		Name:      address.Address,
 		To:        address.Address,
 		Token:     code,
 		TTL:       fmt.Sprintf("%d minutes", int(OTP_TTL.Minutes())),
 		EmailType: mailserver.QUEUE_EMAIL_TYPE_OTP}
-	err = queue.PublishEmail(&email)
+	err = mailqueue.SendMail(&email)
 
 	if err != nil {
 		log.Debug().Msgf("error sending email %v", err)

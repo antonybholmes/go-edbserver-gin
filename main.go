@@ -47,7 +47,7 @@ import (
 	"github.com/antonybholmes/go-geneconv/geneconvdbcache"
 	"github.com/antonybholmes/go-genome/genomedbcache"
 	"github.com/antonybholmes/go-gex/gexdbcache"
-	"github.com/antonybholmes/go-mailserver/queue"
+	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-motifs/motifsdb"
 	"github.com/antonybholmes/go-mutations/mutationdbcache"
 	"github.com/antonybholmes/go-pathway/pathwaydbcache"
@@ -155,7 +155,7 @@ func init() {
 
 	//queue.Init(mailserver.NewRedisEmailQueue(rdb))
 
-	queue.Init(mailserver.NewSQSEmailQueue(consts.SQS_QUEUE_URL))
+	mailqueue.Init(mailserver.NewSQSEmailQueue(consts.SQS_QUEUE_URL))
 
 	// writer := kafka.NewWriter(kafka.WriterConfig{
 	// 	Brokers:  []string{"localhost:9094"}, // Kafka broker
@@ -393,8 +393,8 @@ func main() {
 		sessionMiddleware,
 		sessionRoutes.SessionInfoRoute)
 
-	sessionGroup.GET("/csrf-token",
-		sessionRoutes.SessionCsrfTokenRoute)
+	sessionGroup.POST("/csrf-token/refresh",
+		sessionRoutes.SessionNewCSRFTokenRoute)
 
 	sessionGroup.POST("/signout",
 		//csrfMiddleware,

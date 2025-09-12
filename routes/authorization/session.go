@@ -9,7 +9,7 @@ import (
 	"github.com/antonybholmes/go-web/userdbcache"
 	"github.com/gin-contrib/sessions"
 
-	"github.com/antonybholmes/go-mailserver/queue"
+	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,7 +52,7 @@ func SessionUpdateUserRoute(c *gin.Context) {
 
 		//SendUserInfoUpdatedEmail(c, authUser)
 
-		email := mailserver.QueueEmail{
+		email := mailserver.MailItem{
 			Name: authUser.FirstName,
 			To:   authUser.Email,
 			//Token:     passwordlessToken,
@@ -62,7 +62,7 @@ func SessionUpdateUserRoute(c *gin.Context) {
 			//VisitUrl:    validator.Req.VisitUrl
 		}
 
-		queue.PublishEmail(&email)
+		mailqueue.SendMail(&email)
 	})
 }
 

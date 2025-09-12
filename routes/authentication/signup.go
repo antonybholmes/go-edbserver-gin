@@ -5,7 +5,7 @@ import (
 
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	mailserver "github.com/antonybholmes/go-mailserver"
-	"github.com/antonybholmes/go-mailserver/queue"
+	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
@@ -51,7 +51,7 @@ func SignupRoute(c *gin.Context) {
 		//	return web.ErrorReq(err)
 		//}
 
-		email := mailserver.QueueEmail{
+		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			Token:     token,
@@ -61,7 +61,7 @@ func SignupRoute(c *gin.Context) {
 			//VisitUrl:    req.VisitUrl
 		}
 
-		queue.PublishEmail(&email)
+		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "check your email for a verification link")
 	})
@@ -92,11 +92,11 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 		// 	"",
 		// 	"")
 
-		email := mailserver.QueueEmail{
+		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			EmailType: mailserver.QUEUE_EMAIL_TYPE_VERIFIED}
-		queue.PublishEmail(&email)
+		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "email address verified")
 	})

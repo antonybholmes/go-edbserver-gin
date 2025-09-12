@@ -14,7 +14,7 @@ import (
 )
 
 const NAME = "Experiments Server"
-const APP_NAME = "edb-server"
+const APP_NAME = "edbserver"
 const COPYRIGHT = "Copyright (C) 2024-2025 Antony Holmes"
 
 var APP_URL string
