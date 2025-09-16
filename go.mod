@@ -41,7 +41,7 @@ require (
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20250624211225-358f1d2ad8fc
-	github.com/antonybholmes/go-web v0.0.0-20250911200714-9343967f4537
+	github.com/antonybholmes/go-web v0.0.0-20250912220821-acc03bdb6244
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32
