@@ -105,7 +105,7 @@ func (otpRoutes *OTPRoutes) EmailOTPRoute(c *gin.Context) {
 		return
 	}
 
-	log.Debug().Msgf("SessionSignInUsingEmailAndOTPRoute")
+	log.Debug().Msgf("EmailOTPRoute")
 
 	//user := validator.AuthUser
 	address := validator.Address
