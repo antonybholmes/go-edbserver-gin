@@ -16,6 +16,8 @@ replace github.com/antonybholmes/go-sys => ../go-sys
 
 replace github.com/antonybholmes/go-mailserver => ../go-mailserver
 
+replace github.com/antonybholmes/go-edbmailserver => ../go-edbmailserver
+
 replace github.com/antonybholmes/go-geneconv => ../go-geneconv
 
 replace github.com/antonybholmes/go-motifs => ../go-motifs
@@ -34,6 +36,8 @@ replace github.com/antonybholmes/go-hubs => ../go-hubs
 
 replace github.com/antonybholmes/go-scrna => ../go-scrna
 
+require github.com/antonybholmes/go-edbmailserver v0.0.0-20250911171638-68021ab78342
+
 require (
 	github.com/antonybholmes/go-basemath v0.0.0-20250911171638-68021ab78342 // indirect
 	github.com/antonybholmes/go-dna v0.0.0-20250911221452-259e76605944
@@ -49,7 +53,7 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-mailserver v0.0.0-20250624151215-6958a0d6a9b4
+	github.com/antonybholmes/go-mailserver v0.0.0-20250912220824-1953053c63aa
 	github.com/antonybholmes/go-sys v0.0.0-20250911204215-49e6747dc058
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
@@ -109,6 +113,7 @@ require (
 	github.com/matoous/go-nanoid/v2 v2.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/panjf2000/ants v1.3.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect

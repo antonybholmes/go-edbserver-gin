@@ -5,6 +5,7 @@ import (
 
 	"net/mail"
 
+	"github.com/antonybholmes/go-edbmailserver/edbmailserver"
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-web"
@@ -29,7 +30,7 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 			return
 		}
 
-		otpToken, err := tokengen.ResetEmailToken(c, authUser, newEmail)
+		otpToken, err := tokengen.MakeResetEmailToken(c, authUser, newEmail)
 
 		if err != nil {
 			c.Error(err)
@@ -55,8 +56,8 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			Token:     otpToken,
-			EmailType: mailserver.QUEUE_EMAIL_TYPE_EMAIL_RESET,
+			Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
+			EmailType: edbmailserver.QUEUE_EMAIL_TYPE_EMAIL_RESET,
 			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_RESET_EMAIL,
 		}
@@ -109,7 +110,7 @@ func UpdateEmailRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: mailserver.QUEUE_EMAIL_TYPE_EMAIL_UPDATED}
+			EmailType: edbmailserver.QUEUE_EMAIL_TYPE_EMAIL_UPDATED}
 		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "email updated confirmation email sent")

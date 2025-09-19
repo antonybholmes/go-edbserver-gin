@@ -1,6 +1,7 @@
 package authorization
 
 import (
+	edbmailserver "github.com/antonybholmes/go-edbmailserver/edbmailserver"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
@@ -60,7 +61,7 @@ func UpdateUserRoute(c *gin.Context) {
 		// send email notification of change
 		email := mailserver.MailItem{Name: authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: mailserver.QUEUE_EMAIL_TYPE_ACCOUNT_UPDATED}
+			EmailType: edbmailserver.QUEUE_EMAIL_TYPE_ACCOUNT_UPDATED}
 		mailqueue.SendMail(&email)
 
 		// send back updated user to having to do a separate call to get the new data

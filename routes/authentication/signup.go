@@ -3,6 +3,7 @@ package authentication
 import (
 	"fmt"
 
+	"github.com/antonybholmes/go-edbmailserver/edbmailserver"
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
@@ -23,7 +24,7 @@ func SignupRoute(c *gin.Context) {
 			return
 		}
 
-		token, err := tokengen.VerifyEmailToken(c, authUser, req.RedirectUrl)
+		token, err := tokengen.MakeVerifyEmailToken(c, authUser, req.RedirectUrl)
 
 		//log.Debug().Msgf("%s", otpJwt)
 
@@ -54,8 +55,8 @@ func SignupRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			Token:     token,
-			EmailType: mailserver.QUEUE_EMAIL_TYPE_VERIFY,
+			Payload:   &mailserver.Payload{DataType: "jwt", Data: token},
+			EmailType: edbmailserver.QUEUE_EMAIL_TYPE_VERIFY,
 			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_VERIFY_EMAIL,
 			//VisitUrl:    req.VisitUrl
@@ -95,7 +96,7 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: mailserver.QUEUE_EMAIL_TYPE_VERIFIED}
+			EmailType: edbmailserver.QUEUE_EMAIL_TYPE_VERIFIED}
 		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "email address verified")

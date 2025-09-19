@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/antonybholmes/go-edbmailserver/edbmailserver"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
@@ -120,9 +121,9 @@ func (otpRoutes *OTPRoutes) EmailOTPRoute(c *gin.Context) {
 	email := mailserver.MailItem{
 		Name:      address.Address,
 		To:        address.Address,
-		Token:     code,
+		Payload:   &mailserver.Payload{DataType: "code", Data: code},
 		TTL:       fmt.Sprintf("%d minutes", int(OTP_TTL.Minutes())),
-		EmailType: mailserver.QUEUE_EMAIL_TYPE_OTP}
+		EmailType: edbmailserver.QUEUE_EMAIL_TYPE_OTP}
 	err = mailqueue.SendMail(&email)
 
 	if err != nil {

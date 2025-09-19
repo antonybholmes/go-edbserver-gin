@@ -3,6 +3,7 @@ package authentication
 import (
 	"fmt"
 
+	"github.com/antonybholmes/go-edbmailserver/edbmailserver"
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
@@ -23,7 +24,7 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 		authUser := validator.AuthUser
 		//req := validator.LoginBodyReq
 
-		otpToken, err := tokengen.ResetPasswordToken(c, authUser)
+		otpToken, err := tokengen.MakeResetPasswordToken(c, authUser)
 
 		if err != nil {
 			c.Error(err)
@@ -48,8 +49,8 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			Token:     otpToken,
-			EmailType: mailserver.QUEUE_EMAIL_TYPE_PASSWORD_RESET,
+			Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
+			EmailType: edbmailserver.QUEUE_EMAIL_TYPE_PASSWORD_RESET,
 			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_RESET_PASSWORD}
 		mailqueue.SendMail(&email)
@@ -91,7 +92,7 @@ func UpdatePasswordRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: mailserver.QUEUE_EMAIL_TYPE_PASSWORD_UPDATED}
+			EmailType: edbmailserver.QUEUE_EMAIL_TYPE_PASSWORD_UPDATED}
 		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "password updated confirmation email sent")
