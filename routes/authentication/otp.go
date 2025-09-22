@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/antonybholmes/go-edbmailserver/edbmailserver"
+	edbmailserver "github.com/antonybholmes/go-edbmailserver/mail"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"

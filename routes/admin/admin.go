@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"github.com/antonybholmes/go-edbmailserver/edbmailserver"
+	edbmailserver "github.com/antonybholmes/go-edbmailserver/mail"
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	mailserver "github.com/antonybholmes/go-mailserver"

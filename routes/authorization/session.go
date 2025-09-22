@@ -1,7 +1,7 @@
 package authorization
 
 import (
-	edbmailserver "github.com/antonybholmes/go-edbmailserver/edbmailserver"
+	edbmailserver "github.com/antonybholmes/go-edbmailserver/mail"
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-web"
