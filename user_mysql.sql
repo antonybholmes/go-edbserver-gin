@@ -15,11 +15,11 @@ CREATE TABLE permissions (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL);
 CREATE INDEX roles_name_idx ON permissions (name);
 
-INSERT INTO permissions (public_id, name, description) VALUES('uwkrk2ljj387', 'Super', 'Superuser');
-INSERT INTO permissions (public_id, name, description) VALUES('iz4kbfy3z0a3', 'Admin', 'Administrator');
-INSERT INTO permissions (public_id, name, description) VALUES('loq75e7zqcbl', 'User', 'User');
-INSERT INTO permissions (public_id, name, description) VALUES('kflynb03pxbj', 'Login', 'Can login');
-INSERT INTO permissions (public_id, name, description) VALUES('og1o5d0p0mjy', 'RDF', 'Can view RDF lab data');
+INSERT INTO permissions (public_id, name, description) VALUES('01997350-f1db-734a-aabc-b738772a9d0c', 'Super', 'Superuser');
+INSERT INTO permissions (public_id, name, description) VALUES('01997351-06c7-7f0d-b026-c51376a044ee', 'Admin', 'Administrator');
+INSERT INTO permissions (public_id, name, description) VALUES('01997351-16e5-70f6-b869-ba08cdac4c85', 'User', 'User');
+INSERT INTO permissions (public_id, name, description) VALUES('01997351-2586-7e76-8a34-db50b222d47a', 'Login', 'Can login');
+INSERT INTO permissions (public_id, name, description) VALUES('01997351-36fe-7e77-b06b-8222ab057601', 'RDF', 'Can view RDF lab data');
 
 
 
@@ -32,12 +32,12 @@ CREATE TABLE roles (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL);
 CREATE INDEX roles_name_idx ON roles (name);
 
-INSERT INTO roles (public_id, name) VALUES('p1gbjods0h90', 'Super');
-INSERT INTO roles (public_id, name) VALUES('mk4bgg4w43fp', 'Admin');
-INSERT INTO roles (public_id, name) VALUES('3xvte0ik4aq4', 'User');
+INSERT INTO roles (public_id, name) VALUES('01997351-4c4b-7900-adb9-eeb64f772ed7', 'Super');
+INSERT INTO roles (public_id, name) VALUES('01997351-7d4f-72bc-aba9-1fbd2d5d41a2', 'Admin');
+INSERT INTO roles (public_id, name) VALUES('01997351-8b67-758e-b798-f200f70c653b', 'User');
 -- INSERT INTO roles (public_id, name) VALUES('UZuAVHDGToa4F786IPTijA==', 'GetDNA');
-INSERT INTO roles (public_id, name) VALUES('x4ewk9papip2', 'Signin');
-INSERT INTO roles (public_id, name) VALUES('kh2yynyheqhv', 'RDF');
+INSERT INTO roles (public_id, name) VALUES('01997351-9ba1-7a6e-9560-fc03b3098665', 'Signin');
+INSERT INTO roles (public_id, name) VALUES('01997351-aac6-7fcc-b886-b3f0585b90d8', 'RDF');
 
 
 CREATE TABLE roles_permissions (
@@ -138,9 +138,9 @@ INSERT INTO users_roles (user_id, role_id) VALUES (2, 3);
 INSERT INTO users_roles (user_id, role_id) VALUES (2, 4);
 INSERT INTO users_roles (user_id, role_id) VALUES (2, 5);
 -- default key --
-INSERT INTO api_keys (user_id, api_key) VALUES (1, '4715057f-0b11-49d0-8a7b-296a2248046d');
+INSERT INTO api_keys (user_id, api_key) VALUES (1, '01997352-5d48-7f9d-b244-5cee8a0239dd');
 
 -- RDF api key --
-INSERT INTO api_keys (user_id, api_key) VALUES (2, 'f80e8d48-112b-4760-8efa-9754d3469f6b');
-INSERT INTO api_keys (user_id, api_key) VALUES (2, '887af980-995b-46c3-80d7-6223491e398f'); 
+INSERT INTO api_keys (user_id, api_key) VALUES (2, '01997352-4858-7909-a3a2-5c0a0329f083');
+INSERT INTO api_keys (user_id, api_key) VALUES (2, '01997352-71f9-7bd1-b288-a885227ce00a'); 
  
