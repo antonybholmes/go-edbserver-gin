@@ -181,3 +181,15 @@ func RandomKeyRoute(c *gin.Context) {
 
 	web.MakeDataResp(c, "", ret)
 }
+
+func UUIDRoute(c *gin.Context) {
+
+	uuid, err := sys.Uuid()
+
+	if err != nil {
+		web.BaseBadReqResp(c, err)
+		return
+	}
+
+	web.MakeDataResp(c, "UUID v7", uuid)
+}

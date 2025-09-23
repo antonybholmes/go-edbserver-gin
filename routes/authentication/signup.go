@@ -3,7 +3,7 @@ package authentication
 import (
 	"fmt"
 
-	edbmailserver "github.com/antonybholmes/go-edbmailserver/mail"
+	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
@@ -56,7 +56,7 @@ func SignupRoute(c *gin.Context) {
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "jwt", Data: token},
-			EmailType: edbmailserver.QUEUE_EMAIL_TYPE_VERIFY,
+			EmailType: edbmail.QUEUE_EMAIL_TYPE_VERIFY,
 			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_VERIFY_EMAIL,
 			//VisitUrl:    req.VisitUrl
@@ -96,7 +96,7 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: edbmailserver.QUEUE_EMAIL_TYPE_VERIFIED}
+			EmailType: edbmail.QUEUE_EMAIL_TYPE_VERIFIED}
 		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "email address verified")

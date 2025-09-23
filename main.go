@@ -597,12 +597,13 @@ func main() {
 
 	utilsGroup.GET("/passwords/hash", utilsroutes.HashedPasswordRoute)
 	utilsGroup.GET("/randkey", utilsroutes.RandomKeyRoute)
+	utilsGroup.GET("/uuid", utilsroutes.UUIDRoute)
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
+	// r.GET("/ping", func(c *gin.Context) {
+	// 	c.JSON(http.StatusOK, gin.H{
+	// 		"message": "pong",
+	// 	})
+	// })
 
 	// required so it can listen externally within docker container
 	r.Run("0.0.0.0:8080") //"localhost:8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

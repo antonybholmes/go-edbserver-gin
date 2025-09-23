@@ -1,7 +1,7 @@
 package authorization
 
 import (
-	edbmailserver "github.com/antonybholmes/go-edbmailserver/mail"
+	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-web"
@@ -57,7 +57,7 @@ func SessionUpdateUserRoute(c *gin.Context) {
 			Name: authUser.FirstName,
 			To:   authUser.Email,
 			//Token:     passwordlessToken,
-			EmailType: edbmailserver.QUEUE_EMAIL_TYPE_ACCOUNT_UPDATED,
+			EmailType: edbmail.QUEUE_EMAIL_TYPE_ACCOUNT_UPDATED,
 			//Ttl:       fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
 			//LinkUrl:   consts.URL_SIGN_IN,
 			//VisitUrl:    validator.Req.VisitUrl

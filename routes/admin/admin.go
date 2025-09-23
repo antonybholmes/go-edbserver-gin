@@ -1,7 +1,7 @@
 package admin
 
 import (
-	edbmailserver "github.com/antonybholmes/go-edbmailserver/mail"
+	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	mailserver "github.com/antonybholmes/go-mailserver"
@@ -163,7 +163,7 @@ func AddUserRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: edbmailserver.QUEUE_EMAIL_TYPE_ACCOUNT_CREATED,
+			EmailType: edbmail.QUEUE_EMAIL_TYPE_ACCOUNT_CREATED,
 			LinkUrl:   consts.APP_URL}
 		mailqueue.SendMail(&email)
 
