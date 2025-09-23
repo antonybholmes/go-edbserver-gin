@@ -1,5 +1,5 @@
 msg=$1 #"Bug fixes and updates."
-type="fix"
+type="Fix"
 branch="dev"
 
 if [[ -z "${msg}" ]]
