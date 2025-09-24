@@ -11,6 +11,7 @@ import (
 	"github.com/antonybholmes/go-beds/bedsdbcache"
 	"github.com/antonybholmes/go-cytobands/cytobandsdbcache"
 	"github.com/antonybholmes/go-dna/dnadbcache"
+	"github.com/antonybholmes/go-edbserver-gin/authorization"
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	adminroutes "github.com/antonybholmes/go-edbserver-gin/routes/admin"
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
@@ -167,6 +168,8 @@ func init() {
 	// })
 
 	// queue.Init(mailserver.NewKafkaEmailPublisher(writer))
+
+	authorization.ModuleRoles("scrna")
 }
 
 func main() {
@@ -475,28 +478,27 @@ func main() {
 	gexGroup.GET("/technologies", gexroutes.TechnologiesRoute)
 	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
 
-	gexGroup.GET("/datasets/:species/:technology",
-		jwtUserMiddleWare,
+	// protected routes
+	gexProtectedGroup := gexGroup.Group("", jwtUserMiddleWare,
 		accessTokenMiddleware,
-		rdfRoleMiddleware,
+		rdfRoleMiddleware)
+
+	gexProtectedGroup.GET("/datasets/:species/:technology",
 		gexroutes.GexDatasetsRoute)
 
-	gexGroup.POST("/exp",
-		jwtUserMiddleWare,
-		accessTokenMiddleware,
-		rdfRoleMiddleware,
-		gexroutes.GexGeneExpRoute,
-	)
+	gexProtectedGroup.POST("/exp",
+		gexroutes.GexGeneExpRoute)
 
 	scrnaGroup := moduleGroup.Group("/scrna")
 	scrnaGroup.GET("/species", scrnaroutes.ScrnaSpeciesRoute)
 	scrnaGroup.GET("/assemblies/:species", scrnaroutes.ScrnaAssembliesRoute)
 	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
 
-	scrnaGroup.GET("/datasets/:species/:assembly",
-		jwtUserMiddleWare,
+	scrnaProtectedGroup := scrnaGroup.Group("", jwtUserMiddleWare,
 		accessTokenMiddleware,
-		rdfRoleMiddleware,
+		rdfRoleMiddleware)
+
+	scrnaProtectedGroup.GET("/datasets/:species/:assembly",
 		scrnaroutes.ScrnaDatasetsRoute)
 
 	// scrnaGroup.GET("/clusters/:id",
@@ -506,33 +508,17 @@ func main() {
 	// 	scrnaroutes.ScrnaClustersRoute,
 	// )
 
-	scrnaGroup.GET("/metadata/:id",
-		jwtUserMiddleWare,
-		accessTokenMiddleware,
-		rdfRoleMiddleware,
-		scrnaroutes.ScrnaMetadataRoute,
-	)
+	scrnaProtectedGroup.GET("/metadata/:id",
+		scrnaroutes.ScrnaMetadataRoute)
 
-	scrnaGroup.GET("/genes/:id",
-		jwtUserMiddleWare,
-		accessTokenMiddleware,
-		rdfRoleMiddleware,
-		scrnaroutes.ScrnaGenesRoute,
-	)
+	scrnaProtectedGroup.GET("/genes/:id",
+		scrnaroutes.ScrnaGenesRoute)
 
-	scrnaGroup.GET("/genes/search/:id",
-		jwtUserMiddleWare,
-		accessTokenMiddleware,
-		rdfRoleMiddleware,
-		scrnaroutes.ScrnaSearchGenesRoute,
-	)
+	scrnaProtectedGroup.GET("/genes/search/:id",
+		scrnaroutes.ScrnaSearchGenesRoute)
 
-	scrnaGroup.POST("/gex/:id",
-		jwtUserMiddleWare,
-		accessTokenMiddleware,
-		rdfRoleMiddleware,
-		scrnaroutes.ScrnaGexRoute,
-	)
+	scrnaProtectedGroup.POST("/gex/:id",
+		scrnaroutes.ScrnaGexRoute)
 
 	hubsGroup := moduleGroup.Group("/hubs")
 	hubsGroup.GET("/:assembly",
