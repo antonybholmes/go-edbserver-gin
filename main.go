@@ -74,6 +74,8 @@ var store cookie.Store
 
 var rdb *redis.Client
 
+const PREFLIGHT_MAX_AGE = 12 * 3600 // 12 hours
+
 func initLogger() {
 	fileLogger := &lumberjack.Logger{
 		Filename:   fmt.Sprintf("logs/%s.log", consts.APP_NAME),
@@ -238,8 +240,8 @@ func main() {
 		AllowHeaders: []string{"Origin", "Content-Type", "Authorization", "X-CSRF-Token"},
 		//AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, "Set-Cookie"},
 		// for sharing session cookie for validating logins etc
-		AllowCredentials: true,      // Allow credentials (cookies, HTTP authentication)
-		MaxAge:           12 * 3600, // Cache preflight response for 12 hours
+		AllowCredentials: true,              // Allow credentials (cookies, HTTP authentication)
+		MaxAge:           PREFLIGHT_MAX_AGE, // Cache preflight response for 12 hours
 	}))
 
 	store = cookie.NewStore([]byte(consts.SESSION_KEY),

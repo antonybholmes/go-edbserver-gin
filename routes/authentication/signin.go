@@ -38,16 +38,16 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		roles, err := userdbcache.UserRoleList(authUser)
+		roles, err := userdbcache.UserRoleSet(authUser)
 
 		if err != nil {
 			web.ForbiddenResp(c, "could not get user roles")
 			return
 		}
 
-		roleClaim := auth.MakeClaim(roles)
+		//roleClaim := auth.MakeClaim(roles)
 
-		if !auth.CanSignin(roleClaim) {
+		if !auth.HasSignInRole(roles) {
 			web.UserNotAllowedToSignInErrorResp(c)
 			return
 		}
@@ -66,7 +66,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		accessToken, err := tokengen.AccessToken(c, authUser.PublicId, roleClaim) //auth.MakeClaim(authUser.Roles))
+		accessToken, err := tokengen.AccessToken(c, authUser.PublicId, roles.Keys()) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			web.TokenErrorResp(c)
@@ -145,16 +145,16 @@ func PasswordlessSignInRoute(c *gin.Context) {
 
 		authUser := validator.AuthUser
 
-		roles, err := userdbcache.UserRoleList(authUser)
+		roles, err := userdbcache.UserRoleSet(authUser)
 
 		if err != nil {
 			web.ForbiddenResp(c, "could not get user roles")
 			return
 		}
 
-		roleClaim := auth.MakeClaim(roles)
+		//roleClaim := auth.MakeClaim(roles)
 
-		if !auth.CanSignin(roleClaim) {
+		if !auth.HasSignInRole(roles) {
 			web.UserNotAllowedToSignInErrorResp(c)
 			return
 		}

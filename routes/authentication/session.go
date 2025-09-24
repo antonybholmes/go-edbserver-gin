@@ -153,16 +153,16 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 		return
 	}
 
-	roles, err := userdbcache.UserRoleList(authUser)
+	roles, err := userdbcache.UserRoleSet(authUser)
 
 	if err != nil {
 		web.ForbiddenResp(c, "could not get user roles")
 		return
 	}
 
-	roleClaim := auth.MakeClaim(roles)
+	//roleClaim := auth.MakeClaim(roles)
 
-	if !auth.CanSignin(roleClaim) {
+	if !auth.HasSignInRole(roles) {
 		web.UserNotAllowedToSignInErrorResp(c)
 		return
 	}
@@ -230,16 +230,16 @@ func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 		return
 	}
 
-	roles, err := userdbcache.UserRoleList(authUser)
+	roles, err := userdbcache.UserRoleSet(authUser)
 
 	if err != nil {
 		web.ForbiddenResp(c, "could not get user roles")
 		return
 	}
 
-	roleClaim := auth.MakeClaim(roles)
+	//roleClaim := auth.MakeClaim(roles)
 
-	if !auth.CanSignin(roleClaim) {
+	if !auth.HasSignInRole(roles) {
 		web.UserNotAllowedToSignInErrorResp(c)
 		return
 	}
@@ -402,17 +402,17 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Co
 
 func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, authUser *auth.AuthUser) {
 
-	roles, err := userdbcache.UserRoleList(authUser)
+	roles, err := userdbcache.UserRoleSet(authUser)
 
 	if err != nil {
 		web.BadReqResp(c, "user roles not found")
 	}
 
-	roleClaim := auth.MakeClaim(roles)
+	//roleClaim := auth.MakeClaim(roles)
 
 	//log.Debug().Msgf("user %v", authUser)
 
-	if !auth.CanSignin(roleClaim) {
+	if !auth.HasSignInRole(roles) {
 		web.UserNotAllowedToSignInErrorResp(c)
 	}
 
@@ -444,18 +444,18 @@ func (sessionRoutes *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gi
 
 		authUser := validator.AuthUser
 
-		roles, err := userdbcache.UserRoleList(authUser)
+		roles, err := userdbcache.UserRoleSet(authUser)
 
 		if err != nil {
 			c.Error(err)
 			return
 		}
 
-		roleClaim := auth.MakeClaim(roles)
+		//roleClaim := auth.MakeClaim(roles)
 
 		//log.Debug().Msgf("user %v", authUser)
 
-		if !auth.CanSignin(roleClaim) {
+		if !auth.HasSignInRole(roles) {
 			web.UserNotAllowedToSignInErrorResp(c)
 			return
 		}
@@ -586,17 +586,19 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 	var token string
 	var err error
 
+	//roles := sys.NewStringSet().UpdateFromList(authUser.Roles)
+
 	switch tokenType {
 	case "access":
 		// Generate encoded token and send it as response.
-		token, err = tokengen.AccessToken(c, authUser.PublicId, auth.MakeClaim(authUser.Roles))
+		token, err = tokengen.AccessToken(c, authUser.PublicId, authUser.Roles)
 
 		if err != nil {
 			err = fmt.Errorf("error creating access token: %w", err)
 		}
 	case "update":
 		// Generate encoded token and send it as response.
-		token, err = tokengen.UpdateToken(c, authUser.PublicId, auth.MakeClaim(authUser.Roles))
+		token, err = tokengen.UpdateToken(c, authUser.PublicId, authUser.Roles)
 
 		if err != nil {
 			err = fmt.Errorf("error creating update token: %w", err)
