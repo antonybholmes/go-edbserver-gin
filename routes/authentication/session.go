@@ -369,7 +369,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Conte
 }
 
 func (sessionRoutes *SessionRoutes) SessionEmailOTPRoute(c *gin.Context) {
-	sessionRoutes.OTPRoutes.EmailOTPRoute(c)
+	sessionRoutes.OTPRoutes.Email6DigitOTPRoute(c)
 }
 
 func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Context) {

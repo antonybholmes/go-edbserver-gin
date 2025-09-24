@@ -15,7 +15,9 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const OTP_TTL = 10 * time.Minute
+const OTP_TTL_MINUTES = 10
+const OTP_TTL = OTP_TTL_MINUTES * time.Minute
+
 const KEY = "otp:"
 
 type OTP struct {
@@ -30,8 +32,8 @@ func NewOTP(rdb *redis.Client) *OTP {
 	}
 }
 
-func (otp *OTP) CacheOTP(username string) (string, error) {
-	code, err := auth.GenerateOTP() //Generate6DigitCode()
+func (otp *OTP) Cache6DigitOTP(username string) (string, error) {
+	code, err := auth.Generate6DigitOTP() //Generate6DigitCode()
 
 	if err != nil {
 		return "", err
@@ -97,7 +99,7 @@ func NewOTPRoutes(otp *OTP) *OTPRoutes {
 	}
 }
 
-func (otpRoutes *OTPRoutes) EmailOTPRoute(c *gin.Context) {
+func (otpRoutes *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
 
 	validator, err := NewValidator(c).CheckEmailIsWellFormed().Ok()
 
@@ -106,12 +108,12 @@ func (otpRoutes *OTPRoutes) EmailOTPRoute(c *gin.Context) {
 		return
 	}
 
-	log.Debug().Msgf("EmailOTPRoute")
+	//log.Debug().Msgf("EmailOTPRoute")
 
 	//user := validator.AuthUser
 	address := validator.Address
 
-	code, err := otpRoutes.OTP.CacheOTP(address.Address)
+	code, err := otpRoutes.OTP.Cache6DigitOTP(address.Address)
 
 	if err != nil {
 		web.BaseInternalErrorResp(c, err)
@@ -122,7 +124,7 @@ func (otpRoutes *OTPRoutes) EmailOTPRoute(c *gin.Context) {
 		Name:      address.Address,
 		To:        address.Address,
 		Payload:   &mailserver.Payload{DataType: "code", Data: code},
-		TTL:       fmt.Sprintf("%d minutes", int(OTP_TTL.Minutes())),
+		TTL:       fmt.Sprintf("%d minutes", OTP_TTL_MINUTES),
 		EmailType: edbmail.QUEUE_EMAIL_TYPE_OTP}
 	err = mailqueue.SendMail(&email)
 
@@ -132,5 +134,5 @@ func (otpRoutes *OTPRoutes) EmailOTPRoute(c *gin.Context) {
 		return
 	}
 
-	web.MakeOkResp(c, "6 digit code sent to email")
+	web.MakeOkResp(c, fmt.Sprintf("A 6 digit one-time code has been sent to the email address. The code is valid for %d minutes.", OTP_TTL_MINUTES))
 }
