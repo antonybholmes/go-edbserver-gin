@@ -1,20 +1,56 @@
 [
   {
+    "path": "/admin/users",
+    "methods": [
+      { "type": "POST", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+    ]
+  },
+  {
+    "path": "/admin/roles",
+    "methods": [
+      { "type": "GET", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+    ]
+  },
+  {
+    "path": "/admin/users/stats",
+    "methods": [
+      { "type": "GET", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+    ]
+  },
+  {
+    "path": "/admin/users/update",
+    "methods": [
+      { "type": "POST", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+    ]
+  },
+  {
+    "path": "/admin/users/add",
+    "methods": [
+      { "type": "POST", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+    ]
+  },
+  {
+    "path": "/admin/users/delete/:id",
+    "methods": [
+      { "type": "DELETE", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+    ]
+  },
+  {
     "path": "/modules/scrna/datasets/:species/:assembly",
-    "method": "GET",
-    "token": "access",
-    "roles": ["RDF"]
+    "methods": [
+      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+    ]
   },
   {
     "path": "/modules/scrna/genes/search/:id",
-    "method": "GET",
-    "token": "access",
-    "roles": ["RDF"]
+    "methods": [
+      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+    ]
   },
   {
     "path": "/modules/scrna/metadata/:id",
-    "method": "GET",
-    "token": "access",
-    "roles": ["RDF"]
+    "methods": [
+      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+    ]
   }
 ]

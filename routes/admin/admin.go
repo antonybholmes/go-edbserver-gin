@@ -46,6 +46,8 @@ func UsersRoute(c *gin.Context) {
 
 	c.Bind(&req)
 
+	//log.Debug().Msgf("list users %v", req)
+
 	users, err := userdbcache.Users(req.Records, req.Offset)
 
 	if err != nil {
@@ -172,7 +174,7 @@ func AddUserRoute(c *gin.Context) {
 }
 
 func DeleteUserRoute(c *gin.Context) {
-	publicId := c.Param("publicId")
+	publicId := c.Param("id")
 
 	err := userdbcache.DeleteUser(publicId)
 

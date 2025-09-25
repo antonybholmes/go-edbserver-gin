@@ -204,7 +204,7 @@ func main() {
 
 	// all subsequent middleware is reliant on this to function
 	claimsParser := middleware.JwtClaimsRSAParser(consts.JWT_RSA_PUBLIC_KEY)
-	jwtUserMiddleWare := middleware.JwtUserMiddleware(claimsParser)
+	jwtUserMiddleWare := middleware.UserJWTMiddleware(claimsParser)
 
 	jwtAuth0Middleware := middleware.JwtAuth0Middleware(consts.JWT_AUTH0_RSA_PUBLIC_KEY)
 
@@ -280,9 +280,11 @@ func main() {
 	//
 
 	adminGroup := r.Group("/admin",
-		jwtUserMiddleWare,
-		accessTokenMiddleware,
-		middleware.JwtIsAdminMiddleware())
+		rulesMiddleware,
+		//jwtUserMiddleWare,
+		//accessTokenMiddleware,
+		//middleware.JwtIsAdminMiddleware()
+	)
 
 	adminGroup.GET("/roles", adminroutes.RolesRoute)
 
@@ -292,7 +294,7 @@ func main() {
 	adminUsersGroup.GET("/stats", adminroutes.UserStatsRoute)
 	adminUsersGroup.POST("/update", adminroutes.UpdateUserRoute)
 	adminUsersGroup.POST("/add", adminroutes.AddUserRoute)
-	adminUsersGroup.DELETE("/delete/:uuid", adminroutes.DeleteUserRoute)
+	adminUsersGroup.DELETE("/delete/:id", adminroutes.DeleteUserRoute)
 
 	// Allow users to sign up for an account
 	r.POST("/signup", authenticationroutes.SignupRoute)
