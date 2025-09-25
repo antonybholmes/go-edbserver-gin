@@ -419,7 +419,7 @@ func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, aut
 	err = sessionRoutes.initSession(c, authUser) // roleClaim)
 
 	if err != nil {
-		web.BaseUnauthorizedResp(c, err)
+		web.UnauthorizedErrResp(c, err)
 		return
 	}
 

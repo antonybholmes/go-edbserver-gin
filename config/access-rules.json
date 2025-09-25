@@ -1,0 +1,20 @@
+[
+  {
+    "path": "/modules/scrna/datasets/:species/:assembly",
+    "method": "GET",
+    "token": "access",
+    "roles": ["RDF"]
+  },
+  {
+    "path": "/modules/scrna/genes/search/:id",
+    "method": "GET",
+    "token": "access",
+    "roles": ["RDF"]
+  },
+  {
+    "path": "/modules/scrna/metadata/:id",
+    "method": "GET",
+    "token": "access",
+    "roles": ["RDF"]
+  }
+]

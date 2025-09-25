@@ -76,7 +76,7 @@ func NewAccessTokenRoute(c *gin.Context) {
 		// Generate encoded token and send it as response.
 		accessToken, err := tokengen.AccessToken(c,
 			validator.Claims.UserId,
-			validator.Claims.Role)
+			validator.Claims.Roles)
 
 		if err != nil {
 			web.BadReqResp(c, "error creating access token")

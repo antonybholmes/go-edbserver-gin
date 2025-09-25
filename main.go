@@ -11,7 +11,7 @@ import (
 	"github.com/antonybholmes/go-beds/bedsdbcache"
 	"github.com/antonybholmes/go-cytobands/cytobandsdbcache"
 	"github.com/antonybholmes/go-dna/dnadbcache"
-	"github.com/antonybholmes/go-edbserver-gin/authorization"
+
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	adminroutes "github.com/antonybholmes/go-edbserver-gin/routes/admin"
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
@@ -31,6 +31,7 @@ import (
 	"github.com/antonybholmes/go-hubs/hubsdbcache"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-web"
+	"github.com/antonybholmes/go-web/access"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
 	"github.com/gin-contrib/cors"
@@ -74,6 +75,8 @@ type InfoResp struct {
 var store cookie.Store
 
 var rdb *redis.Client
+
+var re *access.RuleEngine
 
 const PREFLIGHT_MAX_AGE = 12 * 3600 // 12 hours
 
@@ -161,6 +164,10 @@ func init() {
 
 	mailqueue.Init(mailserver.NewSQSEmailQueue(consts.SQS_QUEUE_URL))
 
+	re = access.NewRuleEngine()
+
+	re.LoadRules("config/access-rules.json")
+
 	// writer := kafka.NewWriter(kafka.WriterConfig{
 	// 	Brokers:  []string{"localhost:9094"}, // Kafka broker
 	// 	Topic:    mailserver.QUEUE_EMAIL_CHANNEL, // Topic name
@@ -169,7 +176,6 @@ func init() {
 
 	// queue.Init(mailserver.NewKafkaEmailPublisher(writer))
 
-	authorization.ModuleRoles("scrna")
 }
 
 func main() {
@@ -197,8 +203,8 @@ func main() {
 	//
 
 	// all subsequent middleware is reliant on this to function
-	jwtUserMiddleWare := middleware.JwtUserMiddleware(
-		middleware.JwtClaimsRSAParser(consts.JWT_RSA_PUBLIC_KEY))
+	claimsParser := middleware.JwtClaimsRSAParser(consts.JWT_RSA_PUBLIC_KEY)
+	jwtUserMiddleWare := middleware.JwtUserMiddleware(claimsParser)
 
 	jwtAuth0Middleware := middleware.JwtAuth0Middleware(consts.JWT_AUTH0_RSA_PUBLIC_KEY)
 
@@ -211,6 +217,8 @@ func main() {
 	sessionMiddleware := middleware.SessionIsValidMiddleware()
 
 	accessTokenMiddleware := middleware.JwtIsAccessTokenMiddleware()
+
+	rulesMiddleware := middleware.RulesMiddleware(claimsParser, re)
 
 	updateTokenMiddleware := middleware.JwtIsUpdateTokenMiddleware()
 
@@ -252,6 +260,7 @@ func main() {
 	r.Use(sessions.Sessions(consts.SESSION_NAME, store))
 
 	r.GET("/about", func(c *gin.Context) {
+		fmt.Println("Handler:", c.FullPath())
 		c.JSON(http.StatusOK,
 			AboutResp{
 				Name:      consts.APP_NAME,
@@ -494,9 +503,13 @@ func main() {
 	scrnaGroup.GET("/assemblies/:species", scrnaroutes.ScrnaAssembliesRoute)
 	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
 
-	scrnaProtectedGroup := scrnaGroup.Group("", jwtUserMiddleWare,
-		accessTokenMiddleware,
-		rdfRoleMiddleware)
+	scrnaProtectedGroup := scrnaGroup.Group("",
+
+		rulesMiddleware,
+		//jwtUserMiddleWare,
+	//accessTokenMiddleware,
+	//rdfRoleMiddleware
+	)
 
 	scrnaProtectedGroup.GET("/datasets/:species/:assembly",
 		scrnaroutes.ScrnaDatasetsRoute)
