@@ -45,7 +45,7 @@ require (
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20250624211225-358f1d2ad8fc
-	github.com/antonybholmes/go-web v0.0.0-20250922212110-3d17c4890b70
+	github.com/antonybholmes/go-web v0.0.0-20250924153451-5aa27d06996d
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32
@@ -54,7 +54,7 @@ require (
 
 require (
 	github.com/antonybholmes/go-mailserver v0.0.0-20250923203839-ae22f71b575f
-	github.com/antonybholmes/go-sys v0.0.0-20250922212114-2fa2c36e7c21
+	github.com/antonybholmes/go-sys v0.0.0-20250924153726-23d5b5bbaad8
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -116,7 +116,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	github.com/quic-go/qpack v0.5.1 // indirect
-	github.com/quic-go/quic-go v0.54.0 // indirect
+	github.com/quic-go/quic-go v0.54.1 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
 	github.com/segmentio/kafka-go v0.4.49 // indirect
