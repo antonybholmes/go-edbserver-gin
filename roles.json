@@ -1,6 +1,0 @@
-{
-  "modules": {
-    "gex": ["rdf"],
-    "scrna": ["rdf"]
-  }
-}
