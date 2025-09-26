@@ -52,5 +52,29 @@
     "methods": [
       { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
     ]
+  },
+  {
+    "path": "/modules/seqs/genomes",
+    "methods": [
+      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+    ]
+  },
+  {
+    "path": "/modules/seqs/platforms/:assembly",
+    "methods": [
+      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+    ]
+  },
+  {
+    "path": "/modules/seqs/search/:assembly",
+    "methods": [
+      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+    ]
+  },
+  {
+    "path": "/modules/seqs/bins",
+    "methods": [
+      { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+    ]
   }
 ]

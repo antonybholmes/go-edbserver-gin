@@ -561,9 +561,11 @@ func main() {
 	pathwayGroup.POST("/overlap", pathwayroutes.PathwayOverlapRoute)
 
 	seqsGroup := moduleGroup.Group("/seqs",
-		jwtUserMiddleWare,
-		accessTokenMiddleware,
-		rdfRoleMiddleware)
+		rulesMiddleware,
+		//jwtUserMiddleWare,
+		//accessTokenMiddleware,
+		//rdfRoleMiddleware
+	)
 
 	seqsGroup.GET("/genomes", seqroutes.GenomeRoute)
 	seqsGroup.GET("/platforms/:assembly", seqroutes.PlatformRoute)
@@ -600,7 +602,7 @@ func main() {
 
 	utilsGroup.GET("/passwords/hash", utilsroutes.HashedPasswordRoute)
 	utilsGroup.GET("/randkey", utilsroutes.RandomKeyRoute)
-	utilsGroup.GET("/uuid", utilsroutes.UUIDRoute)
+	utilsGroup.GET("/uuidv7", utilsroutes.UUIDv7Route)
 
 	// r.GET("/ping", func(c *gin.Context) {
 	// 	c.JSON(http.StatusOK, gin.H{
