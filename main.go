@@ -478,9 +478,10 @@ func main() {
 		mutationroutes.PileupRoute)
 
 	mutationsGroup.POST("/pileup/:assembly",
-		jwtUserMiddleWare,
-		accessTokenMiddleware,
-		rdfRoleMiddleware,
+		rulesMiddleware,
+		//jwtUserMiddleWare,
+		//accessTokenMiddleware,
+		//rdfRoleMiddleware,
 		mutationroutes.PileupRoute,
 	)
 

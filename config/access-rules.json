@@ -76,5 +76,11 @@
     "methods": [
       { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
     ]
+  },
+  {
+    "path": "/modules/mutations/pileup/:assembly",
+    "methods": [
+      { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+    ]
   }
 ]
