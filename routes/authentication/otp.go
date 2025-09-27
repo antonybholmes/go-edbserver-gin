@@ -1,9 +1,8 @@
 package authentication
 
 import (
-	"context"
 	"fmt"
-	"time"
+	"math"
 
 	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
 	mailserver "github.com/antonybholmes/go-mailserver"
@@ -11,89 +10,16 @@ import (
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog/log"
 )
 
-const OTP_TTL_MINUTES = 10
-const OTP_TTL = OTP_TTL_MINUTES * time.Minute
 
-const KEY = "otp:"
-
-type OTP struct {
-	Context     context.Context
-	RedisClient *redis.Client
-}
-
-func NewOTP(rdb *redis.Client) *OTP {
-	return &OTP{
-		Context:     context.Background(),
-		RedisClient: rdb,
-	}
-}
-
-func (otp *OTP) Cache6DigitOTP(username string) (string, error) {
-	code, err := auth.Generate6DigitOTP() //Generate6DigitCode()
-
-	if err != nil {
-		return "", err
-	}
-
-	err = otp.storeOTP(username, code)
-
-	if err != nil {
-		return "", err
-	}
-
-	return code, nil
-}
-
-func (otp *OTP) deleteOTP(username string) error {
-	key := KEY + username
-	return otp.RedisClient.Del(otp.Context, key).Err()
-}
-
-func (otp *OTP) getOTP(username string) (string, error) {
-	key := KEY + username
-	return otp.RedisClient.Get(otp.Context, key).Result()
-}
-
-func (otp *OTP) storeOTP(username string, code string) error {
-	key := KEY + username
-	return otp.RedisClient.Set(otp.Context, key, code, OTP_TTL).Err() // expires in 5 mins
-}
-
-func (otp *OTP) validateOTP(username string, input string) (bool, error) {
-
-	stored, err := otp.getOTP(username)
-
-	log.Debug().Msgf("validating %s %s %s", username, input, stored)
-
-	if err == redis.Nil {
-		return false, nil // not found or expired
-	} else if err != nil {
-		return false, err
-	}
-
-	if stored != input {
-		return false, nil
-	}
-
-	// Remove after use
-	err = otp.deleteOTP(username)
-
-	if err != nil {
-		return false, err
-	}
-
-	return true, nil
-}
 
 type OTPRoutes struct {
-	OTP *OTP
+	OTP *auth.OTP
 }
 
-func NewOTPRoutes(otp *OTP) *OTPRoutes {
+func NewOTPRoutes(otp *auth.OTP) *OTPRoutes {
 	return &OTPRoutes{
 		OTP: otp,
 	}
@@ -120,12 +46,15 @@ func (otpRoutes *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
 		return
 	}
 
+	mins :=  int(math.Round(otpRoutes.OTP.TTL().Minutes()))  
+
 	email := mailserver.MailItem{
 		Name:      address.Address,
 		To:        address.Address,
 		Payload:   &mailserver.Payload{DataType: "code", Data: code},
-		TTL:       fmt.Sprintf("%d minutes", OTP_TTL_MINUTES),
-		EmailType: edbmail.QUEUE_EMAIL_TYPE_OTP}
+		TTL:       fmt.Sprintf("%d minutes", mins),
+		EmailType: edbmail.QUEUE_EMAIL_TYPE_OTP,
+	}
 	err = mailqueue.SendMail(&email)
 
 	if err != nil {
@@ -134,5 +63,5 @@ func (otpRoutes *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
 		return
 	}
 
-	web.MakeOkResp(c, fmt.Sprintf("A 6 digit one-time code has been sent to the email address. The code is valid for %d minutes.", OTP_TTL_MINUTES))
+	web.MakeOkResp(c, fmt.Sprintf("A 6 digit one-time code has been sent to the email address. The code is valid for %d minutes.", mins))
 }

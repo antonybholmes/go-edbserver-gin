@@ -32,6 +32,7 @@ import (
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/access"
+	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
 	"github.com/gin-contrib/cors"
@@ -224,7 +225,7 @@ func main() {
 
 	rdfRoleMiddleware := middleware.JwtHasRDFRoleMiddleware()
 
-	otp := authenticationroutes.NewOTP(rdb)
+	otp := auth.NewDefaultOTP(rdb)
 
 	otpRoutes := authenticationroutes.NewOTPRoutes(otp)
 
