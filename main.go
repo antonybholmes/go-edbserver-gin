@@ -354,7 +354,7 @@ func main() {
 	passwordlessGroup := authGroup.Group("/passwordless")
 
 	passwordlessGroup.POST("/email", func(c *gin.Context) {
-		authenticationroutes.PasswordlessSigninEmailRoute(c, nil)
+		authenticationroutes.PasswordlessSignInEmailRoute(c, nil)
 	})
 
 	passwordlessGroup.POST("/signin",

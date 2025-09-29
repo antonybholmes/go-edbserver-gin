@@ -135,7 +135,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 	}
 
 	if validator.UserBodyReq.Password == "" {
-		PasswordlessSigninEmailRoute(c, validator)
+		PasswordlessSignInEmailRoute(c, validator)
 		return
 	}
 
@@ -211,7 +211,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 }
 
 func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
-	validator, err := NewValidator(c).ParseLoginRequestBody().Ok()
+	validator, err := NewValidator(c).ParseSignInRequestBody().Ok()
 
 	if err != nil {
 		c.Error(err)

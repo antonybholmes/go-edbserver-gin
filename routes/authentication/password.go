@@ -22,7 +22,7 @@ func PasswordUpdatedResp(c *gin.Context) {
 func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 	NewValidator(c).LoadAuthUserFromUsername().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
 		authUser := validator.AuthUser
-		//req := validator.LoginBodyReq
+		//req := validator.SignInBodyReq
 
 		otpToken, err := tokengen.MakeResetPasswordToken(c, authUser)
 
@@ -64,7 +64,7 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 }
 
 func UpdatePasswordRoute(c *gin.Context) {
-	NewValidator(c).ParseLoginRequestBody().LoadAuthUserFromToken().Success(func(validator *Validator) {
+	NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Success(func(validator *Validator) {
 
 		if validator.Claims.Type != auth.RESET_PASSWORD_TOKEN {
 			web.BadReqResp(c, web.ERROR_WRONG_TOKEN_TYPE)

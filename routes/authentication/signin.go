@@ -19,10 +19,10 @@ func PasswordlessEmailSentResp(c *gin.Context) {
 }
 
 func UsernamePasswordSignInRoute(c *gin.Context) {
-	NewValidator(c).ParseLoginRequestBody().Success(func(validator *Validator) {
+	NewValidator(c).ParseSignInRequestBody().Success(func(validator *Validator) {
 
 		if validator.UserBodyReq.Password == "" {
-			PasswordlessSigninEmailRoute(c, validator)
+			PasswordlessSignInEmailRoute(c, validator)
 			return
 		}
 
@@ -73,14 +73,14 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		web.MakeDataResp(c, "", &web.LoginResp{
+		web.MakeDataResp(c, "", &web.SignInResp{
 			RefreshToken: refreshToken,
 			AccessToken:  accessToken})
 	})
 }
 
 // Start passwordless login by sending an email
-func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
+func PasswordlessSignInEmailRoute(c *gin.Context, validator *Validator) {
 	if validator == nil {
 		validator = NewValidator(c)
 	}
@@ -131,7 +131,7 @@ func PasswordlessSigninEmailRoute(c *gin.Context, validator *Validator) {
 		//	return web.ErrorReq(err)
 		//}
 
-		web.MakeOkResp(c, "check your email for a magic link to sign in")
+		web.MakeOkResp(c, "check your email for a magic link to login")
 	})
 }
 

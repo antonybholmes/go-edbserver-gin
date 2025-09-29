@@ -19,7 +19,7 @@ import (
 
 // Start passwordless login by sending an email
 func SendResetEmailEmailRoute(c *gin.Context) {
-	NewValidator(c).ParseLoginRequestBody().LoadAuthUserFromToken().Success(func(validator *Validator) {
+	NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Success(func(validator *Validator) {
 		authUser := validator.AuthUser
 		req := validator.UserBodyReq
 

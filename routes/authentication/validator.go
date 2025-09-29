@@ -62,7 +62,7 @@ func (validator *Validator) Success(success func(validator *Validator)) {
 	success(validator)
 }
 
-func (validator *Validator) ParseLoginRequestBody() *Validator {
+func (validator *Validator) ParseSignInRequestBody() *Validator {
 	if validator.Err != nil {
 		return validator
 	}
@@ -83,13 +83,13 @@ func (validator *Validator) ParseLoginRequestBody() *Validator {
 }
 
 func (validator *Validator) CheckUsernameIsWellFormed() *Validator {
-	validator.ParseLoginRequestBody()
+	validator.ParseSignInRequestBody()
 
 	if validator.Err != nil {
 		return validator
 	}
 
-	//log.Debug().Msgf("check username well formed %s", validator.LoginBodyReq.Username)
+	//log.Debug().Msgf("check username well formed %s", validator.SignInBodyReq.Username)
 
 	err := auth.CheckUsername(validator.UserBodyReq.Username)
 
@@ -103,7 +103,7 @@ func (validator *Validator) CheckUsernameIsWellFormed() *Validator {
 
 func (validator *Validator) CheckEmailIsWellFormed() *Validator {
 
-	validator.ParseLoginRequestBody()
+	validator.ParseSignInRequestBody()
 
 	if validator.Err != nil {
 		return validator
@@ -160,7 +160,7 @@ func (validator *Validator) LoadAuthUserFromEmail() *Validator {
 }
 
 func (validator *Validator) LoadAuthUserFromUsername() *Validator {
-	validator.ParseLoginRequestBody()
+	validator.ParseSignInRequestBody()
 
 	if validator.Err != nil {
 		return validator
@@ -181,7 +181,7 @@ func (validator *Validator) LoadAuthUserFromUsername() *Validator {
 }
 
 func (validator *Validator) LoadAuthUserFromSession() *Validator {
-	validator.ParseLoginRequestBody()
+	validator.ParseSignInRequestBody()
 
 	if validator.Err != nil {
 		return validator
@@ -297,7 +297,7 @@ func (validator *Validator) CheckIsValidAccessToken() *Validator {
 	return validator
 }
 
-// func ParseLoginRequestBody(c *gin.Context) (*auth.UserBodyReq, error) {
+// func ParseSignInRequestBody(c *gin.Context) (*auth.UserBodyReq, error) {
 
 // 	var req auth.UserBodyReq
 

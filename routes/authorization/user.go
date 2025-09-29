@@ -22,7 +22,7 @@ func UserUpdatedResp(c *gin.Context) {
 
 func UpdateUserRoute(c *gin.Context) {
 
-	authenticationroutes.NewValidator(c).ParseLoginRequestBody().LoadTokenClaims().Success(func(validator *authenticationroutes.Validator) {
+	authenticationroutes.NewValidator(c).ParseSignInRequestBody().LoadTokenClaims().Success(func(validator *authenticationroutes.Validator) {
 
 		//db, err := userdbcache.AutoConn(nil) //not clear on what is needed for the user and password
 

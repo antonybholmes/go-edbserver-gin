@@ -36,7 +36,7 @@ INSERT INTO roles (public_id, name) VALUES('01997351-4c4b-7900-adb9-eeb64f772ed7
 INSERT INTO roles (public_id, name) VALUES('01997351-7d4f-72bc-aba9-1fbd2d5d41a2', 'Admin');
 INSERT INTO roles (public_id, name) VALUES('01997351-8b67-758e-b798-f200f70c653b', 'User');
 -- INSERT INTO roles (public_id, name) VALUES('UZuAVHDGToa4F786IPTijA==', 'GetDNA');
-INSERT INTO roles (public_id, name) VALUES('01997351-9ba1-7a6e-9560-fc03b3098665', 'Signin');
+INSERT INTO roles (public_id, name) VALUES('01997351-9ba1-7a6e-9560-fc03b3098665', 'Login');
 INSERT INTO roles (public_id, name) VALUES('01997351-aac6-7fcc-b886-b3f0585b90d8', 'RDF');
 
 
