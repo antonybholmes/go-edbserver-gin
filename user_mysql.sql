@@ -18,8 +18,8 @@ CREATE INDEX roles_name_idx ON permissions (name);
 INSERT INTO permissions (public_id, name, description) VALUES('01997350-f1db-734a-aabc-b738772a9d0c', 'Super', 'Superuser');
 INSERT INTO permissions (public_id, name, description) VALUES('01997351-06c7-7f0d-b026-c51376a044ee', 'Admin', 'Administrator');
 INSERT INTO permissions (public_id, name, description) VALUES('01997351-16e5-70f6-b869-ba08cdac4c85', 'User', 'User');
-INSERT INTO permissions (public_id, name, description) VALUES('01997351-2586-7e76-8a34-db50b222d47a', 'Login', 'Can login');
-INSERT INTO permissions (public_id, name, description) VALUES('01997351-36fe-7e77-b06b-8222ab057601', 'RDF', 'Can view RDF lab data');
+INSERT INTO permissions (public_id, name, description) VALUES('01997351-2586-7e76-8a34-db50b222d47a', 'Signin', 'User can sign in');
+INSERT INTO permissions (public_id, name, description) VALUES('01997351-36fe-7e77-b06b-8222ab057601', 'RDF', 'User can view RDF lab data');
 
 
 
