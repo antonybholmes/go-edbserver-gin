@@ -23,7 +23,7 @@ func initTracerProvider() (*sdktrace.TracerProvider, error) {
 	// Identify your service
 	res, err := resource.New(ctx,
 		resource.WithAttributes(
-			semconv.ServiceName(consts.APP_NAME),
+			semconv.ServiceName(consts.AppName),
 		),
 	)
 	if err != nil {

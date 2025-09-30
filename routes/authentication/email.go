@@ -58,8 +58,8 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
 			EmailType: edbmail.EmailQueueTypeEmailReset,
-			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
-			LinkUrl:   consts.URL_RESET_EMAIL,
+			TTL:       fmt.Sprintf("%d minutes", int(consts.ShortTtlMins.Minutes())),
+			LinkUrl:   consts.UrlResetEmail,
 		}
 		mailqueue.SendMail(&email)
 

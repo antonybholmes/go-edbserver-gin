@@ -166,7 +166,7 @@ func AddUserRoute(c *gin.Context) {
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			EmailType: edbmail.EmailQueueTypeAccountCreated,
-			LinkUrl:   consts.APP_URL}
+			LinkUrl:   consts.AppUrl}
 		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "account created email sent")

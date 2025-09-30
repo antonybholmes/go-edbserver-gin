@@ -57,8 +57,8 @@ func SignupRoute(c *gin.Context) {
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "jwt", Data: token},
 			EmailType: edbmail.EmailQueueTypeVerify,
-			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
-			LinkUrl:   consts.URL_VERIFY_EMAIL,
+			TTL:       fmt.Sprintf("%d minutes", int(consts.ShortTtlMins.Minutes())),
+			LinkUrl:   consts.UrlVerifyEmail,
 			//VisitUrl:    req.VisitUrl
 		}
 

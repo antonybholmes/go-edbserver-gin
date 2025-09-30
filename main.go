@@ -75,7 +75,7 @@ const PREFLIGHT_MAX_AGE = 12 * 3600 // 12 hours
 
 func initLogger() {
 	fileLogger := &lumberjack.Logger{
-		Filename:   fmt.Sprintf("logs/%s.log", consts.APP_NAME),
+		Filename:   fmt.Sprintf("logs/%s.log", consts.AppName),
 		MaxSize:    10,   // Max size in MB before rotating
 		MaxBackups: 3,    // Keep 3 backup files
 		MaxAge:     7,    // Retain files for 7 days
@@ -147,15 +147,15 @@ func init() {
 	hubsdbcache.InitCache("data/modules/hubs/")
 
 	rdb = redis.NewClient(&redis.Options{
-		Addr:     consts.REDIS_ADDR,
+		Addr:     consts.RedisAddr,
 		Username: "edb",
-		Password: consts.REDIS_PASSWORD,
+		Password: consts.RedisPassword,
 		DB:       0, // use default DB
 	})
 
 	//queue.Init(mailserver.NewRedisEmailQueue(rdb))
 
-	mailqueue.Init(mailserver.NewSQSEmailQueue(consts.SQS_QUEUE_URL))
+	mailqueue.Init(mailserver.NewSQSEmailQueue(consts.SqsQueueUrl))
 
 	re = access.NewRuleEngine()
 
@@ -178,7 +178,7 @@ func main() {
 
 	//consts.Init()
 
-	tokengen.Init(consts.JWT_RSA_PRIVATE_KEY)
+	tokengen.Init(consts.JwtRsaPrivateKey)
 
 	//env.Load()
 
@@ -196,14 +196,14 @@ func main() {
 	//
 
 	// all subsequent middleware is reliant on this to function
-	claimsParser := middleware.JwtClaimsRSAParser(consts.JWT_RSA_PUBLIC_KEY)
+	claimsParser := middleware.JwtClaimsRSAParser(consts.JwtRsaPublicKey)
 	jwtUserMiddleWare := middleware.UserJWTMiddleware(claimsParser)
 
-	jwtAuth0Middleware := middleware.JwtAuth0Middleware(consts.JWT_AUTH0_RSA_PUBLIC_KEY)
+	jwtAuth0Middleware := middleware.JwtAuth0Middleware(consts.JwtAuth0RsaPublicKey)
 
-	jwtClerkMiddleware := middleware.JwtClerkMiddleware(consts.JWT_CLERK_RSA_PUBLIC_KEY)
+	jwtClerkMiddleware := middleware.JwtClerkMiddleware(consts.JwtClerkRsaPublicKey)
 
-	jwtSupabaseMiddleware := middleware.JwtSupabaseMiddleware(consts.JWT_SUPABASE_SECRET_KEY)
+	jwtSupabaseMiddleware := middleware.JwtSupabaseMiddleware(consts.JwtSupabaseSecretKey)
 
 	csrfMiddleware := middleware.CSRFValidateMiddleware()
 
@@ -265,18 +265,18 @@ func main() {
 		MaxAge:           PREFLIGHT_MAX_AGE, // Cache preflight response for 12 hours
 	}))
 
-	store = cookie.NewStore([]byte(consts.SESSION_KEY),
-		[]byte(consts.SESSION_ENCRYPTION_KEY))
-	r.Use(sessions.Sessions(consts.SESSION_NAME, store))
+	store = cookie.NewStore([]byte(consts.SessionKey),
+		[]byte(consts.SessionEncryptionKey))
+	r.Use(sessions.Sessions(consts.SessionName, store))
 
 	r.GET("/about", func(c *gin.Context) {
 		fmt.Println("Handler:", c.FullPath())
 		c.JSON(http.StatusOK,
 			AboutResp{
-				Name:      consts.APP_NAME,
-				Version:   consts.VERSION,
-				Updated:   consts.UPDATED,
-				Copyright: consts.COPYRIGHT})
+				Name:      consts.AppName,
+				Version:   consts.Version,
+				Updated:   consts.Updated,
+				Copyright: consts.Copyright})
 	})
 
 	r.GET("/info", func(c *gin.Context) {

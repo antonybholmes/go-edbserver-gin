@@ -60,7 +60,7 @@ func TokenInfoRoute(c *gin.Context) {
 	claims := auth.TokenClaims{}
 
 	_, err = jwt.ParseWithClaims(t, &claims, func(token *jwt.Token) (any, error) {
-		return consts.JWT_RSA_PUBLIC_KEY, nil
+		return consts.JwtRsaPublicKey, nil
 	})
 
 	if err != nil {
