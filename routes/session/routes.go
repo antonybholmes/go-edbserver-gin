@@ -1,16 +1,29 @@
 package session
 
 import (
+	"github.com/antonybholmes/go-edbserver-gin/consts"
+	"github.com/antonybholmes/go-edbserver-gin/routes/authentication"
+	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/middleware"
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes(r *gin.Engine, sessionRoutes *SessionRoutes,
-	jwtAuth0Middleware gin.HandlerFunc,
-	jwtClerkMiddleware gin.HandlerFunc,
-	jwtSupabaseMiddleware gin.HandlerFunc,
-	jwtUserMiddleWare gin.HandlerFunc,
-	csrfMiddleware gin.HandlerFunc,
-	sessionMiddleware gin.HandlerFunc) {
+func RegisterRoutes(r *gin.Engine, otp *auth.OTP, jwtUserMiddleWare gin.HandlerFunc) {
+
+	otpRoutes := authentication.NewOTPRoutes(otp)
+
+	sessionRoutes := NewSessionRoutes(otpRoutes)
+
+	sessionMiddleware := middleware.SessionIsValidMiddleware()
+
+	jwtAuth0Middleware := middleware.JwtAuth0Middleware(consts.JwtAuth0RsaPublicKey)
+
+	jwtClerkMiddleware := middleware.JwtClerkMiddleware(consts.JwtClerkRsaPublicKey)
+
+	jwtSupabaseMiddleware := middleware.JwtSupabaseMiddleware(consts.JwtSupabaseSecretKey)
+
+	csrfMiddleware := middleware.CSRFValidateMiddleware()
+
 	sessionGroup := r.Group("/sessions")
 
 	sessionAuthGroup := sessionGroup.Group("/auth")

@@ -200,16 +200,6 @@ func main() {
 	claimsParser := middleware.JwtClaimsRSAParser(consts.JwtRsaPublicKey)
 	jwtUserMiddleWare := middleware.UserJWTMiddleware(claimsParser)
 
-	jwtAuth0Middleware := middleware.JwtAuth0Middleware(consts.JwtAuth0RsaPublicKey)
-
-	jwtClerkMiddleware := middleware.JwtClerkMiddleware(consts.JwtClerkRsaPublicKey)
-
-	jwtSupabaseMiddleware := middleware.JwtSupabaseMiddleware(consts.JwtSupabaseSecretKey)
-
-	csrfMiddleware := middleware.CSRFValidateMiddleware()
-
-	sessionMiddleware := middleware.SessionIsValidMiddleware()
-
 	//accessTokenMiddleware := middleware.JwtIsAccessTokenMiddleware()
 
 	rulesMiddleware := middleware.RulesMiddleware(claimsParser, re)
@@ -219,10 +209,6 @@ func main() {
 	//rdfRoleMiddleware := middleware.JwtHasRDFRoleMiddleware()
 
 	otp := auth.NewDefaultOTP(rdb)
-
-	otpRoutes := authenticationroutes.NewOTPRoutes(otp)
-
-	sessionRoutes := sessionroutes.NewSessionRoutes(otpRoutes)
 
 	// Setup tracer provider
 	tp, err := initTracerProvider()
@@ -295,13 +281,8 @@ func main() {
 	authenticationroutes.RegisterRoutes(r, jwtUserMiddleWare, updateTokenMiddleware)
 
 	sessionroutes.RegisterRoutes(r,
-		sessionRoutes,
-		jwtAuth0Middleware,
-		jwtClerkMiddleware,
-		jwtSupabaseMiddleware,
-		jwtUserMiddleWare,
-		csrfMiddleware,
-		sessionMiddleware)
+		otp,
+		jwtUserMiddleWare)
 
 	//
 	// Deal with logins where we want a session
