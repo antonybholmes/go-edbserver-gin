@@ -24,7 +24,7 @@ func NewOTPRoutes(otp *auth.OTP) *OTPRoutes {
 	}
 }
 
-func (otpRoutes *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
+func (otpr *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
 
 	validator, err := NewValidator(c).CheckEmailIsWellFormed().Ok()
 
@@ -33,27 +33,23 @@ func (otpRoutes *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
 		return
 	}
 
-	err = otpRoutes.OTP.GlobalRateLimitForOTPCachingExceeded()
+	address := validator.Address
+
+	code, exceeded, err := otpr.OTP.Cache6DigitOTP(address.Address)
 
 	if err != nil {
 		log.Warn().Msgf("GlobalRateLimitForOTPCachingExceeded: %v", err)
-		web.ErrorResp(c, http.StatusTooManyRequests, "too many attempts, please try again later")
+
+		if exceeded {
+			web.ErrResp(c, http.StatusTooManyRequests, err) // "too many attempts, please try again later")
+		} else {
+			web.BaseInternalErrorResp(c, err)
+		}
+
 		return
 	}
 
-	//log.Debug().Msgf("EmailOTPRoute")
-
-	//user := validator.AuthUser
-	address := validator.Address
-
-	code, err := otpRoutes.OTP.Cache6DigitOTP(address.Address)
-
-	if err != nil {
-		web.BaseInternalErrorResp(c, err)
-		return
-	}
-
-	mins := int(math.Round(otpRoutes.OTP.TTL().Minutes()))
+	mins := int(math.Round(otpr.OTP.TTL().Minutes()))
 
 	email := mailserver.MailItem{
 		Name:      address.Address,
