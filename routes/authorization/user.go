@@ -61,7 +61,7 @@ func UpdateUserRoute(c *gin.Context) {
 		// send email notification of change
 		email := mailserver.MailItem{Name: authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: edbmail.EmailQueueTypeAccountUpdate}
+			EmailType: edbmail.EmailQueueTypeAccountUpdated}
 		mailqueue.SendMail(&email)
 
 		// send back updated user to having to do a separate call to get the new data
