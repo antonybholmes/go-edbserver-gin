@@ -235,7 +235,7 @@ func (validator *Validator) LoadTokenClaims() *Validator {
 	}
 
 	if validator.Claims == nil {
-		user, ok := validator.c.Get(web.SESSION_USER)
+		user, ok := validator.c.Get(web.SessionUser)
 
 		if ok {
 			validator.Claims = user.(*auth.TokenClaims)
@@ -275,7 +275,7 @@ func (validator *Validator) CheckIsValidRefreshToken() *Validator {
 		return validator
 	}
 
-	if validator.Claims.Type != auth.REFRESH_TOKEN {
+	if validator.Claims.Type != auth.TokenTypeRefresh {
 		validator.Err = fmt.Errorf("no refresh token")
 	}
 
@@ -290,7 +290,7 @@ func (validator *Validator) CheckIsValidAccessToken() *Validator {
 		return validator
 	}
 
-	if validator.Claims.Type != auth.ACCESS_TOKEN {
+	if validator.Claims.Type != auth.TokenTypeAccess {
 		validator.Err = fmt.Errorf("no access token")
 	}
 

@@ -57,7 +57,7 @@ func SessionUpdateUserRoute(c *gin.Context) {
 			Name: authUser.FirstName,
 			To:   authUser.Email,
 			//Token:     passwordlessToken,
-			EmailType: edbmail.QUEUE_EMAIL_TYPE_ACCOUNT_UPDATED,
+			EmailType: edbmail.EmailQueueTypeAccountUpdate,
 			//Ttl:       fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
 			//LinkUrl:   consts.URL_SIGN_IN,
 			//VisitUrl:    validator.Req.VisitUrl
@@ -68,7 +68,7 @@ func SessionUpdateUserRoute(c *gin.Context) {
 }
 
 func SessionUpdatePasswordRoute(c *gin.Context) {
-	user, _ := c.Get(web.SESSION_USER)
+	user, _ := c.Get(web.SessionUser)
 
 	authUser := user.(*auth.AuthUser)
 

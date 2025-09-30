@@ -50,7 +50,7 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
-			EmailType: edbmail.QUEUE_EMAIL_TYPE_PASSWORD_RESET,
+			EmailType: edbmail.EmailQueueTypePasswordReset,
 			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_RESET_PASSWORD}
 		mailqueue.SendMail(&email)
@@ -66,7 +66,7 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 func UpdatePasswordRoute(c *gin.Context) {
 	NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Success(func(validator *Validator) {
 
-		if validator.Claims.Type != auth.RESET_PASSWORD_TOKEN {
+		if validator.Claims.Type != auth.TokenTypeResetPassword {
 			web.BadReqResp(c, auth.ErrInvalidTokenType)
 			return
 		}
@@ -92,7 +92,7 @@ func UpdatePasswordRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: edbmail.QUEUE_EMAIL_TYPE_PASSWORD_UPDATED}
+			EmailType: edbmail.EmailQueueTypePasswordUpdated}
 		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "password updated confirmation email sent")

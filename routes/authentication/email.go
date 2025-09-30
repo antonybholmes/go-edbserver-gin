@@ -57,7 +57,7 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
-			EmailType: edbmail.QUEUE_EMAIL_TYPE_EMAIL_RESET,
+			EmailType: edbmail.EmailQueueTypeEmailReset,
 			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_RESET_EMAIL,
 		}
@@ -74,7 +74,7 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 func UpdateEmailRoute(c *gin.Context) {
 	NewValidator(c).CheckEmailIsWellFormed().LoadAuthUserFromToken().Success(func(validator *Validator) {
 
-		if validator.Claims.Type != auth.CHANGE_EMAIL_TOKEN {
+		if validator.Claims.Type != auth.TokenTypeChangeEmail {
 			auth.WrongTokenTypeReq(c)
 		}
 
@@ -110,7 +110,7 @@ func UpdateEmailRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: edbmail.QUEUE_EMAIL_TYPE_EMAIL_UPDATED}
+			EmailType: edbmail.EmailQueueTypeEmailUpdated}
 		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "email updated confirmation email sent")

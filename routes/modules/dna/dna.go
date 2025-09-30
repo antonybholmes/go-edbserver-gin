@@ -11,10 +11,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const DEFAULT_ASSEMBLY string = "grch38"
-const DEFAULT_CHR string = "chr1" //"chr3"
-const DEFAULT_START uint = 100000 //187728170
-const DEFAULT_END uint = 100100   //187752257
+const (
+	DefaultAssembly string = "grch38"
+	DefaultChr      string = "chr1" //"chr3"
+	DefaultStart    uint   = 100000 //187728170
+	DefaultEnd      uint   = 100100 //187752257
+)
 
 type ReqLocs struct {
 	Locations []string `json:"locations"`
@@ -41,9 +43,9 @@ type DNAQuery struct {
 }
 
 func ParseLocation(c *gin.Context) (*dna.Location, error) {
-	chr := DEFAULT_CHR
-	start := DEFAULT_START
-	end := DEFAULT_END
+	chr := DefaultChr
+	start := DefaultStart
+	end := DefaultEnd
 
 	var v string
 	var err error

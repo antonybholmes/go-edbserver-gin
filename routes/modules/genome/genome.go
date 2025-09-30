@@ -18,9 +18,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const DEFAULT_CLOSEST_N uint = 5
-
-const MAX_ANNOTATIONS = 1000
+const (
+	DefaultClosestN uint = 5
+	MaxAnnotations  int  = 1000
+)
 
 var (
 	ErrLocationCannotBeEmpty = errors.New("location cannot be empty")
@@ -233,7 +234,7 @@ func ClosestGeneRoute(c *gin.Context) {
 		return
 	}
 
-	closestN := web.ParseNumParam(c, "closest", DEFAULT_CLOSEST_N)
+	closestN := web.ParseNumParam(c, "closest", DefaultClosestN)
 
 	data := make([]*genome.GenomicFeatures, len(locations))
 
@@ -285,7 +286,7 @@ func AnnotateRoute(c *gin.Context) {
 	}
 
 	// limit amount of data returned per request to 1000 entries at a time
-	locations = locations[0:basemath.Min(len(locations), MAX_ANNOTATIONS)]
+	locations = locations[0:basemath.Min(len(locations), MaxAnnotations)]
 
 	query, err := parseGeneQuery(c, c.Param("assembly"))
 
@@ -294,7 +295,7 @@ func AnnotateRoute(c *gin.Context) {
 		return
 	}
 
-	closestN := web.ParseNumParam(c, "closest", DEFAULT_CLOSEST_N)
+	closestN := web.ParseNumParam(c, "closest", DefaultClosestN)
 
 	tssRegion := ParsePromoterRegion(c)
 

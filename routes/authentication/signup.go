@@ -56,7 +56,7 @@ func SignupRoute(c *gin.Context) {
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "jwt", Data: token},
-			EmailType: edbmail.QUEUE_EMAIL_TYPE_VERIFY,
+			EmailType: edbmail.EmailQueueTypeVerify,
 			TTL:       fmt.Sprintf("%d minutes", int(consts.SHORT_TTL_MINS.Minutes())),
 			LinkUrl:   consts.URL_VERIFY_EMAIL,
 			//VisitUrl:    req.VisitUrl
@@ -96,7 +96,7 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: edbmail.QUEUE_EMAIL_TYPE_VERIFIED}
+			EmailType: edbmail.EmailQueueTypeVerified}
 		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "email address verified")

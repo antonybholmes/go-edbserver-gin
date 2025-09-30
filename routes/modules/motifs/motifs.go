@@ -10,7 +10,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const MIN_SEARCH_LEN = 3
+const MinSearchLen = 3
 
 var (
 	ErrSearchTooShort = errors.New("search too short")
@@ -69,7 +69,7 @@ func SearchRoute(c *gin.Context) {
 
 	search := params.Search
 
-	if len(search) < MIN_SEARCH_LEN {
+	if len(search) < MinSearchLen {
 		web.BadReqResp(c, ErrSearchTooShort)
 		return
 	}

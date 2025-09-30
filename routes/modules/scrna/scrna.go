@@ -11,7 +11,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const DEFAULT_LIMIT uint16 = 20
+const DefaultLimit uint16 = 20
 
 type ScrnaParams struct {
 	Genes []string `json:"genes"`
@@ -193,7 +193,7 @@ func ScrnaSearchGenesRoute(c *gin.Context) {
 		return
 	}
 
-	limit := DEFAULT_LIMIT
+	limit := DefaultLimit
 
 	if c.Query("limit") != "" {
 		v, err := strconv.ParseUint(c.Query("limit"), 10, 16)

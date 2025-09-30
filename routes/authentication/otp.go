@@ -56,7 +56,7 @@ func (otpr *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
 		To:        address.Address,
 		Payload:   &mailserver.Payload{DataType: "code", Data: code},
 		TTL:       fmt.Sprintf("%d minutes", mins),
-		EmailType: edbmail.QUEUE_EMAIL_TYPE_OTP,
+		EmailType: edbmail.EmailQueueTypeOTP,
 	}
 	err = mailqueue.SendMail(&email)
 

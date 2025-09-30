@@ -14,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+const Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 var (
 	ErrLengthCannotBeZero = fmt.Errorf("length cannot be zero")
@@ -138,13 +138,13 @@ func generateRandomString(length int) (string, error) {
 	b := make([]byte, length)
 	for i := range b {
 		// Generate a random index
-		index, err := rand.Int(rand.Reader, big.NewInt(int64(len(ALPHABET))))
+		index, err := rand.Int(rand.Reader, big.NewInt(int64(len(Alphabet))))
 
 		if err != nil {
 			return "", err
 		}
 
-		b[i] = ALPHABET[index.Int64()]
+		b[i] = Alphabet[index.Int64()]
 	}
 	return string(b), nil
 }

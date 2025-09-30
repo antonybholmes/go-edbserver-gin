@@ -165,7 +165,7 @@ func AddUserRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.FirstName,
 			To:        authUser.Email,
-			EmailType: edbmail.QUEUE_EMAIL_TYPE_ACCOUNT_CREATED,
+			EmailType: edbmail.EmailQueueTypeAccountCreated,
 			LinkUrl:   consts.APP_URL}
 		mailqueue.SendMail(&email)
 
