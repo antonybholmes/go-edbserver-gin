@@ -75,7 +75,7 @@ func UpdateEmailRoute(c *gin.Context) {
 	NewValidator(c).CheckEmailIsWellFormed().LoadAuthUserFromToken().Success(func(validator *Validator) {
 
 		if validator.Claims.Type != auth.CHANGE_EMAIL_TOKEN {
-			web.WrongTokentTypeReq(c)
+			auth.WrongTokenTypeReq(c)
 		}
 
 		err := auth.CheckOTPValid(validator.AuthUser,

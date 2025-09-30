@@ -3,13 +3,13 @@ package authentication
 import (
 	"fmt"
 	"math"
-	"net/http"
 
 	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
+
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
@@ -29,21 +29,21 @@ func (otpr *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
 	validator, err := NewValidator(c).CheckEmailIsWellFormed().Ok()
 
 	if err != nil {
-		web.BaseBadReqResp(c, err)
+		web.BadReqResp(c, err)
 		return
 	}
 
 	address := validator.Address
 
-	code, exceeded, err := otpr.OTP.Cache6DigitOTP(address.Address)
+	code, err := otpr.OTP.Cache6DigitOTP(address.Address)
 
 	if err != nil {
 		log.Warn().Msgf("GlobalRateLimitForOTPCachingExceeded: %v", err)
 
-		if exceeded {
-			web.ErrResp(c, http.StatusTooManyRequests, err) // "too many attempts, please try again later")
+		if auth.IsRateLimitError(err) {
+			web.TooManyRequestsResp(c, err) // "too many attempts, please try again later")
 		} else {
-			web.BaseInternalErrorResp(c, err)
+			web.InternalErrorResp(c, err)
 		}
 
 		return
@@ -62,7 +62,7 @@ func (otpr *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
 
 	if err != nil {
 		log.Debug().Msgf("error sending email %v", err)
-		web.BaseInternalErrorResp(c, err)
+		web.InternalErrorResp(c, err)
 		return
 	}
 

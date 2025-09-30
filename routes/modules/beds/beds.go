@@ -1,12 +1,18 @@
 package beds
 
 import (
+	"errors"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/antonybholmes/go-beds"
 	"github.com/antonybholmes/go-beds/bedsdbcache"
 	"github.com/antonybholmes/go-dna"
 	"github.com/antonybholmes/go-web"
+)
+
+var (
+	ErrNoBedsSupplied = errors.New("at least 1 bed id must be supplied")
 )
 
 type ReqBedsParams struct {
@@ -66,7 +72,7 @@ func SearchBedsRoute(c *gin.Context) {
 	genome := c.Param("assembly")
 
 	if genome == "" {
-		web.BadReqResp(c, "must supply a genome")
+		web.BadReqResp(c, ErrNoBedsSupplied)
 	}
 
 	query := c.Query("search")
@@ -91,7 +97,7 @@ func BedRegionsRoute(c *gin.Context) {
 	}
 
 	if len(params.Beds) == 0 {
-		web.BadReqResp(c, "at least 1 bed id must be supplied")
+		web.BadReqResp(c, ErrNoBedsSupplied)
 	}
 
 	ret := make([][]*beds.BedRegion, 0, len(params.Beds))

@@ -1,6 +1,8 @@
 package authorization
 
 import (
+	"errors"
+
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	"github.com/antonybholmes/go-web"
@@ -43,6 +45,10 @@ import (
 // 	return MakeDataResp(c, "", &JwtResp{t})
 // }
 
+var (
+	ErrCreatingToken = errors.New("error creating token")
+)
+
 func TokenInfoRoute(c *gin.Context) {
 	t, err := middleware.ParseToken(c)
 
@@ -62,9 +68,9 @@ func TokenInfoRoute(c *gin.Context) {
 		return
 	}
 
-	web.MakeDataResp(c, "", &web.JwtInfo{
-		Uuid: claims.UserId,
-		Type: claims.Type, //.TokenTypeString(claims.Type),
+	web.MakeDataResp(c, "", &auth.JwtInfo{
+		UserId: claims.UserId,
+		Type:   claims.Type, //.TokenTypeString(claims.Type),
 		//IpAddr:  claims.IpAddr,
 		Expires: claims.ExpiresAt.UTC().String()})
 
@@ -79,7 +85,7 @@ func NewAccessTokenRoute(c *gin.Context) {
 			validator.Claims.Roles)
 
 		if err != nil {
-			web.BadReqResp(c, "error creating access token")
+			web.BadReqResp(c, ErrCreatingToken)
 		}
 
 		web.MakeDataResp(c, "", &web.AccessTokenResp{AccessToken: accessToken})

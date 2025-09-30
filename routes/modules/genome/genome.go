@@ -3,6 +3,7 @@ package genes
 import (
 	"bytes"
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -19,6 +20,13 @@ import (
 
 const DEFAULT_CLOSEST_N uint = 5
 
+const MAX_ANNOTATIONS = 1000
+
+var (
+	ErrLocationCannotBeEmpty = errors.New("location cannot be empty")
+	ErrSearchTooShort        = errors.New("search too short")
+)
+
 // A GeneQuery contains info from query params.
 type GeneQuery struct {
 	Feature  genome.Feature
@@ -33,8 +41,6 @@ type GenesResp struct {
 	Location *dna.Location            `json:"location"`
 	Features []*genome.GenomicFeature `json:"features"`
 }
-
-const MAX_ANNOTATIONS = 1000
 
 type AnnotationResponse struct {
 	Status int                      `json:"status"`
@@ -125,7 +131,7 @@ func OverlappingGenesRoute(c *gin.Context) {
 	}
 
 	if len(locations) == 0 {
-		web.BadReqResp(c, "must supply at least 1 location")
+		web.BadReqResp(c, ErrLocationCannotBeEmpty)
 	}
 
 	ret := make([]*GenesResp, 0, len(locations))
@@ -149,7 +155,7 @@ func SearchForGeneByNameRoute(c *gin.Context) {
 	search := c.Query("search") // dnaroutes.ParseLocationsFromPost(c)
 
 	if search == "" {
-		web.BadReqResp(c, "search cannot be empty")
+		web.BadReqResp(c, ErrSearchTooShort)
 		return
 	}
 

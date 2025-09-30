@@ -1,6 +1,7 @@
 package authentication
 
 import (
+	"errors"
 	"fmt"
 
 	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
@@ -12,6 +13,12 @@ import (
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
 	"github.com/gin-gonic/gin"
+)
+
+var (
+	ERR_USER_ROLES          = errors.New("could not get user roles")
+	ERR_SESSION_EXPIRED     = errors.New("session not found or expired")
+	ERR_USER_DOES_NOT_EXIST = errors.New("user does not exist")
 )
 
 func PasswordlessEmailSentResp(c *gin.Context) {
@@ -41,7 +48,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 		roles, err := userdbcache.UserRoleSet(authUser)
 
 		if err != nil {
-			web.ForbiddenResp(c, "could not get user roles")
+			web.ForbiddenResp(c, ERR_USER_ROLES)
 			return
 		}
 
@@ -62,14 +69,14 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 		refreshToken, err := tokengen.RefreshToken(c, authUser) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
-			web.TokenErrorResp(c)
+			auth.TokenErrorResp(c)
 			return
 		}
 
 		accessToken, err := tokengen.AccessToken(c, authUser.PublicId, roles.Keys()) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
-			web.TokenErrorResp(c)
+			auth.TokenErrorResp(c)
 			return
 		}
 
@@ -139,7 +146,7 @@ func PasswordlessSignInRoute(c *gin.Context) {
 	NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
 
 		if validator.Claims.Type != auth.PASSWORDLESS_TOKEN {
-			web.WrongTokentTypeReq(c)
+			auth.WrongTokenTypeReq(c)
 			return
 		}
 
@@ -148,7 +155,7 @@ func PasswordlessSignInRoute(c *gin.Context) {
 		roles, err := userdbcache.UserRoleSet(authUser)
 
 		if err != nil {
-			web.ForbiddenResp(c, "could not get user roles")
+			web.ForbiddenResp(c, ERR_USER_ROLES)
 			return
 		}
 
@@ -162,7 +169,7 @@ func PasswordlessSignInRoute(c *gin.Context) {
 		t, err := tokengen.RefreshToken(c, authUser) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
-			web.TokenErrorResp(c)
+			auth.TokenErrorResp(c)
 			return
 		}
 

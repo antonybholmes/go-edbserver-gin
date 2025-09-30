@@ -76,7 +76,7 @@ func SessionUpdatePasswordRoute(c *gin.Context) {
 	authUser, err := userdbcache.FindUserByPublicId(authUser.PublicId)
 
 	if err != nil {
-		web.BadReqResp(c, "user not found")
+		web.BadReqResp(c, auth.ErrUserDoesNotExist)
 		return
 	}
 
@@ -85,28 +85,28 @@ func SessionUpdatePasswordRoute(c *gin.Context) {
 	err = c.ShouldBindJSON(&req)
 
 	if err != nil {
-		web.BadReqResp(c, "invalid request body")
+		web.BadReqResp(c, web.ErrInvalidBody)
 		return
 	}
 
 	err = auth.CheckPassword(req.Password)
 
 	if err != nil {
-		web.BadReqResp(c, "password does not meet requirements")
+		web.BadReqResp(c, auth.ErrPasswordDoesNotMeetCriteria)
 		return
 	}
 
 	err = authUser.CheckPasswordsMatch(req.Password)
 
 	if err != nil {
-		web.BadReqResp(c, "current and new password do not match")
+		web.BadReqResp(c, auth.ErrPasswordsDoNotMatch)
 		return
 	}
 
 	err = userdbcache.SetPassword(authUser, req.NewPassword)
 
 	if err != nil {
-		web.BadReqResp(c, "could not update password")
+		web.BadReqResp(c, auth.ErrCouldNotUpdatePassword)
 		return
 	}
 

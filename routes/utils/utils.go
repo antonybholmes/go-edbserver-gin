@@ -14,6 +14,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+var (
+	ErrLengthCannotBeZero = fmt.Errorf("length cannot be zero")
+)
+
 type XlsxReq struct {
 	Sheet          string `json:"sheet"`
 	Headers        int    `json:"headers"`
@@ -40,8 +46,6 @@ type KeyResp struct {
 	Key    string `json:"key"`
 	Length int    `json:"length"`
 }
-
-const ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 func makeXlsxReader(b64data string) (*bytes.Reader, error) {
 	xlsxb, err := b64.StdEncoding.DecodeString(b64data)
@@ -150,7 +154,7 @@ func HashedPasswordRoute(c *gin.Context) {
 	password := c.Query("password")
 
 	if len(password) == 0 {
-		web.BadReqResp(c, "password cannot be empty")
+		web.BadReqResp(c, auth.ErrPasswordDoesNotMeetCriteria)
 		return
 	}
 
@@ -166,7 +170,7 @@ func RandomKeyRoute(c *gin.Context) {
 	l, err := strconv.Atoi(c.Query("l"))
 
 	if err != nil || l < 1 {
-		web.BadReqResp(c, "length cannot be zero")
+		web.BadReqResp(c, ErrLengthCannotBeZero)
 		return
 	}
 
@@ -187,7 +191,7 @@ func UUIDv7Route(c *gin.Context) {
 	uuid, err := sys.Uuid()
 
 	if err != nil {
-		web.BaseBadReqResp(c, err)
+		web.BadReqResp(c, err)
 		return
 	}
 

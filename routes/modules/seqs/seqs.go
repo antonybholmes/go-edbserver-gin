@@ -1,12 +1,18 @@
 package seqs
 
 import (
+	"errors"
+
 	"github.com/antonybholmes/go-dna"
 	seq "github.com/antonybholmes/go-seqs"
 	"github.com/antonybholmes/go-seqs/seqsdbcache"
 	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
+)
+
+var (
+	ErrNoGenomeSupplied = errors.New("must supply a genome")
 )
 
 type ReqSeqParams struct {
@@ -100,7 +106,7 @@ func SearchSeqRoute(c *gin.Context) {
 	genome := c.Param("assembly")
 
 	if genome == "" {
-		web.BadReqResp(c, "must supply a genome")
+		web.BadReqResp(c, ErrNoGenomeSupplied)
 		return
 	}
 

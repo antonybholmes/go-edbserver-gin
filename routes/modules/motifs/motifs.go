@@ -1,6 +1,8 @@
 package motifs
 
 import (
+	"errors"
+
 	"github.com/antonybholmes/go-motifs"
 	"github.com/antonybholmes/go-motifs/motifsdb"
 	"github.com/antonybholmes/go-web"
@@ -9,6 +11,10 @@ import (
 )
 
 const MIN_SEARCH_LEN = 3
+
+var (
+	ErrSearchTooShort = errors.New("search too short")
+)
 
 type ReqParams struct {
 	Search     string `json:"search"`
@@ -64,7 +70,7 @@ func SearchRoute(c *gin.Context) {
 	search := params.Search
 
 	if len(search) < MIN_SEARCH_LEN {
-		web.BadReqResp(c, "Search too short")
+		web.BadReqResp(c, ErrSearchTooShort)
 		return
 	}
 

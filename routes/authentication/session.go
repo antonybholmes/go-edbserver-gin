@@ -2,6 +2,7 @@ package authentication
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/mail"
@@ -21,6 +22,11 @@ import (
 )
 
 const MAX_AGE_ONE_YEAR_SECS = 31536000 // 60 * 60 * 24 * 365
+
+var (
+	ERR_NO_SESSION_USER = errors.New("no auth user")
+	ERR_SAVING_SESSION  = errors.New("error saving session")
+)
 
 type SessionRoutes struct {
 	sessionOptions sessions.Options
@@ -156,7 +162,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 	roles, err := userdbcache.UserRoleSet(authUser)
 
 	if err != nil {
-		web.ForbiddenResp(c, "could not get user roles")
+		web.ForbiddenResp(c, ERR_USER_ROLES)
 		return
 	}
 
@@ -233,7 +239,7 @@ func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	roles, err := userdbcache.UserRoleSet(authUser)
 
 	if err != nil {
-		web.ForbiddenResp(c, "could not get user roles")
+		web.ForbiddenResp(c, ERR_USER_ROLES)
 		return
 	}
 
@@ -247,7 +253,7 @@ func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	err = sessionRoutes.initSession(c, authUser) //, roleClaim)
 
 	if err != nil {
-		web.BadReqResp(c, middleware.ERROR_CREATING_SESSION)
+		web.BadReqResp(c, middleware.ERR_CREATING_SESSION)
 		return
 	}
 
@@ -272,7 +278,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context)
 	}
 
 	if !ok {
-		web.TokenErrorResp(c)
+		auth.TokenErrorResp(c)
 
 		return
 	}
@@ -312,7 +318,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context)
 	}
 
 	if !ok {
-		web.TokenErrorResp(c)
+		auth.TokenErrorResp(c)
 
 		return
 	}
@@ -344,7 +350,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Conte
 	}
 
 	if !ok {
-		web.TokenErrorResp(c)
+		auth.TokenErrorResp(c)
 
 		return
 	}
@@ -377,16 +383,21 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Co
 	validator, err := NewValidator(c).CheckEmailIsWellFormed().Ok()
 
 	if err != nil {
-		web.BaseBadReqResp(c, err)
+		web.BadReqResp(c, err)
 		return
 	}
 
 	username := validator.Address.Address
 
-	otpValid, err := sessionRoutes.OTPRoutes.OTP.ValidateOTP(username, validator.UserBodyReq.OTP)
+	err = sessionRoutes.OTPRoutes.OTP.ValidateOTP(username, validator.UserBodyReq.OTP)
 
-	if !otpValid || err != nil {
-		web.BadReqResp(c, "invalid one time passcode")
+	if err != nil {
+		if auth.IsRateLimitError(err) {
+			web.TooManyRequestsResp(c, err)
+		} else {
+			web.BadReqResp(c, err)
+		}
+
 		return
 	}
 
@@ -405,7 +416,7 @@ func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, aut
 	roles, err := userdbcache.UserRoleSet(authUser)
 
 	if err != nil {
-		web.BadReqResp(c, "user roles not found")
+		web.BadReqResp(c, ERR_USER_ROLES)
 	}
 
 	//roleClaim := auth.MakeClaim(roles)
@@ -419,7 +430,7 @@ func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, aut
 	err = sessionRoutes.initSession(c, authUser) // roleClaim)
 
 	if err != nil {
-		web.UnauthorizedErrResp(c, err)
+		web.UnauthorizedResp(c, err)
 		return
 	}
 
@@ -438,7 +449,7 @@ func (sessionRoutes *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gi
 	NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
 
 		if validator.Claims.Type != auth.PASSWORDLESS_TOKEN {
-			web.WrongTokentTypeReq(c)
+			auth.WrongTokenTypeReq(c)
 			return
 		}
 
@@ -463,7 +474,7 @@ func (sessionRoutes *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gi
 		err = sessionRoutes.initSession(c, authUser) //, roleClaim)
 
 		if err != nil {
-			web.BaseInternalErrorResp(c, err)
+			web.InternalErrorResp(c, err)
 			return
 		}
 
@@ -506,7 +517,7 @@ func (sessionRoutes *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 	sessionInfo, err := middleware.ReadSessionInfo(c, session)
 
 	if err != nil {
-		web.UnauthorizedResp(c, "session not found or expired")
+		web.UnauthorizedResp(c, ERR_SESSION_EXPIRED)
 		return
 	}
 
@@ -521,7 +532,7 @@ func (sessionRoutes *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 	user, ok := c.Get(web.SESSION_USER)
 
 	if !ok {
-		web.UnauthorizedResp(c, "no auth user")
+		web.UnauthorizedResp(c, ERR_NO_SESSION_USER)
 		return
 	}
 
@@ -529,7 +540,7 @@ func (sessionRoutes *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 	authUser, err := userdbcache.FindUserById(user.(*auth.AuthUser).Id)
 
 	if err != nil {
-		web.UnauthorizedResp(c, "user not found")
+		web.UnauthorizedResp(c, ERR_USER_DOES_NOT_EXIST)
 		return
 	}
 
@@ -552,7 +563,7 @@ func (sessionRoutes *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 	err = sess.Save() //c.Request(), c.Response())
 
 	if err != nil {
-		web.InternalErrorResp(c, "error saving session")
+		web.InternalErrorResp(c, ERR_SAVING_SESSION)
 		return
 	}
 
@@ -608,7 +619,7 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 	}
 
 	if err != nil {
-		web.BaseInternalErrorResp(c, err)
+		web.InternalErrorResp(c, err)
 		return
 	}
 
@@ -620,7 +631,7 @@ func UserFromSessionRoute(c *gin.Context) {
 	user, ok := c.Get(web.SESSION_USER)
 
 	if !ok {
-		web.BadReqResp(c, "no auth user")
+		web.BadReqResp(c, ERR_NO_SESSION_USER)
 		return
 	}
 

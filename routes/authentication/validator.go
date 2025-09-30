@@ -131,7 +131,7 @@ func (validator *Validator) LoadAuthUserFromPublicId() *Validator {
 	authUser, err := userdbcache.FindUserByPublicId(validator.UserBodyReq.PublicId)
 
 	if err != nil {
-		validator.Err = fmt.Errorf(web.ERROR_USER_DOES_NOT_EXIST)
+		validator.Err = auth.ErrUserDoesNotExist
 	} else {
 		validator.AuthUser = authUser
 	}
@@ -150,7 +150,7 @@ func (validator *Validator) LoadAuthUserFromEmail() *Validator {
 	authUser, err := userdbcache.FindUserByEmail(validator.Address)
 
 	if err != nil {
-		validator.Err = fmt.Errorf(web.ERROR_USER_DOES_NOT_EXIST)
+		validator.Err = auth.ErrUserDoesNotExist
 	} else {
 		validator.AuthUser = authUser
 	}
@@ -171,7 +171,7 @@ func (validator *Validator) LoadAuthUserFromUsername() *Validator {
 	//log.Debug().Msgf("beep2 %s", authUser.Username)
 
 	if err != nil {
-		validator.Err = fmt.Errorf(web.ERROR_USER_DOES_NOT_EXIST)
+		validator.Err = auth.ErrUserDoesNotExist
 	} else {
 		validator.AuthUser = authUser
 	}
@@ -260,7 +260,7 @@ func (validator *Validator) LoadAuthUserFromToken() *Validator {
 	authUser, err := userdbcache.FindUserByPublicId(validator.Claims.UserId)
 
 	if err != nil {
-		validator.Err = fmt.Errorf(web.ERROR_USER_DOES_NOT_EXIST)
+		validator.Err = auth.ErrUserDoesNotExist
 	} else {
 		validator.AuthUser = authUser
 	}
