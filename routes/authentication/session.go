@@ -10,12 +10,14 @@ import (
 	"strconv"
 	"time"
 
+	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
+	mailserver "github.com/antonybholmes/go-mailserver"
+	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/antonybholmes/go-web/userdbcache"
-
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -637,4 +639,97 @@ func UserFromSessionRoute(c *gin.Context) {
 	}
 
 	web.MakeDataResp(c, "", user)
+}
+
+type PasswordUpdateReq struct {
+	Password    string `json:"password"`
+	NewPassword string `json:"newPassword"`
+}
+
+func SessionUpdateUserRoute(c *gin.Context) {
+	session := sessions.Default(c)
+	// Read the session info, which includes the AuthUser
+
+	sessionData, err := middleware.ReadSessionInfo(c, session)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	authUser := sessionData.AuthUser
+
+	NewValidator(c).CheckUsernameIsWellFormed().Success(func(validator *Validator) {
+
+		err = userdbcache.SetUserInfo(authUser,
+			validator.UserBodyReq.Username,
+			validator.UserBodyReq.FirstName,
+			validator.UserBodyReq.LastName,
+			false)
+
+		if err != nil {
+			c.Error(err)
+			return
+		}
+
+		//SendUserInfoUpdatedEmail(c, authUser)
+
+		email := mailserver.MailItem{
+			Name: authUser.FirstName,
+			To:   authUser.Email,
+			//Token:     passwordlessToken,
+			EmailType: edbmail.EmailQueueTypeAccountUpdated,
+			//Ttl:       fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
+			//LinkUrl:   consts.URL_SIGN_IN,
+			//VisitUrl:    validator.Req.VisitUrl
+		}
+
+		mailqueue.SendMail(&email)
+	})
+}
+
+func SessionUpdatePasswordRoute(c *gin.Context) {
+	user, _ := c.Get(web.SessionUser)
+
+	authUser := user.(*auth.AuthUser)
+
+	// use current session user
+	authUser, err := userdbcache.FindUserByPublicId(authUser.PublicId)
+
+	if err != nil {
+		web.BadReqResp(c, auth.ErrUserDoesNotExist)
+		return
+	}
+
+	var req PasswordUpdateReq
+
+	err = c.ShouldBindJSON(&req)
+
+	if err != nil {
+		web.BadReqResp(c, web.ErrInvalidBody)
+		return
+	}
+
+	err = auth.CheckPassword(req.Password)
+
+	if err != nil {
+		web.BadReqResp(c, auth.ErrPasswordDoesNotMeetCriteria)
+		return
+	}
+
+	err = authUser.CheckPasswordsMatch(req.Password)
+
+	if err != nil {
+		web.BadReqResp(c, auth.ErrPasswordsDoNotMatch)
+		return
+	}
+
+	err = userdbcache.SetPassword(authUser, req.NewPassword)
+
+	if err != nil {
+		web.BadReqResp(c, auth.ErrCouldNotUpdatePassword)
+		return
+	}
+
+	web.MakeOkResp(c, "password updated successfully")
 }

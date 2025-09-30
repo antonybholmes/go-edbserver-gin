@@ -18,7 +18,7 @@ import (
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	adminroutes "github.com/antonybholmes/go-edbserver-gin/routes/admin"
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
-	authorizationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authorization"
+
 	"github.com/antonybholmes/go-edbserver-gin/routes/modules"
 	"github.com/antonybholmes/go-hubs/hubsdbcache"
 	mailserver "github.com/antonybholmes/go-mailserver"
@@ -155,7 +155,7 @@ func init() {
 
 	//queue.Init(mailserver.NewRedisEmailQueue(rdb))
 
-	mailqueue.Init(mailserver.NewSQSEmailQueue(consts.SqsQueueUrl))
+	mailqueue.InitMailQueue(mailserver.NewSqsEmailQueue(consts.SqsQueueUrl))
 
 	re = access.NewRuleEngine()
 
@@ -306,76 +306,7 @@ func main() {
 	adminUsersGroup.POST("/add", adminroutes.AddUserRoute)
 	adminUsersGroup.DELETE("/delete/:id", adminroutes.DeleteUserRoute)
 
-	// Allow users to sign up for an account
-	r.POST("/signup", authenticationroutes.SignupRoute)
-
-	//
-	// user groups: start
-	//
-
-	authGroup := r.Group("/auth")
-
-	// auth0Group := authGroup.Group("/auth0")
-	// auth0Group.POST("/validate",
-	// 	jwtAuth0UserMiddleware,
-	// 	auth0routes.ValidateAuth0TokenRoute)
-
-	authGroup.POST("/signin", authenticationroutes.UsernamePasswordSignInRoute)
-
-	emailGroup := authGroup.Group("/email")
-
-	emailGroup.POST("/verified",
-		jwtUserMiddleWare,
-		middleware.JwtIsVerifyEmailTokenMiddleware(),
-		authenticationroutes.EmailAddressVerifiedRoute,
-	)
-
-	// with the correct token, performs the update
-	emailGroup.POST("/reset",
-		jwtUserMiddleWare,
-		authenticationroutes.SendResetEmailEmailRoute)
-
-	// with the correct token, performs the update
-	emailGroup.POST("/update",
-		jwtUserMiddleWare,
-		authenticationroutes.UpdateEmailRoute)
-
-	passwordGroup := authGroup.Group("/passwords")
-
-	// sends a reset link
-	passwordGroup.POST("/reset",
-		authenticationroutes.SendResetPasswordFromUsernameEmailRoute)
-
-	// with the correct token, updates a password
-	passwordGroup.POST("/update",
-		jwtUserMiddleWare,
-		authenticationroutes.UpdatePasswordRoute)
-
-	passwordlessGroup := authGroup.Group("/passwordless")
-
-	passwordlessGroup.POST("/email", func(c *gin.Context) {
-		authenticationroutes.PasswordlessSignInEmailRoute(c, nil)
-	})
-
-	passwordlessGroup.POST("/signin",
-		jwtUserMiddleWare,
-		authenticationroutes.PasswordlessSignInRoute,
-	)
-
-	tokenGroup := authGroup.Group("/tokens", jwtUserMiddleWare)
-	tokenGroup.POST("/info", authorizationroutes.TokenInfoRoute)
-	tokenGroup.POST("/access", authorizationroutes.NewAccessTokenRoute)
-
-	usersGroup := authGroup.Group("/users",
-		jwtUserMiddleWare)
-
-	//usersGroup.POST("", authorizationroutes.UserRoute)
-
-	// we do not use an id parameter here as the user is derived from the token
-	// for security reasons. User can be updated using an update token
-	usersGroup.POST("/update", updateTokenMiddleware, authorizationroutes.UpdateUserRoute)
-
-	//usersGroup.POST("/passwords/update", authentication.UpdatePasswordRoute)
+	authenticationroutes.RegisterRoutes(r, jwtUserMiddleWare, updateTokenMiddleware)
 
 	//
 	// Deal with logins where we want a session
@@ -450,10 +381,10 @@ func main() {
 		sessionMiddleware)
 	sessionUserGroup.GET("", authenticationroutes.UserFromSessionRoute)
 	sessionUserGroup.POST("/update",
-		authorizationroutes.SessionUpdateUserRoute)
+		authenticationroutes.SessionUpdateUserRoute)
 
 	sessionUserGroup.POST("/passwords/update",
-		authorizationroutes.SessionUpdatePasswordRoute)
+		authenticationroutes.SessionUpdatePasswordRoute)
 
 	modules.RegisterRoutes(r, rulesMiddleware)
 

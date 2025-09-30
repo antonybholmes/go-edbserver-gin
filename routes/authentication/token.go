@@ -1,10 +1,10 @@
-package authorization
+package authentication
 
 import (
 	"errors"
 
 	"github.com/antonybholmes/go-edbserver-gin/consts"
-	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
+
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/middleware"
@@ -77,7 +77,7 @@ func TokenInfoRoute(c *gin.Context) {
 }
 
 func NewAccessTokenRoute(c *gin.Context) {
-	authenticationroutes.NewValidator(c).CheckIsValidRefreshToken().Success(func(validator *authenticationroutes.Validator) {
+	NewValidator(c).CheckIsValidRefreshToken().Success(func(validator *Validator) {
 
 		// Generate encoded token and send it as response.
 		accessToken, err := tokengen.AccessToken(c,

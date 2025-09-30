@@ -1,4 +1,4 @@
-package authorization
+package authentication
 
 import (
 	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
@@ -8,7 +8,6 @@ import (
 	"github.com/antonybholmes/go-web/userdbcache"
 	"github.com/rs/zerolog/log"
 
-	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,7 +21,7 @@ func UserUpdatedResp(c *gin.Context) {
 
 func UpdateUserRoute(c *gin.Context) {
 
-	authenticationroutes.NewValidator(c).ParseSignInRequestBody().LoadTokenClaims().Success(func(validator *authenticationroutes.Validator) {
+	NewValidator(c).ParseSignInRequestBody().LoadTokenClaims().Success(func(validator *Validator) {
 
 		//db, err := userdbcache.AutoConn(nil) //not clear on what is needed for the user and password
 
@@ -70,9 +69,9 @@ func UpdateUserRoute(c *gin.Context) {
 }
 
 func UserRoute(c *gin.Context) {
-	authenticationroutes.NewValidator(c).
+	NewValidator(c).
 		LoadAuthUserFromToken().
-		Success(func(validator *authenticationroutes.Validator) {
+		Success(func(validator *Validator) {
 			web.MakeDataResp(c, "", validator.AuthUser)
 		})
 }
