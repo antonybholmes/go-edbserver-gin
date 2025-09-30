@@ -36,6 +36,7 @@ func (otpRoutes *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
 	err = otpRoutes.OTP.GlobalRateLimitForOTPCachingExceeded()
 
 	if err != nil {
+		log.Warn().Msgf("GlobalRateLimitForOTPCachingExceeded: %v", err)
 		web.ErrorResp(c, http.StatusTooManyRequests, "too many attempts, please try again later")
 		return
 	}
