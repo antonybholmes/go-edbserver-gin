@@ -24,8 +24,9 @@ import (
 const MAX_AGE_ONE_YEAR_SECS = 31536000 // 60 * 60 * 24 * 365
 
 var (
-	ERR_NO_SESSION_USER = errors.New("no auth user")
-	ERR_SAVING_SESSION  = errors.New("error saving session")
+	ErrNoSessionUser  = errors.New("no auth user")
+	ErrSavingSession  = errors.New("error saving session")
+	ErrSessionExpired = errors.New("session not found or expired")
 )
 
 type SessionRoutes struct {
@@ -162,7 +163,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 	roles, err := userdbcache.UserRoleSet(authUser)
 
 	if err != nil {
-		web.ForbiddenResp(c, ERR_USER_ROLES)
+		web.ForbiddenResp(c, ErrUserRoles)
 		return
 	}
 
@@ -239,7 +240,7 @@ func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	roles, err := userdbcache.UserRoleSet(authUser)
 
 	if err != nil {
-		web.ForbiddenResp(c, ERR_USER_ROLES)
+		web.ForbiddenResp(c, ErrUserRoles)
 		return
 	}
 
@@ -416,7 +417,7 @@ func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, aut
 	roles, err := userdbcache.UserRoleSet(authUser)
 
 	if err != nil {
-		web.BadReqResp(c, ERR_USER_ROLES)
+		web.BadReqResp(c, ErrUserRoles)
 	}
 
 	//roleClaim := auth.MakeClaim(roles)
@@ -517,7 +518,7 @@ func (sessionRoutes *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 	sessionInfo, err := middleware.ReadSessionInfo(c, session)
 
 	if err != nil {
-		web.UnauthorizedResp(c, ERR_SESSION_EXPIRED)
+		web.UnauthorizedResp(c, ErrSessionExpired)
 		return
 	}
 
@@ -532,7 +533,7 @@ func (sessionRoutes *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 	user, ok := c.Get(web.SESSION_USER)
 
 	if !ok {
-		web.UnauthorizedResp(c, ERR_NO_SESSION_USER)
+		web.UnauthorizedResp(c, ErrNoSessionUser)
 		return
 	}
 
@@ -540,7 +541,7 @@ func (sessionRoutes *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 	authUser, err := userdbcache.FindUserById(user.(*auth.AuthUser).Id)
 
 	if err != nil {
-		web.UnauthorizedResp(c, ERR_USER_DOES_NOT_EXIST)
+		web.UnauthorizedResp(c, auth.ErrUserDoesNotExist)
 		return
 	}
 
@@ -563,7 +564,7 @@ func (sessionRoutes *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 	err = sess.Save() //c.Request(), c.Response())
 
 	if err != nil {
-		web.InternalErrorResp(c, ERR_SAVING_SESSION)
+		web.InternalErrorResp(c, ErrSavingSession)
 		return
 	}
 
@@ -631,7 +632,7 @@ func UserFromSessionRoute(c *gin.Context) {
 	user, ok := c.Get(web.SESSION_USER)
 
 	if !ok {
-		web.BadReqResp(c, ERR_NO_SESSION_USER)
+		web.BadReqResp(c, ErrNoSessionUser)
 		return
 	}
 

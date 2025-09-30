@@ -16,9 +16,7 @@ import (
 )
 
 var (
-	ERR_USER_ROLES          = errors.New("could not get user roles")
-	ERR_SESSION_EXPIRED     = errors.New("session not found or expired")
-	ERR_USER_DOES_NOT_EXIST = errors.New("user does not exist")
+	ErrUserRoles = errors.New("could not get user roles")
 )
 
 func PasswordlessEmailSentResp(c *gin.Context) {
@@ -48,7 +46,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 		roles, err := userdbcache.UserRoleSet(authUser)
 
 		if err != nil {
-			web.ForbiddenResp(c, ERR_USER_ROLES)
+			web.ForbiddenResp(c, ErrUserRoles)
 			return
 		}
 
@@ -155,7 +153,7 @@ func PasswordlessSignInRoute(c *gin.Context) {
 		roles, err := userdbcache.UserRoleSet(authUser)
 
 		if err != nil {
-			web.ForbiddenResp(c, ERR_USER_ROLES)
+			web.ForbiddenResp(c, ErrUserRoles)
 			return
 		}
 
