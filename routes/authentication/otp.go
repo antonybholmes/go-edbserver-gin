@@ -3,6 +3,7 @@ package authentication
 import (
 	"fmt"
 	"math"
+	"net/http"
 
 	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
 	mailserver "github.com/antonybholmes/go-mailserver"
@@ -12,8 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
-
-
 
 type OTPRoutes struct {
 	OTP *auth.OTP
@@ -34,6 +33,13 @@ func (otpRoutes *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
 		return
 	}
 
+	err = otpRoutes.OTP.GlobalRateLimitForOTPCachingExceeded()
+
+	if err != nil {
+		web.ErrorResp(c, http.StatusTooManyRequests, "too many attempts, please try again later")
+		return
+	}
+
 	//log.Debug().Msgf("EmailOTPRoute")
 
 	//user := validator.AuthUser
@@ -46,7 +52,7 @@ func (otpRoutes *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
 		return
 	}
 
-	mins :=  int(math.Round(otpRoutes.OTP.TTL().Minutes()))  
+	mins := int(math.Round(otpRoutes.OTP.TTL().Minutes()))
 
 	email := mailserver.MailItem{
 		Name:      address.Address,
