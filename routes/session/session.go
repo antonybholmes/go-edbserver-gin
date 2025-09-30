@@ -1,4 +1,4 @@
-package authentication
+package session
 
 import (
 	"encoding/json"
@@ -11,6 +11,7 @@ import (
 	"time"
 
 	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
+	"github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
@@ -33,10 +34,10 @@ var (
 
 type SessionRoutes struct {
 	sessionOptions sessions.Options
-	OTPRoutes      *OTPRoutes
+	OTPRoutes      *authentication.OTPRoutes
 }
 
-func NewSessionRoutes(otpRoutes *OTPRoutes) *SessionRoutes {
+func NewSessionRoutes(otpRoutes *authentication.OTPRoutes) *SessionRoutes {
 	maxAge := auth.MaxAge7DaysSecs
 
 	t := os.Getenv("SESSION_TTL_HOURS")
@@ -136,7 +137,7 @@ func (sessionRoutes *SessionRoutes) initSession(c *gin.Context, authUser *auth.A
 // }
 
 func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
-	validator, err := NewValidator(c).LoadAuthUserFromUsername().Ok()
+	validator, err := authentication.NewValidator(c).LoadAuthUserFromUsername().Ok()
 
 	if err != nil {
 		c.Error(err)
@@ -144,7 +145,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 	}
 
 	if validator.UserBodyReq.Password == "" {
-		PasswordlessSignInEmailRoute(c, validator)
+		authentication.PasswordlessSignInEmailRoute(c, validator)
 		return
 	}
 
@@ -165,7 +166,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 	roles, err := userdbcache.UserRoleSet(authUser)
 
 	if err != nil {
-		web.ForbiddenResp(c, ErrUserRoles)
+		web.ForbiddenResp(c, authentication.ErrUserRoles)
 		return
 	}
 
@@ -220,7 +221,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 }
 
 func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
-	validator, err := NewValidator(c).ParseSignInRequestBody().Ok()
+	validator, err := authentication.NewValidator(c).ParseSignInRequestBody().Ok()
 
 	if err != nil {
 		c.Error(err)
@@ -242,7 +243,7 @@ func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	roles, err := userdbcache.UserRoleSet(authUser)
 
 	if err != nil {
-		web.ForbiddenResp(c, ErrUserRoles)
+		web.ForbiddenResp(c, authentication.ErrUserRoles)
 		return
 	}
 
@@ -383,7 +384,7 @@ func (sessionRoutes *SessionRoutes) SessionEmailOTPRoute(c *gin.Context) {
 
 func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Context) {
 
-	validator, err := NewValidator(c).CheckEmailIsWellFormed().Ok()
+	validator, err := authentication.NewValidator(c).CheckEmailIsWellFormed().Ok()
 
 	if err != nil {
 		web.BadReqResp(c, err)
@@ -419,7 +420,7 @@ func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, aut
 	roles, err := userdbcache.UserRoleSet(authUser)
 
 	if err != nil {
-		web.BadReqResp(c, ErrUserRoles)
+		web.BadReqResp(c, authentication.ErrUserRoles)
 	}
 
 	//roleClaim := auth.MakeClaim(roles)
@@ -449,7 +450,7 @@ func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, aut
 // can be used to generate access tokens to use resources
 func (sessionRoutes *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) {
 
-	NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
+	authentication.NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *authentication.Validator) {
 
 		if validator.Claims.Type != auth.TokenTypePasswordless {
 			auth.WrongTokenTypeReq(c)
@@ -659,7 +660,7 @@ func SessionUpdateUserRoute(c *gin.Context) {
 
 	authUser := sessionData.AuthUser
 
-	NewValidator(c).CheckUsernameIsWellFormed().Success(func(validator *Validator) {
+	authentication.NewValidator(c).CheckUsernameIsWellFormed().Success(func(validator *authentication.Validator) {
 
 		err = userdbcache.SetUserInfo(authUser,
 			validator.UserBodyReq.Username,

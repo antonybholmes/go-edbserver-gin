@@ -18,6 +18,7 @@ import (
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	adminroutes "github.com/antonybholmes/go-edbserver-gin/routes/admin"
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
+	sessionroutes "github.com/antonybholmes/go-edbserver-gin/routes/session"
 
 	"github.com/antonybholmes/go-edbserver-gin/routes/modules"
 	"github.com/antonybholmes/go-hubs/hubsdbcache"
@@ -221,7 +222,7 @@ func main() {
 
 	otpRoutes := authenticationroutes.NewOTPRoutes(otp)
 
-	sessionRoutes := authenticationroutes.NewSessionRoutes(otpRoutes)
+	sessionRoutes := sessionroutes.NewSessionRoutes(otpRoutes)
 
 	// Setup tracer provider
 	tp, err := initTracerProvider()
@@ -289,102 +290,22 @@ func main() {
 	// Routes
 	//
 
-	adminGroup := r.Group("/admin",
-		rulesMiddleware,
-		//jwtUserMiddleWare,
-		//accessTokenMiddleware,
-		//middleware.JwtIsAdminMiddleware()
-	)
-
-	adminGroup.GET("/roles", adminroutes.RolesRoute)
-
-	adminUsersGroup := adminGroup.Group("/users")
-
-	adminUsersGroup.POST("", adminroutes.UsersRoute)
-	adminUsersGroup.GET("/stats", adminroutes.UserStatsRoute)
-	adminUsersGroup.POST("/update", adminroutes.UpdateUserRoute)
-	adminUsersGroup.POST("/add", adminroutes.AddUserRoute)
-	adminUsersGroup.DELETE("/delete/:id", adminroutes.DeleteUserRoute)
+	adminroutes.RegisterRoutes(r, rulesMiddleware)
 
 	authenticationroutes.RegisterRoutes(r, jwtUserMiddleWare, updateTokenMiddleware)
+
+	sessionroutes.RegisterRoutes(r,
+		sessionRoutes,
+		jwtAuth0Middleware,
+		jwtClerkMiddleware,
+		jwtSupabaseMiddleware,
+		jwtUserMiddleWare,
+		csrfMiddleware,
+		sessionMiddleware)
 
 	//
 	// Deal with logins where we want a session
 	//
-
-	sessionGroup := r.Group("/sessions")
-
-	sessionAuthGroup := sessionGroup.Group("/auth")
-
-	sessionOAuth2Group := sessionAuthGroup.Group("/oauth2")
-
-	sessionOAuth2Group.POST("/auth0/signin",
-		jwtAuth0Middleware,
-		sessionRoutes.SessionSignInUsingAuth0Route)
-
-	sessionOAuth2Group.POST("/clerk/signin",
-		jwtClerkMiddleware,
-		sessionRoutes.SessionSignInUsingClerkRoute)
-
-	sessionOAuth2Group.POST("/supabase/signin",
-		jwtSupabaseMiddleware,
-		sessionRoutes.SessionSignInUsingSupabaseRoute)
-
-	sessionAuthGroup.POST("/signin",
-		sessionRoutes.SessionUsernamePasswordSignInRoute)
-
-	sessionOtpGroup := sessionAuthGroup.Group("/otp")
-
-	sessionOtpGroup.POST("/send", sessionRoutes.SessionEmailOTPRoute)
-
-	sessionOtpGroup.POST("/signin",
-		sessionRoutes.SessionSignInUsingEmailAndOTPRoute)
-
-	sessionAuthGroup.POST("/passwordless/validate",
-		jwtUserMiddleWare,
-		sessionRoutes.SessionPasswordlessValidateSignInRoute)
-
-	sessionGroup.POST("/api/keys/signin",
-		sessionRoutes.SessionApiKeySignInRoute)
-
-	sessionGroup.GET("/info",
-		sessionMiddleware,
-		sessionRoutes.SessionInfoRoute)
-
-	sessionGroup.POST("/csrf-token/refresh",
-		sessionRoutes.SessionNewCSRFTokenRoute)
-
-	sessionGroup.POST("/signout",
-		//csrfMiddleware,
-		sessionMiddleware,
-		authenticationroutes.SessionSignOutRoute)
-
-	sessionTokensGroup := sessionGroup.Group("/tokens",
-		csrfMiddleware,
-		sessionMiddleware)
-
-	//sessionTokensGroup.POST("/access",
-	//		authenticationroutes.NewAccessTokenFromSessionRoute)
-
-	// issue tokens
-	sessionTokensGroup.POST("/create/:type",
-		authenticationroutes.CreateTokenFromSessionRoute)
-
-	// update session info
-	sessionGroup.POST("/refresh",
-		csrfMiddleware,
-		sessionMiddleware,
-		sessionRoutes.SessionRefreshRoute)
-
-	sessionUserGroup := sessionGroup.Group("/user",
-		csrfMiddleware,
-		sessionMiddleware)
-	sessionUserGroup.GET("", authenticationroutes.UserFromSessionRoute)
-	sessionUserGroup.POST("/update",
-		authenticationroutes.SessionUpdateUserRoute)
-
-	sessionUserGroup.POST("/passwords/update",
-		authenticationroutes.SessionUpdatePasswordRoute)
 
 	modules.RegisterRoutes(r, rulesMiddleware)
 
