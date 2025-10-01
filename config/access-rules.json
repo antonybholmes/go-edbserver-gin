@@ -82,5 +82,17 @@
     "methods": [
       { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
     ]
+  },
+  {
+    "path": "/modules/gex/datasets/:species/:technology",
+    "methods": [
+      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+    ]
+  },
+  {
+    "path": "/modules/gex/exp",
+    "methods": [
+      { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+    ]
   }
 ]
