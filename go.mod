@@ -45,7 +45,7 @@ require (
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20250624211225-358f1d2ad8fc
-	github.com/antonybholmes/go-web v0.0.0-20250929223907-003faea4bf2b
+	github.com/antonybholmes/go-web v0.0.0-20250930224158-5c7fc450eef4
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32
@@ -53,8 +53,8 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-mailserver v0.0.0-20250929223614-38db8ec48499
-	github.com/antonybholmes/go-sys v0.0.0-20250925180737-3c2a91ac29b8
+	github.com/antonybholmes/go-mailserver v0.0.0-20251001224920-e34d9a9836f8
+	github.com/antonybholmes/go-sys v0.0.0-20251001224921-4e3a327973ea
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -148,7 +148,7 @@ require (
 	google.golang.org/genproto/googleapis/api v0.0.0-20250825161204-c5933d9347a5 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250825161204-c5933d9347a5 // indirect
 	google.golang.org/grpc v1.75.0 // indirect
-	google.golang.org/protobuf v1.36.9 // indirect
+	google.golang.org/protobuf v1.36.10 // indirect
 )
 
 require (
