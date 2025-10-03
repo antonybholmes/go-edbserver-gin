@@ -261,8 +261,8 @@ func main() {
 		c.JSON(http.StatusOK,
 			AboutResp{
 				Name:      consts.AppName,
-				Version:   consts.Version,
-				Updated:   consts.Updated,
+				Version:   consts.Version.Version,
+				Updated:   consts.Version.Updated,
 				Copyright: consts.Copyright})
 	})
 

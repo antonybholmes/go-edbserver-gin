@@ -5,10 +5,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/rs/zerolog/log"
-
+	"github.com/antonybholmes/go-sys"
 	"github.com/antonybholmes/go-sys/env"
 	"github.com/antonybholmes/go-web/auth"
+	"github.com/rs/zerolog/log"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -22,7 +22,7 @@ const (
 var (
 	AppUrl    string
 	AppDomain string
-	Version   string
+	Version   sys.VersionInfo
 
 	JwtRsaPrivateKey     *rsa.PrivateKey //[]byte
 	JwtRsaPublicKey      *rsa.PublicKey  //[]byte
@@ -32,7 +32,7 @@ var (
 	SessionName          string
 	SessionKey           string
 	SessionEncryptionKey string
-	Updated              string
+	//Updated              string
 
 	RedisAddr     string
 	RedisPassword string
@@ -55,8 +55,8 @@ func init() {
 
 	AppUrl = os.Getenv("APP_URL")
 	AppDomain = os.Getenv("APP_DOMAIN")
-	Version = os.Getenv("VERSION")
-	Updated = os.Getenv("UPDATED")
+	//Version = os.Getenv("VERSION")
+	//Updated = os.Getenv("UPDATED")
 
 	RedisAddr = os.Getenv("REDIS_ADDR")
 	RedisPassword = os.Getenv("REDIS_PASSWORD")
@@ -120,4 +120,5 @@ func init() {
 		log.Fatal().Msgf("%s", err)
 	}
 
+	Version = sys.Must(sys.LoadVersionInfo("version.json"))
 }

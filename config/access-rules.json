@@ -1,98 +1,105 @@
-[
-  {
-    "path": "/admin/users",
-    "methods": [
-      { "type": "POST", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
-    ]
-  },
-  {
-    "path": "/admin/roles",
-    "methods": [
-      { "type": "GET", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
-    ]
-  },
-  {
-    "path": "/admin/users/stats",
-    "methods": [
-      { "type": "GET", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
-    ]
-  },
-  {
-    "path": "/admin/users/update",
-    "methods": [
-      { "type": "POST", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
-    ]
-  },
-  {
-    "path": "/admin/users/add",
-    "methods": [
-      { "type": "POST", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
-    ]
-  },
-  {
-    "path": "/admin/users/delete/:id",
-    "methods": [
-      { "type": "DELETE", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
-    ]
-  },
-  {
-    "path": "/modules/scrna/datasets/:species/:assembly",
-    "methods": [
-      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
-    ]
-  },
-  {
-    "path": "/modules/scrna/genes/search/:id",
-    "methods": [
-      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
-    ]
-  },
-  {
-    "path": "/modules/scrna/metadata/:id",
-    "methods": [
-      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
-    ]
-  },
-  {
-    "path": "/modules/seqs/genomes",
-    "methods": [
-      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
-    ]
-  },
-  {
-    "path": "/modules/seqs/platforms/:assembly",
-    "methods": [
-      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
-    ]
-  },
-  {
-    "path": "/modules/seqs/search/:assembly",
-    "methods": [
-      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
-    ]
-  },
-  {
-    "path": "/modules/seqs/bins",
-    "methods": [
-      { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
-    ]
-  },
-  {
-    "path": "/modules/mutations/pileup/:assembly",
-    "methods": [
-      { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
-    ]
-  },
-  {
-    "path": "/modules/gex/datasets/:species/:technology",
-    "methods": [
-      { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
-    ]
-  },
-  {
-    "path": "/modules/gex/exp",
-    "methods": [
-      { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
-    ]
-  }
-]
+{
+  "version": "1.0.0",
+  "updated": "Oct 03, 2025",
+  "rules": [
+    {
+      "path": "/admin/users",
+      "methods": [
+        { "type": "POST", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+      ]
+    },
+    {
+      "path": "/admin/roles",
+      "methods": [
+        { "type": "GET", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+      ]
+    },
+    {
+      "path": "/admin/users/stats",
+      "methods": [
+        { "type": "GET", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+      ]
+    },
+    {
+      "path": "/admin/users/update",
+      "methods": [
+        { "type": "POST", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+      ]
+    },
+    {
+      "path": "/admin/users/add",
+      "methods": [
+        { "type": "POST", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+      ]
+    },
+    {
+      "path": "/admin/users/delete/:id",
+      "methods": [
+        {
+          "type": "DELETE",
+          "tokens": [{ "type": "access", "roles": ["Admin"] }]
+        }
+      ]
+    },
+    {
+      "path": "/modules/scrna/datasets/:species/:assembly",
+      "methods": [
+        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+      ]
+    },
+    {
+      "path": "/modules/scrna/genes/search/:id",
+      "methods": [
+        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+      ]
+    },
+    {
+      "path": "/modules/scrna/metadata/:id",
+      "methods": [
+        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+      ]
+    },
+    {
+      "path": "/modules/seqs/genomes",
+      "methods": [
+        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+      ]
+    },
+    {
+      "path": "/modules/seqs/platforms/:assembly",
+      "methods": [
+        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+      ]
+    },
+    {
+      "path": "/modules/seqs/search/:assembly",
+      "methods": [
+        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+      ]
+    },
+    {
+      "path": "/modules/seqs/bins",
+      "methods": [
+        { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+      ]
+    },
+    {
+      "path": "/modules/mutations/pileup/:assembly",
+      "methods": [
+        { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+      ]
+    },
+    {
+      "path": "/modules/gex/datasets/:species/:technology",
+      "methods": [
+        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+      ]
+    },
+    {
+      "path": "/modules/gex/exp",
+      "methods": [
+        { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+      ]
+    }
+  ]
+}
