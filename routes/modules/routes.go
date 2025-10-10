@@ -60,6 +60,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	gexGroup := moduleGroup.Group("/gex")
 	gexGroup.GET("/species", gexroutes.SpeciesRoute)
 	gexGroup.GET("/technologies", gexroutes.TechnologiesRoute)
+
 	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
 
 	// protected routes
@@ -72,6 +73,10 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 
 	gexProtectedGroup.GET("/datasets/:species/:technology",
 		gexroutes.GexDatasetsRoute)
+
+	gexProtectedGroup.POST("/expr/types",
+		gexroutes.ExprTypesRoute,
+	)
 
 	gexProtectedGroup.POST("/exp", gexroutes.GexGeneExpRoute)
 

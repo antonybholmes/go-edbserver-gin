@@ -39,13 +39,13 @@ replace github.com/antonybholmes/go-scrna => ../go-scrna
 require github.com/antonybholmes/go-edbmailserver v0.0.0-20250911171638-68021ab78342
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20250911171638-68021ab78342 // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20250923203645-9c04f9f727c6
+	github.com/antonybholmes/go-basemath v0.0.0-20251008222328-9d996776e793 // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20251008222323-bbf03fd1088e
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20250624211225-358f1d2ad8fc
-	github.com/antonybholmes/go-web v0.0.0-20251003150640-fdfd17b6e616
+	github.com/antonybholmes/go-web v0.0.0-20251008222324-d181dd3491d7
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32
@@ -53,8 +53,8 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-mailserver v0.0.0-20251001224920-e34d9a9836f8
-	github.com/antonybholmes/go-sys v0.0.0-20251003150644-1088538d5aea
+	github.com/antonybholmes/go-mailserver v0.0.0-20251008222327-aef28c18021f
+	github.com/antonybholmes/go-sys v0.0.0-20251008222328-ea54acd3095b
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -141,10 +141,10 @@ require (
 	go.opentelemetry.io/proto/otlp v1.7.1 // indirect
 	go.uber.org/mock v0.6.0 // indirect
 	golang.org/x/arch v0.22.0 // indirect
-	golang.org/x/exp v0.0.0-20251002181428-27f1f14c8bb9 // indirect
+	golang.org/x/exp v0.0.0-20251009144603-d2f985daa21b // indirect
 	golang.org/x/mod v0.29.0 // indirect
 	golang.org/x/sync v0.17.0 // indirect
-	golang.org/x/tools v0.37.0 // indirect
+	golang.org/x/tools v0.38.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250825161204-c5933d9347a5 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250825161204-c5933d9347a5 // indirect
 	google.golang.org/grpc v1.75.0 // indirect

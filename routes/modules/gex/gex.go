@@ -8,11 +8,11 @@ import (
 )
 
 type GexParams struct {
-	Species    string   `json:"species"`
-	Technology string   `json:"technology"`
-	GexType    string   `json:"gexType"`
-	Genes      []string `json:"genes"`
-	Datasets   []string `json:"datasets"`
+	Species    string       `json:"species"`
+	Technology string       `json:"technology"`
+	GexType    gex.ExprType `json:"gexType"`
+	Genes      []string     `json:"genes"`
+	Datasets   []string     `json:"datasets"`
 }
 
 func parseParamsFromPost(c *gin.Context) (*GexParams, error) {
@@ -54,6 +54,25 @@ func TechnologiesRoute(c *gin.Context) {
 	technologies := gexdbcache.Technologies() //gexdbcache.Technologies()
 
 	web.MakeDataResp(c, "", technologies)
+}
+
+func ExprTypesRoute(c *gin.Context) {
+
+	params, err := parseParamsFromPost(c)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	exprTypes, err := gexdbcache.ExprTypes(params.Datasets)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	web.MakeDataResp(c, "", exprTypes)
 }
 
 // func GexValueTypesRoute(c *gin.Context) {
@@ -111,7 +130,7 @@ func GexGeneExpRoute(c *gin.Context) {
 		web.MakeDataResp(c, "", ret)
 	} else {
 		// default to rna-seq
-		ret, err := gexdbcache.FindRNASeqValues(params.Datasets, params.GexType, params.Genes)
+		ret, err := gexdbcache.FindSeqValues(params.Datasets, params.GexType, params.Genes)
 
 		if err != nil {
 			c.Error(err)

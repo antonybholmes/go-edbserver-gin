@@ -102,6 +102,12 @@
       ]
     },
     {
+      "path": "/modules/gex/expr/type",
+      "methods": [
+        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+      ]
+    },
+    {
       "path": "/modules/hubs/:assembly",
       "methods": [
         { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
