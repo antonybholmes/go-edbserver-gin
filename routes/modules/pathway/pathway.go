@@ -7,15 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ReqOverlapParams struct {
-	Geneset  pathway.Geneset `json:"geneset"`
-	Datasets []string        `json:"datasets"`
-}
+type (
+	ReqOverlapParams struct {
+		Geneset  pathway.Geneset `json:"geneset"`
+		Datasets []string        `json:"datasets"`
+	}
 
-type ReqDatasetParams struct {
-	Organization string `json:"organization"`
-	Name         string `json:"name"`
-}
+	ReqDatasetParams struct {
+		Organization string `json:"organization"`
+		Name         string `json:"name"`
+	}
+)
 
 func ParseOverlapParamsFromPost(c *gin.Context) (*ReqOverlapParams, error) {
 

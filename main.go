@@ -53,26 +53,30 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type AboutResp struct {
-	Name      string `json:"name"`
-	Copyright string `json:"copyright"`
-	Version   string `json:"version"`
-	Updated   string `json:"updated"`
-}
+type (
+	AboutResp struct {
+		Name      string `json:"name"`
+		Copyright string `json:"copyright"`
+		Version   string `json:"version"`
+		Updated   string `json:"updated"`
+	}
 
-type InfoResp struct {
-	IpAddr string `json:"ipAddr"`
-	Arch   string `json:"arch"`
-}
+	InfoResp struct {
+		IpAddr string `json:"ipAddr"`
+		Arch   string `json:"arch"`
+	}
+)
+
+const PreflightMaxAge = 12 * 3600 // 12 hours
 
 // var store *sqlitestorr.SqliteStore
-var store cookie.Store
+var (
+	store cookie.Store
 
-var rdb *redis.Client
+	rdb *redis.Client
 
-var re *access.RuleEngine
-
-const PREFLIGHT_MAX_AGE = 12 * 3600 // 12 hours
+	re *access.RuleEngine
+)
 
 func initLogger() {
 	fileLogger := &lumberjack.Logger{
@@ -248,8 +252,8 @@ func main() {
 		AllowHeaders: []string{"Origin", "Content-Type", "Authorization", "X-CSRF-Token"},
 		//AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, "Set-Cookie"},
 		// for sharing session cookie for validating logins etc
-		AllowCredentials: true,              // Allow credentials (cookies, HTTP authentication)
-		MaxAge:           PREFLIGHT_MAX_AGE, // Cache preflight response for 12 hours
+		AllowCredentials: true,            // Allow credentials (cookies, HTTP authentication)
+		MaxAge:           PreflightMaxAge, // Cache preflight response for 12 hours
 	}))
 
 	store = cookie.NewStore([]byte(consts.SessionKey),

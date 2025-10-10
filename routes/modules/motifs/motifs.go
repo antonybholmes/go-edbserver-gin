@@ -16,19 +16,21 @@ var (
 	ErrSearchTooShort = errors.New("search too short")
 )
 
-type ReqParams struct {
-	Search     string `json:"search"`
-	Exact      bool   `json:"exact"`
-	Reverse    bool   `json:"reverse"`
-	Complement bool   `json:"complement"`
-}
+type (
+	ReqParams struct {
+		Search     string `json:"search"`
+		Exact      bool   `json:"exact"`
+		Reverse    bool   `json:"reverse"`
+		Complement bool   `json:"complement"`
+	}
 
-type MotifRes struct {
-	Search     string          `json:"search"`
-	Motifs     []*motifs.Motif `json:"motifs"`
-	Reverse    bool            `json:"reverse"`
-	Complement bool            `json:"complement"`
-}
+	MotifRes struct {
+		Search     string          `json:"search"`
+		Motifs     []*motifs.Motif `json:"motifs"`
+		Reverse    bool            `json:"reverse"`
+		Complement bool            `json:"complement"`
+	}
+)
 
 func ParseParamsFromPost(c *gin.Context) (*ReqParams, error) {
 
