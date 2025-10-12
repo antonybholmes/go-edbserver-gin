@@ -1,7 +1,7 @@
 package gex
 
 import (
-	"strings"
+	"fmt"
 
 	"github.com/antonybholmes/go-gex"
 	"github.com/antonybholmes/go-gex/gexdbcache"
@@ -12,7 +12,7 @@ import (
 type GexParams struct {
 	Species    string        `json:"species"`
 	Technology string        `json:"technology"`
-	ExprType   *gex.ExprType `json:"exprType"`
+	ExprType   *gex.ExprType `json:"exprType"` // use pointer so we can check for nil
 	Genes      []string      `json:"genes"`
 	Datasets   []string      `json:"datasets"`
 }
@@ -44,15 +44,6 @@ func SpeciesRoute(c *gin.Context) {
 
 func TechnologiesRoute(c *gin.Context) {
 
-	//species := c.Param("species")
-
-	// technologies, err := gexdbcache.AllTechnologies() //gexdbcache.Technologies() //species)
-
-	// if err != nil {
-	// 	c.Error(err)
-	// 	return
-	// }
-
 	technologies := gexdbcache.Technologies() //gexdbcache.Technologies()
 
 	web.MakeDataResp(c, "", technologies)
@@ -76,25 +67,6 @@ func ExprTypesRoute(c *gin.Context) {
 
 	web.MakeDataResp(c, "", exprTypes)
 }
-
-// func GexValueTypesRoute(c *gin.Context) {
-
-// 	params, err := parseParamsFromPost(c)
-
-// 	if err != nil {
-// 		c.Error(err)
-// 		return
-// 	}
-
-// 	valueTypes, err := gexdbcache.GexValueTypes(params.Platform.Id)
-
-// 	if err != nil {
-// 		c.Error(err)
-// 		return
-// 	}
-
-// 	web.MakeDataResp(c, "", valueTypes)
-// }
 
 func GexDatasetsRoute(c *gin.Context) {
 
@@ -120,12 +92,23 @@ func GexGeneExprRoute(c *gin.Context) {
 		return
 	}
 
+	// we enforce the expr type so that if multiple datasets are provided
+	// they must all be of the same type so that we do not
+	// mix microarray and rna-seq searches together for example
+	if params.ExprType == nil {
+		web.BadReqResp(c, fmt.Errorf("exprType is required"))
+		return
+	}
+
 	results := make([]*gex.SearchResults, 0, len(params.Datasets))
 
-	for _, datasetId := range params.Datasets {
-
-		if strings.Contains(datasetId, "microarray") {
-			// microarray
+	// at a minimum the dataset id will contain the technology
+	// we can use this to determine which search function to call
+	// e.g. "FindMicroarrayValues" or "FindSeqValues", other
+	// info could be added later
+	if params.ExprType.Name == "Microarray" {
+		// microarray
+		for _, datasetId := range params.Datasets {
 			ret, err := gexdbcache.FindMicroarrayValues(datasetId, params.Genes)
 
 			if err != nil {
@@ -134,8 +117,9 @@ func GexGeneExprRoute(c *gin.Context) {
 			}
 
 			results = append(results, ret)
-		} else {
-			// default to rna-seq
+		}
+	} else {
+		for _, datasetId := range params.Datasets {
 			ret, err := gexdbcache.FindSeqValues(datasetId, params.ExprType, params.Genes)
 
 			if err != nil {
@@ -145,27 +129,8 @@ func GexGeneExprRoute(c *gin.Context) {
 
 			results = append(results, ret)
 		}
-
-		web.MakeDataResp(c, "", results)
 	}
+
+	web.MakeDataResp(c, "", results)
+
 }
-
-// func GexRoute(c *gin.Context) {
-// 	gexType := c.Param("type")
-
-// 	params, err := ParseParamsFromPost(c)
-
-// 	if err != nil {
-// 		return web.ErrorReq(err)
-// 	}
-
-// 	search, err := gexdbcache.GetInstance().Search(gexType, params.Datasets, params.Genes)
-
-// 	if err != nil {
-// 		return web.ErrorReq(err)
-// 	}
-
-// 	web.MakeDataResp(c, "", search)
-
-// 	//web.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
-// }
