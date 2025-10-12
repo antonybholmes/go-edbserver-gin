@@ -78,7 +78,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 		gexroutes.ExprTypesRoute,
 	)
 
-	gexProtectedGroup.POST("/exp", gexroutes.GexGeneExpRoute)
+	gexProtectedGroup.POST("/expr", gexroutes.GexGeneExprRoute)
 
 	scrnaGroup := moduleGroup.Group("/scrna")
 	scrnaGroup.GET("/species", scrnaroutes.ScrnaSpeciesRoute)

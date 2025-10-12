@@ -24,7 +24,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const MAX_AGE_ONE_YEAR_SECS = 31536000 // 60 * 60 * 24 * 365
+const MaxAgeOneYearSecs = 31536000 // 60 * 60 * 24 * 365
 
 var (
 	ErrNoSessionUser  = errors.New("no auth user")

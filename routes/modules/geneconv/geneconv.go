@@ -73,7 +73,7 @@ func ConvertRoute(c *gin.Context) {
 	fromSpecies = strings.ToLower(fromSpecies)
 	//toSpecies = strings.ToLower(toSpecies)
 
-	if fromSpecies == geneconv.HUMAN_SPECIES {
+	if fromSpecies == geneconv.SpeciesHuman {
 		ret.From = geneconv.HUMAN_TAX
 		ret.To = geneconv.MOUSE_TAX
 	} else {

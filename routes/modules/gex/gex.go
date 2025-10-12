@@ -1,6 +1,8 @@
 package gex
 
 import (
+	"strings"
+
 	"github.com/antonybholmes/go-gex"
 	"github.com/antonybholmes/go-gex/gexdbcache"
 	"github.com/antonybholmes/go-web"
@@ -8,11 +10,11 @@ import (
 )
 
 type GexParams struct {
-	Species    string       `json:"species"`
-	Technology string       `json:"technology"`
-	GexType    gex.ExprType `json:"gexType"`
-	Genes      []string     `json:"genes"`
-	Datasets   []string     `json:"datasets"`
+	Species    string        `json:"species"`
+	Technology string        `json:"technology"`
+	ExprType   *gex.ExprType `json:"exprType"`
+	Genes      []string      `json:"genes"`
+	Datasets   []string      `json:"datasets"`
 }
 
 func parseParamsFromPost(c *gin.Context) (*GexParams, error) {
@@ -110,7 +112,7 @@ func GexDatasetsRoute(c *gin.Context) {
 	web.MakeDataResp(c, "", datasets)
 }
 
-func GexGeneExpRoute(c *gin.Context) {
+func GexGeneExprRoute(c *gin.Context) {
 	params, err := parseParamsFromPost(c)
 
 	if err != nil {
@@ -118,26 +120,33 @@ func GexGeneExpRoute(c *gin.Context) {
 		return
 	}
 
-	if params.Technology == gex.MICROARRAY_TECHNOLOGY {
-		// microarray
-		ret, err := gexdbcache.FindMicroarrayValues(params.Datasets, params.Genes)
+	results := make([]*gex.SearchResults, 0, len(params.Datasets))
 
-		if err != nil {
-			c.Error(err)
-			return
+	for _, datasetId := range params.Datasets {
+
+		if strings.Contains(datasetId, "microarray") {
+			// microarray
+			ret, err := gexdbcache.FindMicroarrayValues(datasetId, params.Genes)
+
+			if err != nil {
+				c.Error(err)
+				return
+			}
+
+			results = append(results, ret)
+		} else {
+			// default to rna-seq
+			ret, err := gexdbcache.FindSeqValues(datasetId, params.ExprType, params.Genes)
+
+			if err != nil {
+				c.Error(err)
+				return
+			}
+
+			results = append(results, ret)
 		}
 
-		web.MakeDataResp(c, "", ret)
-	} else {
-		// default to rna-seq
-		ret, err := gexdbcache.FindSeqValues(params.Datasets, params.GexType, params.Genes)
-
-		if err != nil {
-			c.Error(err)
-			return
-		}
-
-		web.MakeDataResp(c, "", ret)
+		web.MakeDataResp(c, "", results)
 	}
 }
 

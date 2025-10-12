@@ -18,29 +18,31 @@ const (
 	DefaultEnd      uint   = 100100 //187752257
 )
 
-type ReqLocs struct {
-	Locations []string `json:"locations"`
-}
+type (
+	ReqLocs struct {
+		Locations []string `json:"locations"`
+	}
 
-type DNA struct {
-	Location *dna.Location `json:"location"`
-	Seq      string        `json:"seq"`
-}
+	DNA struct {
+		Location *dna.Location `json:"location"`
+		Seq      string        `json:"seq"`
+	}
 
-type DNAResp struct {
-	Assembly     string `json:"assembly"`
-	Format       string `json:"format"`
-	IsRev        bool   `json:"isRev"`
-	IsComplement bool   `json:"isComp"`
-	Seqs         []*DNA `json:"seqs"`
-}
+	DNAResp struct {
+		Assembly     string `json:"assembly"`
+		Format       string `json:"format"`
+		IsRev        bool   `json:"isRev"`
+		IsComplement bool   `json:"isComp"`
+		Seqs         []*DNA `json:"seqs"`
+	}
 
-type DNAQuery struct {
-	Rev        bool
-	Comp       bool
-	Format     string
-	RepeatMask string
-}
+	DNAQuery struct {
+		Rev        bool
+		Comp       bool
+		Format     string
+		RepeatMask string
+	}
+)
 
 func ParseLocation(c *gin.Context) (*dna.Location, error) {
 	chr := DefaultChr

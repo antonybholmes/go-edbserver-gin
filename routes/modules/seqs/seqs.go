@@ -15,24 +15,26 @@ var (
 	ErrNoGenomeSupplied = errors.New("must supply a genome")
 )
 
-type ReqSeqParams struct {
-	Locations []string `json:"locations"`
-	Scale     float64  `json:"scale"`
-	BinSizes  []uint   `json:"binSizes"`
-	Tracks    []string `json:"tracks"`
-}
+type (
+	ReqSeqParams struct {
+		Locations []string `json:"locations"`
+		Scale     float64  `json:"scale"`
+		BinSizes  []uint   `json:"binSizes"`
+		Tracks    []string `json:"tracks"`
+	}
 
-type SeqParams struct {
-	Locations []*dna.Location
-	Scale     float64
-	BinSizes  []uint
-	Tracks    []string
-}
+	SeqParams struct {
+		Locations []*dna.Location
+		Scale     float64
+		BinSizes  []uint
+		Tracks    []string
+	}
 
-type SeqResp struct {
-	Location *dna.Location         `json:"location"`
-	Tracks   []*seq.TrackBinCounts `json:"tracks"`
-}
+	SeqResp struct {
+		Location *dna.Location         `json:"location"`
+		Tracks   []*seq.TrackBinCounts `json:"tracks"`
+	}
+)
 
 func ParseSeqParamsFromPost(c *gin.Context) (*SeqParams, error) {
 

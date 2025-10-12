@@ -10,15 +10,17 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type MutationParams struct {
-	Locations []*dna.Location
-	Datasets  []string
-}
+type (
+	MutationParams struct {
+		Locations []*dna.Location
+		Datasets  []string
+	}
 
-type ReqMutationParams struct {
-	Locations []string `json:"locations"`
-	Datasets  []string `json:"datasets"`
-}
+	ReqMutationParams struct {
+		Locations []string `json:"locations"`
+		Datasets  []string `json:"datasets"`
+	}
+)
 
 func ParseParamsFromPost(c *gin.Context) (*MutationParams, error) {
 

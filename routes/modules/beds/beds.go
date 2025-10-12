@@ -15,15 +15,17 @@ var (
 	ErrNoBedsSupplied = errors.New("at least 1 bed id must be supplied")
 )
 
-type ReqBedsParams struct {
-	Location string   `json:"location"`
-	Beds     []string `json:"beds"`
-}
+type (
+	ReqBedsParams struct {
+		Location string   `json:"location"`
+		Beds     []string `json:"beds"`
+	}
 
-type BedsParams struct {
-	Location *dna.Location `json:"location"`
-	Beds     []string      `json:"beds"`
-}
+	BedsParams struct {
+		Location *dna.Location `json:"location"`
+		Beds     []string      `json:"beds"`
+	}
+)
 
 func ParseBedParamsFromPost(c *gin.Context) (*BedsParams, error) {
 
