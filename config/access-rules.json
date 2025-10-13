@@ -96,13 +96,13 @@
       ]
     },
     {
-      "path": "/modules/gex/exp",
+      "path": "/modules/gex/expr",
       "methods": [
         { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
       ]
     },
     {
-      "path": "/modules/gex/expr/type",
+      "path": "/modules/gex/expr/types",
       "methods": [
         { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
       ]
