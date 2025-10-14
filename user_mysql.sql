@@ -13,7 +13,7 @@ CREATE TABLE permissions (
     description VARCHAR(255) NOT NULL DEFAULT "",
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL);
-CREATE INDEX roles_name_idx ON permissions (name);
+CREATE INDEX permission_name_idx ON permissions (name);
 
 INSERT INTO permissions (public_id, name, description) VALUES('01997350-f1db-734a-aabc-b738772a9d0c', 'Super', 'Superuser');
 INSERT INTO permissions (public_id, name, description) VALUES('01997351-06c7-7f0d-b026-c51376a044ee', 'Admin', 'Administrator');

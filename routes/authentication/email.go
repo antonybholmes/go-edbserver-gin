@@ -10,8 +10,8 @@ import (
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
+	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/antonybholmes/go-web/tokengen"
-	"github.com/antonybholmes/go-web/userdbcache"
 
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/gin-gonic/gin"

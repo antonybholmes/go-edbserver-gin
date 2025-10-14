@@ -6,8 +6,9 @@ import (
 
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/auth/userdb"
+	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/antonybholmes/go-web/middleware"
-	"github.com/antonybholmes/go-web/userdbcache"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -91,7 +92,7 @@ func (validator *Validator) CheckUsernameIsWellFormed() *Validator {
 
 	//log.Debug().Msgf("check username well formed %s", validator.SignInBodyReq.Username)
 
-	err := auth.CheckUsername(validator.UserBodyReq.Username)
+	err := userdb.CheckUsername(validator.UserBodyReq.Username)
 
 	if err != nil {
 		log.Debug().Msgf("check user name err %s", err)

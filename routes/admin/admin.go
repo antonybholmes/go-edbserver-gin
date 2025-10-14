@@ -7,7 +7,7 @@ import (
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
-	"github.com/antonybholmes/go-web/userdbcache"
+	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )

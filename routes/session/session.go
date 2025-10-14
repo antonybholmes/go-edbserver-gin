@@ -16,9 +16,10 @@ import (
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/auth/userdb"
+	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/tokengen"
-	"github.com/antonybholmes/go-web/userdbcache"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -158,7 +159,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 		return
 	}
 
-	if authUser.EmailVerifiedAt == auth.EmailNotVerifiedDate {
+	if authUser.EmailVerifiedAt == userdb.EmailNotVerifiedDate {
 		web.EmailNotVerifiedReq(c)
 		return
 	}
@@ -235,7 +236,7 @@ func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 		return
 	}
 
-	if authUser.EmailVerifiedAt == auth.EmailNotVerifiedDate {
+	if authUser.EmailVerifiedAt == userdb.EmailNotVerifiedDate {
 		web.EmailNotVerifiedReq(c)
 		return
 	}
@@ -711,7 +712,7 @@ func SessionUpdatePasswordRoute(c *gin.Context) {
 		return
 	}
 
-	err = auth.CheckPassword(req.Password)
+	err = userdb.CheckPassword(req.Password)
 
 	if err != nil {
 		web.BadReqResp(c, auth.ErrPasswordDoesNotMeetCriteria)
