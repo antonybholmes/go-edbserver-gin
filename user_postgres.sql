@@ -15,9 +15,9 @@ DROP TABLE IF EXISTS users;
 
 CREATE TABLE permissions (
     id SERIAL PRIMARY KEY, 
-    public_id VARCHAR(255) NOT NULL UNIQUE,
-    name VARCHAR(255) NOT NULL UNIQUE,
-    description VARCHAR(255) NOT NULL DEFAULT '',
+    public_id TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
 CREATE INDEX permissions_name_idx ON permissions (name);
@@ -38,9 +38,9 @@ INSERT INTO permissions (public_id, name, description) VALUES('01997351-36fe-7e7
 
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY, 
-    public_id VARCHAR(255) NOT NULL UNIQUE, 
-    name VARCHAR(255) NOT NULL UNIQUE,
-    description VARCHAR(255) NOT NULL DEFAULT '',
+    public_id TEXT NOT NULL UNIQUE, 
+    name TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
 CREATE INDEX roles_name_idx ON roles (name);
@@ -96,12 +96,12 @@ INSERT INTO roles_permissions (role_id, permission_id) VALUES(5, 5);
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     id SERIAL PRIMARY KEY, 
-    public_id VARCHAR(255) NOT NULL UNIQUE,
-    username VARCHAR(255) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL DEFAULT '',
-    first_name VARCHAR(255) NOT NULL DEFAULT '',
-    last_name VARCHAR(255) NOT NULL DEFAULT '',
+    public_id TEXT NOT NULL UNIQUE,
+    username TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL DEFAULT '',
+    first_name TEXT NOT NULL DEFAULT '',
+    last_name TEXT NOT NULL DEFAULT '',
     is_locked BOOLEAN NOT NULL DEFAULT false,
     email_verified_at TIMESTAMP DEFAULT 'epoch' NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -139,7 +139,7 @@ DROP TABLE IF EXISTS api_keys;
 CREATE TABLE api_keys (
     id SERIAL PRIMARY KEY, 
     user_id INTEGER NOT NULL,
-    api_key VARCHAR(255) NOT NULL, 
+    api_key TEXT NOT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     UNIQUE(user_id, api_key),
