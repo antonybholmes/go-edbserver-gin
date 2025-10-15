@@ -47,7 +47,7 @@ import (
 	"github.com/antonybholmes/go-motifs/motifsdb"
 	"github.com/antonybholmes/go-mutations/mutationdbcache"
 	"github.com/antonybholmes/go-pathway/pathwaydbcache"
-	"github.com/antonybholmes/go-scrna/scrnadbcache"
+	scrnadbcache "github.com/antonybholmes/go-scrna/cache"
 	"github.com/antonybholmes/go-seqs/seqsdbcache"
 	"github.com/antonybholmes/go-sys/env"
 	_ "github.com/mattn/go-sqlite3"

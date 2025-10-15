@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/antonybholmes/go-scrna/scrnadbcache"
+	scrnadbcache "github.com/antonybholmes/go-scrna/cache"
 	"github.com/antonybholmes/go-sys"
 	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"

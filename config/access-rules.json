@@ -112,6 +112,12 @@
       "methods": [
         { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
       ]
+    },
+    {
+      "path": "/modules/scrna/gex/:id",
+      "methods": [
+        { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+      ]
     }
   ]
 }
