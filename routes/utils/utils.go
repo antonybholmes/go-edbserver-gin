@@ -188,7 +188,7 @@ func RandomKeyRoute(c *gin.Context) {
 
 func UUIDv7Route(c *gin.Context) {
 
-	uuid, err := sys.Uuid()
+	uuid, err := sys.Uuidv7()
 
 	if err != nil {
 		web.BadReqResp(c, err)
