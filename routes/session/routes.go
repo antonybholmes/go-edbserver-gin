@@ -5,6 +5,7 @@ import (
 	"github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/middleware"
+	csrfmiddleware "github.com/antonybholmes/go-web/middleware/csrf"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,7 +23,7 @@ func RegisterRoutes(r *gin.Engine, otp *auth.OTP, jwtUserMiddleWare gin.HandlerF
 
 	jwtSupabaseMiddleware := middleware.JwtSupabaseMiddleware(consts.JwtSupabaseSecretKey)
 
-	csrfMiddleware := middleware.CSRFValidateMiddleware()
+	csrfMiddleware := csrfmiddleware.CSRFValidateMiddleware()
 
 	sessionGroup := r.Group("/sessions")
 
