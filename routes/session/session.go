@@ -19,6 +19,7 @@ import (
 	"github.com/antonybholmes/go-web/auth/userdb"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/antonybholmes/go-web/middleware"
+	csrfmiddleware "github.com/antonybholmes/go-web/middleware/csrf"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -217,7 +218,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 		return
 	}
 
-	web.MakeNewCSRFTokenResp(c)
+	csrfmiddleware.MakeNewCSRFTokenResp(c)
 	//return c.NoContent(http.StatusOK)
 }
 
@@ -441,7 +442,7 @@ func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, aut
 
 	//log.Debug().Msgf("token %s", token)
 
-	web.MakeNewCSRFTokenResp(c)
+	csrfmiddleware.MakeNewCSRFTokenResp(c)
 
 	//web.MakeOkResp(c, "user has been signed in")
 }
@@ -530,7 +531,7 @@ func (sessionRoutes *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 }
 
 func (sessionRoutes *SessionRoutes) SessionNewCSRFTokenRoute(c *gin.Context) {
-	web.MakeNewCSRFTokenResp(c)
+	csrfmiddleware.MakeNewCSRFTokenResp(c)
 }
 
 func (sessionRoutes *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
