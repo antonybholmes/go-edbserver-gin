@@ -8,6 +8,7 @@ import (
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
+	"github.com/antonybholmes/go-sys"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
@@ -43,16 +44,16 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		roles, err := userdbcache.UserRoleSet(authUser)
+		// roles, err := userdbcache.UserRoleSet(authUser)
 
-		if err != nil {
-			web.ForbiddenResp(c, ErrUserRoles)
-			return
-		}
+		// if err != nil {
+		// 	web.ForbiddenResp(c, ErrUserRoles)
+		// 	return
+		// }
 
 		//roleClaim := auth.MakeClaim(roles)
 
-		if !auth.HasSignInRole(roles) {
+		if !auth.HasLoginInRole(sys.NewStringSet().ListUpdate(auth.FlattenRoles(authUser.Roles))) {
 			web.UserNotAllowedToSignInErrorResp(c)
 			return
 		}
@@ -71,7 +72,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		accessToken, err := tokengen.AccessToken(c, authUser.PublicId, roles.Keys()) //auth.MakeClaim(authUser.Roles))
+		accessToken, err := tokengen.AccessToken(c, authUser.PublicId, authUser.Roles) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			auth.TokenErrorResp(c)
@@ -150,16 +151,16 @@ func PasswordlessSignInRoute(c *gin.Context) {
 
 		authUser := validator.AuthUser
 
-		roles, err := userdbcache.UserRoleSet(authUser)
+		// roles, err := userdbcache.UserRoleSet(authUser)
 
-		if err != nil {
-			web.ForbiddenResp(c, ErrUserRoles)
-			return
-		}
+		// if err != nil {
+		// 	web.ForbiddenResp(c, ErrUserRoles)
+		// 	return
+		// }
 
 		//roleClaim := auth.MakeClaim(roles)
 
-		if !auth.HasSignInRole(roles) {
+		if !auth.HasLoginInRole(sys.NewStringSet().ListUpdate(auth.FlattenRoles(authUser.Roles))) {
 			web.UserNotAllowedToSignInErrorResp(c)
 			return
 		}

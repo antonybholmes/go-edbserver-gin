@@ -5,31 +5,46 @@
     {
       "path": "/admin/users",
       "methods": [
-        { "type": "POST", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+        {
+          "type": "POST",
+          "tokens": [{ "type": "access", "roles": ["super:*", "admin:*"] }]
+        }
       ]
     },
     {
       "path": "/admin/roles",
       "methods": [
-        { "type": "GET", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "roles": ["super:*", "admin:*"] }]
+        }
       ]
     },
     {
       "path": "/admin/users/stats",
       "methods": [
-        { "type": "GET", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "roles": ["super:*", "admin:*"] }]
+        }
       ]
     },
     {
       "path": "/admin/users/update",
       "methods": [
-        { "type": "POST", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+        {
+          "type": "POST",
+          "tokens": [{ "type": "access", "roles": ["super:*", "admin:*"] }]
+        }
       ]
     },
     {
       "path": "/admin/users/add",
       "methods": [
-        { "type": "POST", "tokens": [{ "type": "access", "roles": ["Admin"] }] }
+        {
+          "type": "POST",
+          "tokens": [{ "type": "access", "roles": ["super:*", "admin:*"] }]
+        }
       ]
     },
     {
@@ -37,86 +52,125 @@
       "methods": [
         {
           "type": "DELETE",
-          "tokens": [{ "type": "access", "roles": ["Admin"] }]
+          "tokens": [{ "type": "access", "roles": ["super:*", "admin:*"] }]
         }
       ]
     },
     {
       "path": "/modules/scrna/datasets/:species/:assembly",
       "methods": [
-        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "roles": ["rdf:read"] }]
+        }
       ]
     },
     {
       "path": "/modules/scrna/genes/search/:id",
       "methods": [
-        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "roles": ["rdf:read"] }]
+        }
       ]
     },
     {
       "path": "/modules/scrna/metadata/:id",
       "methods": [
-        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "roles": ["rdf:read"] }]
+        }
       ]
     },
     {
       "path": "/modules/seqs/genomes",
       "methods": [
-        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "roles": ["rdf:read"] }]
+        }
       ]
     },
     {
       "path": "/modules/seqs/platforms/:assembly",
       "methods": [
-        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "roles": ["rdf:read"] }]
+        }
       ]
     },
     {
       "path": "/modules/seqs/search/:assembly",
       "methods": [
-        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "roles": ["rdf:read"] }]
+        }
       ]
     },
     {
       "path": "/modules/seqs/bins",
       "methods": [
-        { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+        {
+          "type": "POST",
+          "tokens": [{ "type": "access", "roles": ["rdf:read"] }]
+        }
       ]
     },
     {
       "path": "/modules/mutations/pileup/:assembly",
       "methods": [
-        { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+        {
+          "type": "POST",
+          "tokens": [{ "type": "access", "roles": ["rdf:read"] }]
+        }
       ]
     },
     {
       "path": "/modules/gex/datasets/:species/:technology",
       "methods": [
-        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "roles": ["rdf:read"] }]
+        }
       ]
     },
     {
       "path": "/modules/gex/expr",
       "methods": [
-        { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+        {
+          "type": "POST",
+          "tokens": [{ "type": "access", "roles": ["rdf:read"] }]
+        }
       ]
     },
     {
       "path": "/modules/gex/expr/types",
       "methods": [
-        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "roles": ["rdf:read"] }]
+        }
       ]
     },
     {
       "path": "/modules/hubs/:assembly",
       "methods": [
-        { "type": "GET", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "roles": ["rdf:read"] }]
+        }
       ]
     },
     {
       "path": "/modules/scrna/gex/:id",
       "methods": [
-        { "type": "POST", "tokens": [{ "type": "access", "roles": ["RDF"] }] }
+        {
+          "type": "POST",
+          "tokens": [{ "type": "access", "roles": ["rdf:read"] }]
+        }
       ]
     }
   ]

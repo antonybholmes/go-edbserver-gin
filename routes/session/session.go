@@ -14,6 +14,7 @@ import (
 	"github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
+	"github.com/antonybholmes/go-sys"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/auth/userdb"
@@ -165,16 +166,16 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 		return
 	}
 
-	roles, err := userdbcache.UserRoleSet(authUser)
+	// roles, err := userdbcache.UserRoleSet(authUser)
 
-	if err != nil {
-		web.ForbiddenResp(c, authentication.ErrUserRoles)
-		return
-	}
+	// if err != nil {
+	// 	web.ForbiddenResp(c, authentication.ErrUserRoles)
+	// 	return
+	// }
 
 	//roleClaim := auth.MakeClaim(roles)
 
-	if !auth.HasSignInRole(roles) {
+	if !auth.HasLoginInRole(sys.NewStringSet().ListUpdate(auth.FlattenRoles(authUser.Roles))) {
 		web.UserNotAllowedToSignInErrorResp(c)
 		return
 	}
@@ -242,16 +243,16 @@ func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 		return
 	}
 
-	roles, err := userdbcache.UserRoleSet(authUser)
+	// roles, err := userdbcache.UserRoleSet(authUser)
 
-	if err != nil {
-		web.ForbiddenResp(c, authentication.ErrUserRoles)
-		return
-	}
+	// if err != nil {
+	// 	web.ForbiddenResp(c, authentication.ErrUserRoles)
+	// 	return
+	// }
 
 	//roleClaim := auth.MakeClaim(roles)
 
-	if !auth.HasSignInRole(roles) {
+	if !auth.HasLoginInRole(sys.NewStringSet().ListUpdate(auth.FlattenRoles(authUser.Roles))) {
 		web.UserNotAllowedToSignInErrorResp(c)
 		return
 	}
@@ -410,6 +411,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Co
 	authUser, err := userdbcache.CreateUserFromOAuth2(username, validator.Address)
 
 	if err != nil {
+		log.Debug().Msgf("error creating user from otp sign in: %v", err)
 		c.Error(err)
 		return
 	}
@@ -419,21 +421,21 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Co
 
 func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, authUser *auth.AuthUser) {
 
-	roles, err := userdbcache.UserRoleSet(authUser)
+	// roles, err := userdbcache.UserRoleSet(authUser)
 
-	if err != nil {
-		web.BadReqResp(c, authentication.ErrUserRoles)
-	}
+	// if err != nil {
+	// 	web.BadReqResp(c, authentication.ErrUserRoles)
+	// }
 
 	//roleClaim := auth.MakeClaim(roles)
 
 	//log.Debug().Msgf("user %v", authUser)
 
-	if !auth.HasSignInRole(roles) {
+	if !auth.HasLoginInRole(sys.NewStringSet().ListUpdate(auth.FlattenRoles(authUser.Roles))) {
 		web.UserNotAllowedToSignInErrorResp(c)
 	}
 
-	err = sessionRoutes.initSession(c, authUser) // roleClaim)
+	err := sessionRoutes.initSession(c, authUser) // roleClaim)
 
 	if err != nil {
 		web.UnauthorizedResp(c, err)
@@ -461,23 +463,23 @@ func (sessionRoutes *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gi
 
 		authUser := validator.AuthUser
 
-		roles, err := userdbcache.UserRoleSet(authUser)
+		// roles, err := userdbcache.UserRoleSet(authUser)
 
-		if err != nil {
-			c.Error(err)
-			return
-		}
+		// if err != nil {
+		// 	c.Error(err)
+		// 	return
+		// }
 
 		//roleClaim := auth.MakeClaim(roles)
 
 		//log.Debug().Msgf("user %v", authUser)
 
-		if !auth.HasSignInRole(roles) {
+		if !auth.HasLoginInRole(sys.NewStringSet().ListUpdate(auth.FlattenRoles(authUser.Roles))) {
 			web.UserNotAllowedToSignInErrorResp(c)
 			return
 		}
 
-		err = sessionRoutes.initSession(c, authUser) //, roleClaim)
+		err := sessionRoutes.initSession(c, authUser) //, roleClaim)
 
 		if err != nil {
 			web.InternalErrorResp(c, err)

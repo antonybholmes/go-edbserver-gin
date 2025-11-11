@@ -25,7 +25,7 @@ type Validator struct {
 	UserBodyReq *auth.UserBodyReq
 
 	AuthUser *auth.AuthUser
-	Claims   *auth.TokenClaims
+	Claims   *auth.AuthUserJwtClaims
 	Err      error
 }
 
@@ -239,7 +239,7 @@ func (validator *Validator) LoadTokenClaims() *Validator {
 		user, ok := validator.c.Get(web.SessionUser)
 
 		if ok {
-			validator.Claims = user.(*auth.TokenClaims)
+			validator.Claims = user.(*auth.AuthUserJwtClaims)
 		}
 	}
 
