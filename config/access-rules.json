@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "updated": "Oct 03, 2025",
+  "updated": "Nov 12, 2025",
   "rules": [
     {
       "path": "/admin/users",
@@ -10,7 +10,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess:*.*", "AdminAccess:*.*"]
+              "roles": ["SuperAccess::*.*", "AdminAccess::*.*"]
             }
           ]
         }
@@ -24,7 +24,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess:*.*", "AdminAccess:*.*"]
+              "roles": ["SuperAccess::*.*", "AdminAccess::*.*"]
             }
           ]
         }
@@ -38,7 +38,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess:*.*", "AdminAccess:*.*"]
+              "roles": ["SuperAccess::*.*", "AdminAccess::*.*"]
             }
           ]
         }
@@ -52,7 +52,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess:*.*", "AdminAccess:*.*"]
+              "roles": ["SuperAccess::*.*", "AdminAccess::*.*"]
             }
           ]
         }
@@ -66,7 +66,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess:*.*", "AdminAccess:*.*"]
+              "roles": ["SuperAccess::*.*", "AdminAccess::*.*"]
             }
           ]
         }
@@ -80,7 +80,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess:*.*", "AdminAccess:*.*"]
+              "roles": ["SuperAccess::*.*", "AdminAccess::*.*"]
             }
           ]
         }
@@ -94,7 +94,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess:*.*", "AdminAccess:*.*"]
+              "roles": ["SuperAccess::*.*", "AdminAccess::*.*"]
             }
           ]
         }
