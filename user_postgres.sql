@@ -264,8 +264,6 @@ CREATE TRIGGER user_groups_updated_trigger
 EXECUTE PROCEDURE update_at_updated();
 
 
-
-
 INSERT INTO user_groups (user_id, group_id, description) VALUES(1, 1, 'Superuser all access');
 INSERT INTO user_groups (user_id, group_id, description) VALUES(1, 4, 'Superuser can login');
 
