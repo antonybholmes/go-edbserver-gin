@@ -14,7 +14,6 @@ import (
 	"github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
-	"github.com/antonybholmes/go-sys"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/auth/userdb"
@@ -175,7 +174,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 
 	//roleClaim := auth.MakeClaim(roles)
 
-	if !auth.HasLoginInRole(sys.NewStringSet().ListUpdate(auth.FlattenRoles(authUser.Roles))) {
+	if !auth.UserHasWebLoginInRole(authUser) {
 		web.UserNotAllowedToSignInErrorResp(c)
 		return
 	}
@@ -252,7 +251,7 @@ func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 
 	//roleClaim := auth.MakeClaim(roles)
 
-	if !auth.HasLoginInRole(sys.NewStringSet().ListUpdate(auth.FlattenRoles(authUser.Roles))) {
+	if !auth.UserHasWebLoginInRole(authUser) {
 		web.UserNotAllowedToSignInErrorResp(c)
 		return
 	}
@@ -431,7 +430,7 @@ func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, aut
 
 	//log.Debug().Msgf("user %v", authUser)
 
-	if !auth.HasLoginInRole(sys.NewStringSet().ListUpdate(auth.FlattenRoles(authUser.Roles))) {
+	if !auth.UserHasWebLoginInRole(authUser) {
 		web.UserNotAllowedToSignInErrorResp(c)
 	}
 
@@ -474,7 +473,7 @@ func (sessionRoutes *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gi
 
 		//log.Debug().Msgf("user %v", authUser)
 
-		if !auth.HasLoginInRole(sys.NewStringSet().ListUpdate(auth.FlattenRoles(authUser.Roles))) {
+		if !auth.UserHasWebLoginInRole(authUser) {
 			web.UserNotAllowedToSignInErrorResp(c)
 			return
 		}
@@ -605,19 +604,19 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 	var token string
 	var err error
 
-	//roles := sys.NewStringSet().UpdateFromList(authUser.Roles)
+	roles := auth.GroupsToRolePermissions(authUser)
 
 	switch tokenType {
 	case "access":
 		// Generate encoded token and send it as response.
-		token, err = tokengen.AccessToken(c, authUser.PublicId, authUser.Roles)
+		token, err = tokengen.AccessToken(c, authUser.PublicId, roles)
 
 		if err != nil {
 			err = fmt.Errorf("error creating access token: %w", err)
 		}
 	case "update":
 		// Generate encoded token and send it as response.
-		token, err = tokengen.UpdateToken(c, authUser.PublicId, authUser.Roles)
+		token, err = tokengen.UpdateToken(c, authUser.PublicId, roles)
 
 		if err != nil {
 			err = fmt.Errorf("error creating update token: %w", err)

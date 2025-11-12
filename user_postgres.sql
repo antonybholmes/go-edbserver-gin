@@ -7,11 +7,37 @@ END;
 $$ language 'plpgsql';
 
 DROP TABLE IF EXISTS users_roles;
+DROP TABLE IF EXISTS user_groups;
 DROP TABLE IF EXISTS roles_permissions;
+DROP TABLE IF EXISTS group_roles;
+DROP TABLE IF EXISTS groups;
 DROP TABLE IF EXISTS permissions;
 DROP TABLE IF EXISTS roles;
 DROP TABLE IF EXISTS api_keys;
 DROP TABLE IF EXISTS users;
+
+
+CREATE TABLE groups (
+    id SERIAL PRIMARY KEY, 
+    public_id TEXT NOT NULL UNIQUE, 
+    name TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
+CREATE INDEX groups_name_idx ON groups (name);
+CREATE TRIGGER groups_updated_trigger
+    BEFORE UPDATE
+    ON
+        groups
+    FOR EACH ROW
+EXECUTE PROCEDURE update_at_updated();
+
+INSERT INTO groups (public_id, name, description) VALUES('019a74b7-6459-70f0-9762-daa347d07f50', 'SuperUsers', 'Superusers');
+INSERT INTO groups (public_id, name, description) VALUES('019a74b7-85c8-7330-9402-995f07a24fee', 'Admins', 'Administrators');
+INSERT INTO groups (public_id, name, description) VALUES('019a74b7-ed63-7022-9489-9a6f64ac7f21', 'Users', 'Standard users');
+INSERT INTO groups (public_id, name, description) VALUES('019a74e1-2669-7046-a1ed-ed28c1a1419f', 'LoginUsers', 'Users who can login');
+INSERT INTO groups (public_id, name, description) VALUES('019a750c-c751-72b2-af19-e05fdb5ade15', 'RDFLabMembers', 'For viewers of RDF data');
+
 
 CREATE TABLE permissions (
     id SERIAL PRIMARY KEY, 
@@ -29,31 +55,12 @@ CREATE TRIGGER permissions_updated_trigger
 EXECUTE PROCEDURE update_at_updated();
 
 INSERT INTO permissions (public_id, name, description) VALUES('01997350-f1db-734a-aabc-b738772a9d0c', '*', 'All permissions');
-INSERT INTO permissions (public_id, name, description) VALUES('01997351-06c7-7f0d-b026-c51376a044ee', 'read', 'User has read access');
-INSERT INTO permissions (public_id, name, description) VALUES('01997351-16e5-70f6-b869-ba08cdac4c85', 'write', 'User has write access');
-INSERT INTO permissions (public_id, name, description) VALUES('01997351-2586-7e76-8a34-db50b222d47a', 'login', 'User can sign in');
+INSERT INTO permissions (public_id, name, description) VALUES('01997351-06c7-7f0d-b026-c51376a044ee', 'read:*', 'User has read access');
+INSERT INTO permissions (public_id, name, description) VALUES('01997351-16e5-70f6-b869-ba08cdac4c85', 'write:*', 'User has write access');
+INSERT INTO permissions (public_id, name, description) VALUES('01997351-2586-7e76-8a34-db50b222d47a', 'web:login', 'User can sign in');
+INSERT INTO permissions (public_id, name, description) VALUES('019a7893-12e2-7d3a-ab13-89cc3cc43336', 'rdf:read:*', 'For viewers of RDF data');
  
 
-CREATE TABLE groups (
-    id SERIAL PRIMARY KEY, 
-    public_id TEXT NOT NULL UNIQUE, 
-    name TEXT NOT NULL UNIQUE,
-    description TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
-CREATE INDEX groups_name_idx ON groups (name);
-CREATE TRIGGER groups_updated_trigger
-    BEFORE UPDATE
-    ON
-        groups
-    FOR EACH ROW
-EXECUTE PROCEDURE update_at_updated();
-
-INSERT INTO groups (public_id, name, description) VALUES('019a74b7-6459-70f0-9762-daa347d07f50', 'super', 'Superusers');
-INSERT INTO groups (public_id, name, description) VALUES('019a74b7-85c8-7330-9402-995f07a24fee', 'admin', 'Administrators');
-INSERT INTO groups (public_id, name, description) VALUES('019a74b7-ed63-7022-9489-9a6f64ac7f21', 'user', 'Standard users');
-INSERT INTO groups (public_id, name, description) VALUES('019a74e1-2669-7046-a1ed-ed28c1a1419f', 'login', 'Users who can login');
-INSERT INTO groups (public_id, name, description) VALUES('019a750c-c751-72b2-af19-e05fdb5ade15', 'rdf', 'For viewers of RDF data');
 
 
 CREATE TABLE roles (
@@ -72,12 +79,12 @@ CREATE TRIGGER roles_updated_trigger
 EXECUTE PROCEDURE update_at_updated();
 
 
-INSERT INTO roles (public_id, name) VALUES('01997351-4c4b-7900-adb9-eeb64f772ed7', 'super');
-INSERT INTO roles (public_id, name) VALUES('01997351-7d4f-72bc-aba9-1fbd2d5d41a2', 'admin');
-INSERT INTO roles (public_id, name) VALUES('01997351-8b67-758e-b798-f200f70c653b', 'user');
+INSERT INTO roles (public_id, name) VALUES('01997351-4c4b-7900-adb9-eeb64f772ed7', 'SuperAccess');
+INSERT INTO roles (public_id, name) VALUES('01997351-7d4f-72bc-aba9-1fbd2d5d41a2', 'AdminAccess');
+INSERT INTO roles (public_id, name) VALUES('01997351-8b67-758e-b798-f200f70c653b', 'ReadOnlyUser');
 -- INSERT INTO roles (public_id, name) VALUES('UZuAVHDGToa4F786IPTijA==', 'GetDNA');
-INSERT INTO roles (public_id, name) VALUES('01997351-9ba1-7a6e-9560-fc03b3098665', 'login');
-INSERT INTO roles (public_id, name) VALUES('01997351-aac6-7fcc-b886-b3f0585b90d8', 'rdf');
+INSERT INTO roles (public_id, name) VALUES('01997351-9ba1-7a6e-9560-fc03b3098665', 'Login');
+INSERT INTO roles (public_id, name) VALUES('01997351-aac6-7fcc-b886-b3f0585b90d8', 'RDFLabReadOnly');
 
 
 CREATE TABLE group_roles (
@@ -100,6 +107,7 @@ EXECUTE PROCEDURE update_at_updated();
 
 -- super/user are both part of the admin group
 INSERT INTO group_roles (group_id, role_id, description) VALUES(1, 1, 'Superuser all access');
+
 -- INSERT INTO role_permissions (role_id, permission_id) VALUES(1, 2);
 INSERT INTO group_roles (group_id, role_id, description) VALUES(2, 2, 'Admin all access');
 
@@ -134,10 +142,10 @@ EXECUTE PROCEDURE update_at_updated();
 
 -- super/user admin
 INSERT INTO role_permissions (role_id, permission_id, description) VALUES(1, 1, 'Superuser all access');
+
 -- INSERT INTO role_permissions (role_id, permission_id) VALUES(1, 2);
 INSERT INTO role_permissions (role_id, permission_id, description) VALUES(2, 1, 'Admin all access');
 
---
 -- standard
 INSERT INTO role_permissions (role_id, permission_id, description) VALUES(3, 2, 'Standard user read access');
 
@@ -147,7 +155,7 @@ INSERT INTO role_permissions (role_id, permission_id, description) VALUES(4, 2, 
 
 
 -- rdf
-INSERT INTO role_permissions (role_id, permission_id, description) VALUES(5, 2, 'RDF read access');
+INSERT INTO role_permissions (role_id, permission_id, description) VALUES(5, 5, 'RDF read access');
 
 
 DROP TABLE IF EXISTS users;

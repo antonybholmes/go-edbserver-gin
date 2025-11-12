@@ -8,7 +8,6 @@ import (
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
-	"github.com/antonybholmes/go-sys"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
@@ -53,7 +52,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 
 		//roleClaim := auth.MakeClaim(roles)
 
-		if !auth.HasLoginInRole(sys.NewStringSet().ListUpdate(auth.FlattenRoles(authUser.Roles))) {
+		if !auth.UserHasWebLoginInRole(authUser) {
 			web.UserNotAllowedToSignInErrorResp(c)
 			return
 		}
@@ -72,7 +71,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		accessToken, err := tokengen.AccessToken(c, authUser.PublicId, authUser.Roles) //auth.MakeClaim(authUser.Roles))
+		accessToken, err := tokengen.AccessToken(c, authUser.PublicId, auth.GroupsToRolePermissions(authUser)) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			auth.TokenErrorResp(c)
@@ -160,7 +159,7 @@ func PasswordlessSignInRoute(c *gin.Context) {
 
 		//roleClaim := auth.MakeClaim(roles)
 
-		if !auth.HasLoginInRole(sys.NewStringSet().ListUpdate(auth.FlattenRoles(authUser.Roles))) {
+		if !auth.UserHasWebLoginInRole(authUser) {
 			web.UserNotAllowedToSignInErrorResp(c)
 			return
 		}
