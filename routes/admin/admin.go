@@ -72,6 +72,19 @@ func RolesRoute(c *gin.Context) {
 
 }
 
+func GroupsRoute(c *gin.Context) {
+
+	groups, err := userdbcache.Groups()
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	web.MakeDataResp(c, "", groups)
+
+}
+
 func UpdateUserRoute(c *gin.Context) {
 
 	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().LoadAuthUserFromPublicId().Success(func(validator *authenticationroutes.Validator) {

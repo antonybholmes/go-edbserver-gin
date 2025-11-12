@@ -12,6 +12,15 @@
       ]
     },
     {
+      "path": "/admin/groups",
+      "methods": [
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "roles": ["super:*", "admin:*"] }]
+        }
+      ]
+    },
+    {
       "path": "/admin/roles",
       "methods": [
         {

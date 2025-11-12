@@ -13,6 +13,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	)
 
 	adminGroup.GET("/roles", RolesRoute)
+	adminGroup.GET("/groups", GroupsRoute)
 
 	adminUsersGroup := adminGroup.Group("/users")
 
