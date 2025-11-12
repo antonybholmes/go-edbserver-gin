@@ -138,11 +138,11 @@ func UpdateUserRoute(c *gin.Context) {
 			}
 		}
 
-		log.Debug().Msgf("roles %s %v", authUser.Email, validator.UserBodyReq.Roles)
+		log.Debug().Msgf("groups %s %v", authUser.Email, validator.UserBodyReq.Groups)
 
 		// set roles
 		err = userdbcache.SetUserGroups(authUser,
-			validator.UserBodyReq.Roles,
+			validator.UserBodyReq.Groups,
 			true)
 
 		if err != nil {

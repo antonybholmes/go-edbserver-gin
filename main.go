@@ -261,7 +261,7 @@ func main() {
 	r.Use(sessions.Sessions(consts.SessionName, store))
 
 	r.GET("/about", func(c *gin.Context) {
-		fmt.Println("Handler:", c.FullPath())
+
 		c.JSON(http.StatusOK,
 			AboutResp{
 				Name:      consts.AppName,
