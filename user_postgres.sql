@@ -151,7 +151,7 @@ INSERT INTO role_permissions (role_id, permission_id, description) VALUES(3, 2, 
 
 -- users can login
 INSERT INTO role_permissions (role_id, permission_id, description) VALUES(4, 4, 'Login access');
-INSERT INTO role_permissions (role_id, permission_id, description) VALUES(4, 2, 'Login user read access');
+-- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(4, 2, 'Login user read access');
 
 
 -- rdf
@@ -182,6 +182,7 @@ CREATE TRIGGER users_updated_trigger
     FOR EACH ROW
 EXECUTE PROCEDURE update_at_updated();
 
+DROP TABLE IF EXISTS user_groups;
 CREATE TABLE user_groups (
     id SERIAL PRIMARY KEY, 
     user_id INTEGER NOT NULL,
@@ -190,8 +191,8 @@ CREATE TABLE user_groups (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     UNIQUE(user_id, group_id),
-    FOREIGN KEY(user_id) REFERENCES users(id),
-    FOREIGN KEY(group_id) REFERENCES groups(id));
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE);
 CREATE INDEX user_groups_user_id_idx ON user_groups (user_id, group_id);
 CREATE TRIGGER user_groups_updated_trigger
     BEFORE UPDATE
@@ -202,25 +203,25 @@ EXECUTE PROCEDURE update_at_updated();
 
 INSERT INTO user_groups (user_id, group_id, description) VALUES(1, 1, 'Superuser all access');
 INSERT INTO user_groups (user_id, group_id, description) VALUES(2, 2, 'Admin all access');
+INSERT INTO user_groups (user_id, group_id, description) VALUES(3, 2, 'Admin all access');
 
 
-
-CREATE TABLE user_roles (
-    id SERIAL PRIMARY KEY, 
-    user_id INTEGER NOT NULL,
-    role_id INTEGER NOT NULL, 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    UNIQUE(user_id, role_id),
-    FOREIGN KEY(user_id) REFERENCES users(id),
-    FOREIGN KEY(role_id) REFERENCES roles(id));
-CREATE INDEX users_roles_user_id_idx ON users_roles (user_id, role_id);
-CREATE TRIGGER users_roles_updated_trigger
-    BEFORE UPDATE
-    ON
-        users_roles
-    FOR EACH ROW
-EXECUTE PROCEDURE update_at_updated();
+-- CREATE TABLE user_roles (
+--     id SERIAL PRIMARY KEY, 
+--     user_id INTEGER NOT NULL,
+--     role_id INTEGER NOT NULL, 
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+--     UNIQUE(user_id, role_id),
+--     FOREIGN KEY(user_id) REFERENCES users(id),
+--     FOREIGN KEY(role_id) REFERENCES roles(id));
+-- CREATE INDEX users_roles_user_id_idx ON users_roles (user_id, role_id);
+-- CREATE TRIGGER users_roles_updated_trigger
+--     BEFORE UPDATE
+--     ON
+--         users_roles
+--     FOR EACH ROW
+-- EXECUTE PROCEDURE update_at_updated();
 
  
 
