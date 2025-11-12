@@ -105,7 +105,9 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "roles": ["rdf:read:*"] }]
+          "tokens": [
+            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
+          ]
         }
       ]
     },
@@ -114,7 +116,9 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "roles": ["rdf:read:*"] }]
+          "tokens": [
+            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
+          ]
         }
       ]
     },
@@ -123,7 +127,9 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "roles": ["rdf:read:*"] }]
+          "tokens": [
+            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
+          ]
         }
       ]
     },
@@ -132,7 +138,9 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "roles": ["rdf:read:*"] }]
+          "tokens": [
+            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
+          ]
         }
       ]
     },
@@ -141,7 +149,9 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "roles": ["rdf:read:*"] }]
+          "tokens": [
+            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
+          ]
         }
       ]
     },
@@ -150,7 +160,9 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "roles": ["rdf:read:*"] }]
+          "tokens": [
+            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
+          ]
         }
       ]
     },
@@ -159,7 +171,9 @@
       "methods": [
         {
           "type": "POST",
-          "tokens": [{ "type": "access", "roles": ["rdf:read:*"] }]
+          "tokens": [
+            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
+          ]
         }
       ]
     },
@@ -168,7 +182,9 @@
       "methods": [
         {
           "type": "POST",
-          "tokens": [{ "type": "access", "roles": ["rdf:read:*"] }]
+          "tokens": [
+            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
+          ]
         }
       ]
     },
@@ -177,7 +193,9 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "roles": ["rdf:read:*"] }]
+          "tokens": [
+            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
+          ]
         }
       ]
     },
@@ -186,7 +204,9 @@
       "methods": [
         {
           "type": "POST",
-          "tokens": [{ "type": "access", "roles": ["rdf:read:*"] }]
+          "tokens": [
+            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
+          ]
         }
       ]
     },
@@ -195,7 +215,9 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "roles": ["rdf:read:*"] }]
+          "tokens": [
+            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
+          ]
         }
       ]
     },
@@ -204,7 +226,9 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "roles": ["rdf:read:*"] }]
+          "tokens": [
+            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
+          ]
         }
       ]
     },
@@ -213,7 +237,9 @@
       "methods": [
         {
           "type": "POST",
-          "tokens": [{ "type": "access", "roles": ["rdf:read:*"] }]
+          "tokens": [
+            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
+          ]
         }
       ]
     }
