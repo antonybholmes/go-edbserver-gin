@@ -71,7 +71,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		accessToken, err := tokengen.AccessToken(c, authUser.PublicId, auth.GroupsToRolePermissions(authUser)) //auth.MakeClaim(authUser.Roles))
+		accessToken, err := tokengen.AccessToken(c, authUser.PublicId, auth.GetRolesFromUser(authUser)) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			auth.TokenErrorResp(c)

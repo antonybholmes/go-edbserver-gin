@@ -604,7 +604,7 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 	var token string
 	var err error
 
-	roles := auth.GroupsToRolePermissions(authUser)
+	roles := auth.GetRolesFromUser(authUser)
 
 	switch tokenType {
 	case "access":
