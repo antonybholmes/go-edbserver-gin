@@ -7,8 +7,8 @@ import (
 
 	"github.com/antonybholmes/go-sys"
 	"github.com/antonybholmes/go-sys/env"
+	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web/auth"
-	"github.com/rs/zerolog/log"
 
 	"github.com/golang-jwt/jwt/v5"
 )

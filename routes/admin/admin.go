@@ -6,10 +6,10 @@ import (
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
+	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
 
 type UserListReq struct {

@@ -5,9 +5,9 @@ import (
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	"github.com/antonybholmes/go-mutations"
 	"github.com/antonybholmes/go-mutations/mutationdbcache"
+	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
 
 type (

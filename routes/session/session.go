@@ -14,6 +14,7 @@ import (
 	"github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
+	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/auth/userdb"
@@ -23,7 +24,6 @@ import (
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
 
 const MaxAgeOneYearSecs = 31536000 // 60 * 60 * 24 * 365

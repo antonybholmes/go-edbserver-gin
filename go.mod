@@ -40,21 +40,21 @@ require github.com/antonybholmes/go-edbmailserver v0.0.0-20250911171638-68021ab7
 
 require (
 	github.com/antonybholmes/go-basemath v0.0.0-20251107200700-4d494adc3d42 // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20251112171523-6049b30cdbe8
+	github.com/antonybholmes/go-dna v0.0.0-20251113182140-74d074bb9000
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20250624211225-358f1d2ad8fc
-	github.com/antonybholmes/go-web v0.0.0-20251112215351-a2a5de06f134
+	github.com/antonybholmes/go-web v0.0.0-20251113181518-d931ec347d90
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32
-	github.com/rs/zerolog v1.34.0
+	github.com/rs/zerolog v1.34.0 // indirect
 )
 
 require (
-	github.com/antonybholmes/go-mailserver v0.0.0-20251112171527-406525463b2d
-	github.com/antonybholmes/go-sys v0.0.0-20251112171528-41b7859942bb
+	github.com/antonybholmes/go-mailserver v0.0.0-20251113182147-6a081e4983f1
+	github.com/antonybholmes/go-sys v0.0.0-20251113170509-8987daf9a00a
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -143,7 +143,7 @@ require (
 	go.opentelemetry.io/proto/otlp v1.7.1 // indirect
 	go.uber.org/mock v0.6.0 // indirect
 	golang.org/x/arch v0.23.0 // indirect
-	golang.org/x/exp v0.0.0-20251023183803-a4bb9ffd2546 // indirect
+	golang.org/x/exp v0.0.0-20251113190631-e25ba8c21ef6 // indirect
 	golang.org/x/sync v0.18.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250825161204-c5933d9347a5 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250825161204-c5933d9347a5 // indirect
@@ -166,5 +166,5 @@ require (
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
-	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 )

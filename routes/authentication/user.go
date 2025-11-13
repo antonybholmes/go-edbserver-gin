@@ -4,9 +4,9 @@ import (
 	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
+	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
-	"github.com/rs/zerolog/log"
 
 	"github.com/gin-gonic/gin"
 )

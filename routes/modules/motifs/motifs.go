@@ -5,9 +5,9 @@ import (
 
 	"github.com/antonybholmes/go-motifs"
 	"github.com/antonybholmes/go-motifs/motifsdb"
+	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
 
 const MinSearchLen = 3

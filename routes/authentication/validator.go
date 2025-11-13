@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/mail"
 
+	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/auth/userdb"
@@ -11,7 +12,6 @@ import (
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
 
 //

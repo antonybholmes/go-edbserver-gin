@@ -6,9 +6,9 @@ import (
 
 	scrnadbcache "github.com/antonybholmes/go-scrna/cache"
 	"github.com/antonybholmes/go-sys"
+	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
 
 const DefaultLimit uint16 = 20

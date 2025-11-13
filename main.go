@@ -2,12 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"io"
 	"time"
 
 	"net/http"
-	"os"
 	"runtime"
 
 	"github.com/antonybholmes/go-beds/bedsdbcache"
@@ -23,6 +20,7 @@ import (
 	"github.com/antonybholmes/go-edbserver-gin/routes/modules"
 	"github.com/antonybholmes/go-hubs/hubsdbcache"
 	mailserver "github.com/antonybholmes/go-mailserver"
+	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/access"
 	"github.com/antonybholmes/go-web/auth"
@@ -33,9 +31,6 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
-	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/antonybholmes/go-web/middleware"
 
@@ -78,32 +73,39 @@ var (
 	re *access.RuleEngine
 )
 
-func initLogger() {
-	fileLogger := &lumberjack.Logger{
-		Filename:   fmt.Sprintf("logs/%s.log", consts.AppName),
-		MaxSize:    10,   // Max size in MB before rotating
-		MaxBackups: 3,    // Keep 3 backup files
-		MaxAge:     7,    // Retain files for 7 days
-		Compress:   true, // Compress old log files
-	}
+// func initLogger() {
 
-	multiWriter := io.MultiWriter(os.Stderr, fileLogger)
+// 	//multiWriter := io.MultiWriter(os.Stderr, fileLogger)
 
-	logger := zerolog.New(multiWriter).With().Timestamp().Logger()
+// 	//logger := zerolog.New(multiWriter).With().Timestamp().Logger()
+// 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
 
-	// we use != development because it means we need to set the env variable in order
-	// to see debugging work. The default is to assume production, in which case we use
-	// lumberjack
-	if os.Getenv("APP_ENV") != "development" {
-		//zerolog.SetGlobalLevel(zerolog.InfoLevel)
-		logger = zerolog.New(io.MultiWriter(zerolog.ConsoleWriter{Out: os.Stderr}, fileLogger)).With().Timestamp().Logger()
-	}
+// 	// we use != development because it means we need to set the env variable in order
+// 	// to see debugging work. The default is to assume production, in which case we use
+// 	// lumberjack
+// 	if os.Getenv("APP_ENV") != "development" {
+// 		// reduce log events in production
+// 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
-	log.Logger = logger
-}
+// 		// log events to log files with rotation
+// 		fileLogger := &lumberjack.Logger{
+// 			Filename:   fmt.Sprintf("logs/%s.log", consts.AppName),
+// 			MaxSize:    10,   // Max size in MB before rotating
+// 			MaxBackups: 3,    // Keep 3 backup files
+// 			MaxAge:     7,    // Retain files for 7 days
+// 			Compress:   true, // Compress old log files
+// 		}
+
+// 		logger = zerolog.New(io.MultiWriter(zerolog.ConsoleWriter{Out: os.Stderr}, fileLogger)).With().Timestamp().Logger()
+// 	}
+
+// 	log.Logger = logger
+// }
 
 func init() {
-	initLogger()
+	//initLogger()
+
+	log.SetAppName(consts.AppName)
 
 	env.Ls()
 
