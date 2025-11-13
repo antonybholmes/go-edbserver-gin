@@ -116,9 +116,10 @@ DROP TABLE IF EXISTS permissions;
 CREATE TABLE permissions (
     id SERIAL PRIMARY KEY, 
     public_id TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL DEFAULT '',
+    description TEXT NOT NULL DEFAULT '',
     resource_id INTEGER NOT NULL,
     action_id INTEGER NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     UNIQUE(resource_id, action_id),
@@ -133,10 +134,10 @@ CREATE TRIGGER permissions_updated_trigger
     FOR EACH ROW
 EXECUTE PROCEDURE update_at_updated();
 
-INSERT INTO permissions (public_id, resource_id, action_id, description) VALUES('01997350-f1db-734a-aabc-b738772a9d0c', 1, 1, 'All permissions');
-INSERT INTO permissions (public_id, resource_id, action_id, description) VALUES('01997351-2586-7e76-8a34-db50b222d47a', 2, 5, 'User can sign in');
-INSERT INTO permissions (public_id, resource_id, action_id, description) VALUES('019a7893-12e2-7d3a-ab13-89cc3cc43336', 3, 2, 'For viewers of RDF data');
- 
+INSERT INTO permissions (public_id, resource_id, action_id, name) VALUES('01997350-f1db-734a-aabc-b738772a9d0c', 1, 1, 'All permissions');
+INSERT INTO permissions (public_id, resource_id, action_id, name) VALUES('01997351-2586-7e76-8a34-db50b222d47a', 2, 5, 'User can sign in');
+INSERT INTO permissions (public_id, resource_id, action_id, name) VALUES('019a7893-12e2-7d3a-ab13-89cc3cc43336', 3, 2, 'For viewers of RDF data');
+
 CREATE TABLE role_permissions (
     id SERIAL PRIMARY KEY, 
     role_id INTEGER NOT NULL,
