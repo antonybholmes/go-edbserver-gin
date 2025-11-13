@@ -39,13 +39,13 @@ replace github.com/antonybholmes/go-scrna => ../go-scrna
 require github.com/antonybholmes/go-edbmailserver v0.0.0-20250911171638-68021ab78342
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20251022134000-6e512f531258 // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20251022133956-c16513ff7bf6
+	github.com/antonybholmes/go-basemath v0.0.0-20251107200700-4d494adc3d42 // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20251112171523-6049b30cdbe8
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20250624211225-358f1d2ad8fc
-	github.com/antonybholmes/go-web v0.0.0-20251022152721-b748206f451c
+	github.com/antonybholmes/go-web v0.0.0-20251112215351-a2a5de06f134
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32
@@ -53,8 +53,8 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-mailserver v0.0.0-20251022134000-989a996f1eac
-	github.com/antonybholmes/go-sys v0.0.0-20251017225059-9b05304a0fc0
+	github.com/antonybholmes/go-mailserver v0.0.0-20251112171527-406525463b2d
+	github.com/antonybholmes/go-sys v0.0.0-20251112171528-41b7859942bb
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -78,8 +78,8 @@ require (
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.39.6 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.31.19 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.18.23 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.31.20 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.18.24 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.13 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.13 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.13 // indirect
@@ -87,11 +87,11 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.13 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.54.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.14 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.30.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.40.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.54.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.15 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.30.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.7 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.40.2 // indirect
 	github.com/aws/smithy-go v1.23.2 // indirect
 	github.com/bytedance/gopkg v0.1.3 // indirect
 	github.com/bytedance/sonic v1.14.2 // indirect
