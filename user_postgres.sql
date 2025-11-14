@@ -158,9 +158,10 @@ EXECUTE PROCEDURE update_at_updated();
 
 -- super/user admin
 INSERT INTO role_permissions (role_id, permission_id, description) VALUES(1, 1, 'Superuser all access');
-
+INSERT INTO role_permissions (role_id, permission_id, description) VALUES(1, 2, 'Super login access');
 -- INSERT INTO role_permissions (role_id, permission_id) VALUES(1, 2);
 INSERT INTO role_permissions (role_id, permission_id, description) VALUES(2, 1, 'Admin all access');
+INSERT INTO role_permissions (role_id, permission_id, description) VALUES(2, 2, 'Admin login access');
 
 -- standard
 -- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(3, 2, 'Standard user read access');
@@ -195,9 +196,11 @@ EXECUTE PROCEDURE update_at_updated();
 
 -- super/user are both part of the admin group
 INSERT INTO group_roles (group_id, role_id, description) VALUES(1, 1, 'Superuser all access');
+INSERT INTO group_roles (group_id, role_id, description) VALUES(1, 3, 'Superuser admin access');
 
 -- INSERT INTO role_permissions (role_id, permission_id) VALUES(1, 2);
 INSERT INTO group_roles (group_id, role_id, description) VALUES(2, 2, 'Admin all access');
+INSERT INTO group_roles (group_id, role_id, description) VALUES(2, 3, 'Admin admin access');
 
 -- standard
 -- INSERT INTO group_roles (group_id, role_id, description) VALUES(3, 3, 'Standard user role');
