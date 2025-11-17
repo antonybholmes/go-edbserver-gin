@@ -10,7 +10,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess::*:*", "AdminAccess::*:*"]
+              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
             }
           ]
         }
@@ -24,7 +24,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess::*:*", "AdminAccess::*:*"]
+              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
             }
           ]
         }
@@ -38,7 +38,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess::*:*", "AdminAccess::*:*"]
+              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
             }
           ]
         }
@@ -52,7 +52,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess::*:*", "AdminAccess::*:*"]
+              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
             }
           ]
         }
@@ -66,7 +66,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess::*:*", "AdminAccess::*:*"]
+              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
             }
           ]
         }
@@ -80,7 +80,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess::*:*", "AdminAccess::*:*"]
+              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
             }
           ]
         }
@@ -94,7 +94,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["SuperAccess::*:*", "AdminAccess::*:*"]
+              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
             }
           ]
         }
@@ -105,9 +105,7 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [
-            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
-          ]
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
     },
@@ -116,9 +114,7 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [
-            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
-          ]
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
     },
@@ -127,9 +123,7 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [
-            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
-          ]
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
     },
@@ -138,9 +132,7 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [
-            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
-          ]
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
     },
@@ -149,9 +141,7 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [
-            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
-          ]
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
     },
@@ -160,9 +150,7 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [
-            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
-          ]
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
     },
@@ -171,9 +159,7 @@
       "methods": [
         {
           "type": "POST",
-          "tokens": [
-            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
-          ]
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
     },
@@ -182,9 +168,7 @@
       "methods": [
         {
           "type": "POST",
-          "tokens": [
-            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
-          ]
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
     },
@@ -193,9 +177,7 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [
-            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
-          ]
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
     },
@@ -204,9 +186,7 @@
       "methods": [
         {
           "type": "POST",
-          "tokens": [
-            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
-          ]
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
     },
@@ -215,9 +195,7 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [
-            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
-          ]
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
     },
@@ -226,9 +204,7 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [
-            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
-          ]
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
     },
@@ -237,9 +213,7 @@
       "methods": [
         {
           "type": "POST",
-          "tokens": [
-            { "type": "access", "roles": ["RDFLabReadOnly::rdf:read"] }
-          ]
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
     }

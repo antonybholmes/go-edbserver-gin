@@ -17,14 +17,14 @@ DROP TABLE IF EXISTS api_keys;
 DROP TABLE IF EXISTS users;
 
 
+DROP TABLE IF EXISTS user_groups;
+DROP TABLE IF EXISTS groups;
 CREATE TABLE groups (
-    id SERIAL PRIMARY KEY, 
-    public_id TEXT NOT NULL UNIQUE, 
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
     name TEXT NOT NULL UNIQUE,
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
-CREATE INDEX groups_public_id_idx ON groups (public_id);
 CREATE INDEX groups_name_idx ON groups (name);
 CREATE TRIGGER groups_updated_trigger
     BEFORE UPDATE
@@ -33,21 +33,20 @@ CREATE TRIGGER groups_updated_trigger
     FOR EACH ROW
 EXECUTE PROCEDURE update_at_updated();
 
-INSERT INTO groups (public_id, name, description) VALUES('019a74b7-6459-70f0-9762-daa347d07f50', 'SuperUsers', 'Superusers');
-INSERT INTO groups (public_id, name, description) VALUES('019a74b7-85c8-7330-9402-995f07a24fee', 'Admins', 'Administrators');
-INSERT INTO groups (public_id, name, description) VALUES('019a74b7-ed63-7022-9489-9a6f64ac7f21', 'Users', 'Standard users');
-INSERT INTO groups (public_id, name, description) VALUES('019a74e1-2669-7046-a1ed-ed28c1a1419f', 'LoginUsers', 'Users who can login');
-INSERT INTO groups (public_id, name, description) VALUES('019a750c-c751-72b2-af19-e05fdb5ade15', 'RDFLabMembers', 'For viewers of RDF data');
+INSERT INTO groups (name, description) VALUES('superusers', 'Superusers');
+INSERT INTO groups (name, description) VALUES('admins', 'Administrators');
+INSERT INTO groups (name, description) VALUES('users', 'Standard users');
+INSERT INTO groups (name, description) VALUES('login', 'Users who can login');
+INSERT INTO groups (name, description) VALUES('rdf', 'For viewers of RDF data');
 
 
+DROP TABLE IF EXISTS resources;
 CREATE TABLE resources (
-    id SERIAL PRIMARY KEY, 
-    public_id TEXT NOT NULL UNIQUE,
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
     name TEXT NOT NULL UNIQUE,
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
-CREATE INDEX resources_public_id_idx ON resources (public_id);
 CREATE INDEX resources_name_idx ON resources (name);
 CREATE TRIGGER resources_updated_trigger
     BEFORE UPDATE
@@ -56,20 +55,20 @@ CREATE TRIGGER resources_updated_trigger
     FOR EACH ROW
 EXECUTE PROCEDURE update_at_updated();
 
-INSERT INTO resources (public_id, name, description) VALUES('019a79b9-585c-7a63-b04a-939beb3529eb', '*', 'All resources');
-INSERT INTO resources (public_id, name, description) VALUES('019a79b9-8d0d-72c1-9d30-67a24fe8ad9b', 'web', 'Web access');
-INSERT INTO resources (public_id, name, description) VALUES('019a79ba-8d23-725b-a136-3477a53f16ef', 'rdf', 'RDF access');
+INSERT INTO resources (name, description) VALUES('*', 'All resources');
+INSERT INTO resources (name, description) VALUES('web', 'Web access');
+INSERT INTO resources (name, description) VALUES('rdf', 'RDF access');
  
 
-
+DROP TABLE IF EXISTS role_permissions;
+DROP TABLE IF EXISTS permissions;
+DROP TABLE IF EXISTS actions;
 CREATE TABLE actions (
-    id SERIAL PRIMARY KEY, 
-    public_id TEXT NOT NULL UNIQUE,
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
     name TEXT NOT NULL UNIQUE,
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
-CREATE INDEX actions_public_id_idx ON actions (public_id);
 CREATE INDEX actions_name_idx ON actions (name);
 CREATE TRIGGER actions_updated_trigger
     BEFORE UPDATE
@@ -78,23 +77,62 @@ CREATE TRIGGER actions_updated_trigger
     FOR EACH ROW
 EXECUTE PROCEDURE update_at_updated();
 
-INSERT INTO actions (public_id, name, description) VALUES('019a79b8-44aa-77d5-8217-07b18b0ef9f2', '*', 'All actions');
-INSERT INTO actions (public_id, name, description) VALUES('019a79b8-8051-784d-9527-c7e62bb50778', 'read', 'Read access');
-INSERT INTO actions (public_id, name, description) VALUES('019a79b8-983a-7414-9d3e-55b1f865a4d7', 'write', 'Write access');
-INSERT INTO actions (public_id, name, description) VALUES('019a79b8-af89-7cbe-a799-1bcec547a07b', 'delete', 'Delete access');
-INSERT INTO actions (public_id, name, description) VALUES('019a79b8-ed23-7869-91b4-905786c7e570', 'login', 'Login access');
+INSERT INTO actions (name, description) VALUES('*', 'All actions');
+INSERT INTO actions (name, description) VALUES('read', 'Read access');
+INSERT INTO actions (name, description) VALUES('write', 'Write access');
+INSERT INTO actions (name, description) VALUES('delete', 'Delete access');
+INSERT INTO actions (name, description) VALUES('login', 'Login access');
+INSERT INTO actions (name, description) VALUES('view', 'View resources');
+
+
+
+
+DROP TABLE IF EXISTS role_permissions;
+DROP TABLE IF EXISTS permissions;
+CREATE TABLE permissions (
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
+    name TEXT NOT NULL DEFAULT '',
+    description TEXT NOT NULL DEFAULT '',
+    resource_id UUID NOT NULL,
+    action_id UUID NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    UNIQUE(resource_id, action_id),
+    FOREIGN KEY(resource_id) REFERENCES resources(id) ON DELETE CASCADE,
+    FOREIGN KEY(action_id) REFERENCES actions(id) ON DELETE CASCADE);
+CREATE INDEX permissions_resource_action_idx ON permissions (resource_id, action_id);
+CREATE TRIGGER permissions_updated_trigger
+    BEFORE UPDATE
+    ON
+        permissions
+    FOR EACH ROW
+EXECUTE PROCEDURE update_at_updated();
+
+INSERT INTO permissions (resource_id, action_id, name) 
+SELECT r.id, a.id, 'All permissions'
+FROM resources r, actions a
+WHERE r.name = '*' AND a.name = '*';
+
+INSERT INTO permissions (resource_id, action_id, name) 
+SELECT r.id, a.id, 'User can login'
+FROM resources r, actions a
+WHERE r.name = 'web' AND a.name = 'login';
+
+INSERT INTO permissions (resource_id, action_id, name) 
+SELECT r.id, a.id, 'RDF viewer access'
+FROM resources r, actions a
+WHERE r.name = 'rdf' AND a.name = 'view';
+
 
 DROP TABLE IF EXISTS group_roles;
 DROP TABLE IF EXISTS role_permissions;
 DROP TABLE IF EXISTS roles;
 CREATE TABLE roles (
-    id SERIAL PRIMARY KEY, 
-    public_id TEXT NOT NULL UNIQUE, 
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
     name TEXT NOT NULL UNIQUE,
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
-CREATE INDEX roles_public_id_idx ON roles (public_id);
 CREATE INDEX roles_name_idx ON roles (name);
 
 CREATE TRIGGER roles_updated_trigger
@@ -105,43 +143,17 @@ CREATE TRIGGER roles_updated_trigger
 EXECUTE PROCEDURE update_at_updated();
 
 
-INSERT INTO roles (public_id, name) VALUES('01997351-4c4b-7900-adb9-eeb64f772ed7', 'SuperAccess');
-INSERT INTO roles (public_id, name) VALUES('01997351-7d4f-72bc-aba9-1fbd2d5d41a2', 'AdminAccess');
-INSERT INTO roles (public_id, name) VALUES('01997351-9ba1-7a6e-9560-fc03b3098665', 'Login');
-INSERT INTO roles (public_id, name) VALUES('01997351-aac6-7fcc-b886-b3f0585b90d8', 'RDFLabReadOnly');
+INSERT INTO roles (name) VALUES('edb-root');
+INSERT INTO roles (name) VALUES('edb-admin');
+INSERT INTO roles (name) VALUES('edb-login');
+INSERT INTO roles (name) VALUES('rdf-viewer');
 
 
 DROP TABLE IF EXISTS role_permissions;
-DROP TABLE IF EXISTS permissions;
-CREATE TABLE permissions (
-    id SERIAL PRIMARY KEY, 
-    public_id TEXT NOT NULL UNIQUE,
-    name TEXT NOT NULL DEFAULT '',
-    description TEXT NOT NULL DEFAULT '',
-    resource_id INTEGER NOT NULL,
-    action_id INTEGER NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    UNIQUE(resource_id, action_id),
-    FOREIGN KEY(resource_id) REFERENCES resources(id) ON DELETE CASCADE,
-    FOREIGN KEY(action_id) REFERENCES actions(id) ON DELETE CASCADE);
-CREATE INDEX permissions_public_id_idx ON permissions (public_id);
-CREATE INDEX permissions_resource_action_idx ON permissions (resource_id, action_id);
-CREATE TRIGGER permissions_updated_trigger
-    BEFORE UPDATE
-    ON
-        permissions
-    FOR EACH ROW
-EXECUTE PROCEDURE update_at_updated();
-
-INSERT INTO permissions (public_id, resource_id, action_id, name) VALUES('01997350-f1db-734a-aabc-b738772a9d0c', 1, 1, 'All permissions');
-INSERT INTO permissions (public_id, resource_id, action_id, name) VALUES('01997351-2586-7e76-8a34-db50b222d47a', 2, 5, 'User can sign in');
-INSERT INTO permissions (public_id, resource_id, action_id, name) VALUES('019a7893-12e2-7d3a-ab13-89cc3cc43336', 3, 2, 'For viewers of RDF data');
-
 CREATE TABLE role_permissions (
-    id SERIAL PRIMARY KEY, 
-    role_id INTEGER NOT NULL,
-    permission_id INTEGER NOT NULL,
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
+    role_id UUID NOT NULL,
+    permission_id UUID NOT NULL,
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -157,29 +169,55 @@ CREATE TRIGGER role_permissions_updated_trigger
 EXECUTE PROCEDURE update_at_updated();
 
 -- super/user admin
-INSERT INTO role_permissions (role_id, permission_id, description) VALUES(1, 1, 'Superuser all access');
-INSERT INTO role_permissions (role_id, permission_id, description) VALUES(1, 2, 'Super login access');
--- INSERT INTO role_permissions (role_id, permission_id) VALUES(1, 2);
-INSERT INTO role_permissions (role_id, permission_id, description) VALUES(2, 1, 'Admin all access');
-INSERT INTO role_permissions (role_id, permission_id, description) VALUES(2, 2, 'Admin login access');
+INSERT INTO role_permissions (role_id, permission_id, description) 
+SELECT r.id, p.id, 'Superuser all access'
+FROM roles r, permissions p
+WHERE r.name = 'edb-root' AND p.name = 'All permissions';
 
--- standard
--- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(3, 2, 'Standard user read access');
+-- super/user can login
+INSERT INTO role_permissions (role_id, permission_id, description) 
+SELECT r.id, p.id, 'Admin login access'
+FROM roles r, permissions p
+WHERE r.name = 'edb-admin' AND p.name = 'All permissions';
 
--- users can login
-INSERT INTO role_permissions (role_id, permission_id, description) VALUES(3, 2, 'Login access');
--- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(4, 2, 'Login user read access');
+-- super/user can login
+INSERT INTO role_permissions (role_id, permission_id, description) 
+SELECT r.id, p.id, 'User can login'
+FROM roles r, permissions p
+WHERE r.name = 'edb-login' AND p.name = 'User can login';
 
 
--- rdf
-INSERT INTO role_permissions (role_id, permission_id, description) VALUES(4, 3, 'RDF read access');
+INSERT INTO role_permissions (role_id, permission_id, description) 
+SELECT r.id, p.id, 'RDF viewer access'
+FROM roles r, permissions p
+WHERE r.name = 'rdf-viewer' AND p.name = 'RDF viewer access';
+
+
+
+-- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(1, 1, 'Superuser all access');
+-- -- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(1, 2, 'Super login access');
+-- -- INSERT INTO role_permissions (role_id, permission_id) VALUES(1, 2);
+-- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(2, 1, 'Admin all access');
+-- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(2, 2, 'Admin login access');
+
+-- -- standard
+-- -- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(3, 2, 'Standard user read access');
+
+-- -- users can login
+-- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(3, 2, 'Login access');
+-- -- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(4, 2, 'Login user read access');
+
+
+-- -- rdf
+-- -- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(4, 3, 'RDF read access');
+-- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(4, 4, 'RDF read access');
 
 
 DROP TABLE IF EXISTS group_roles;
 CREATE TABLE group_roles (
-    id SERIAL PRIMARY KEY, 
-    group_id INTEGER NOT NULL,
-    role_id INTEGER NOT NULL,
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
+    group_id UUID NOT NULL,
+    role_id UUID NOT NULL,
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -194,31 +232,55 @@ CREATE TRIGGER group_roles_updated_trigger
     FOR EACH ROW
 EXECUTE PROCEDURE update_at_updated();
 
--- super/user are both part of the admin group
-INSERT INTO group_roles (group_id, role_id, description) VALUES(1, 1, 'Superuser all access');
-INSERT INTO group_roles (group_id, role_id, description) VALUES(1, 3, 'Superuser admin access');
+INSERT INTO group_roles (group_id, role_id, description)
+SELECT g.id, r.id, 'Superuser all access'
+FROM groups g, roles r
+WHERE g.name = 'superusers' AND r.name = 'edb-root' ON CONFLICT DO NOTHING;
 
--- INSERT INTO role_permissions (role_id, permission_id) VALUES(1, 2);
-INSERT INTO group_roles (group_id, role_id, description) VALUES(2, 2, 'Admin all access');
-INSERT INTO group_roles (group_id, role_id, description) VALUES(2, 3, 'Admin admin access');
+INSERT INTO group_roles (group_id, role_id, description)
+SELECT g.id, r.id, 'Admin all access'
+FROM groups g, roles r
+WHERE g.name = 'admins' AND r.name = 'edb-admin' ON CONFLICT DO NOTHING;
 
--- standard
--- INSERT INTO group_roles (group_id, role_id, description) VALUES(3, 3, 'Standard user role');
+INSERT INTO group_roles (group_id, role_id, description)
+SELECT g.id, r.id, 'User can login'
+FROM groups g, roles r
+WHERE g.name = 'login' AND r.name = 'edb-login' ON CONFLICT DO NOTHING;
 
--- login
-INSERT INTO group_roles (group_id, role_id, description) VALUES(4, 3, 'Login access');
+INSERT INTO group_roles (group_id, role_id, description)
+SELECT g.id, r.id, 'RDF viewer access'
+FROM groups g, roles r
+WHERE g.name = 'rdf' AND r.name = 'rdf-viewer' ON CONFLICT DO NOTHING;
 
--- rdf
-INSERT INTO group_roles (group_id, role_id, description) VALUES(5, 4, 'RDF access');
 
 
+-- -- super/user are both part of the admin group
+-- INSERT INTO group_roles (group_id, role_id, description) VALUES(1, 1, 'Superuser all access');
+-- INSERT INTO group_roles (group_id, role_id, description) VALUES(1, 3, 'Superuser admin access');
+
+-- -- INSERT INTO role_permissions (role_id, permission_id) VALUES(1, 2);
+-- INSERT INTO group_roles (group_id, role_id, description) VALUES(2, 2, 'Admin all access');
+-- INSERT INTO group_roles (group_id, role_id, description) VALUES(2, 3, 'Admin admin access');
+
+-- -- standard
+-- -- INSERT INTO group_roles (group_id, role_id, description) VALUES(3, 3, 'Standard user role');
+
+-- -- login
+-- INSERT INTO group_roles (group_id, role_id, description) VALUES(4, 3, 'Login access');
+
+-- -- rdf
+-- INSERT INTO group_roles (group_id, role_id, description) VALUES(5, 4, 'RDF access');
+
+
+ALTER TABLE IF EXISTS users DROP column id;
+ALTER TABLE IF EXISTS users ADD COLUMN id UUID PRIMARY KEY DEFAULT uuidv7();
+ALTER TABLE IF EXISTS users DROP column public_id;
 
 
 
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY, 
-    public_id TEXT NOT NULL UNIQUE,
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
     username TEXT NOT NULL UNIQUE,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL DEFAULT '',
@@ -228,7 +290,6 @@ CREATE TABLE users (
     email_verified_at TIMESTAMP DEFAULT 'epoch' NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
-CREATE INDEX users_public_id_idx ON users (public_id);
 -- CREATE INDEX name ON users (first_name, last_name);
 CREATE INDEX users_username_idx ON users (username);
 CREATE INDEX users_email_idx ON users (email);
@@ -240,8 +301,7 @@ CREATE TRIGGER users_updated_trigger
 EXECUTE PROCEDURE update_at_updated();
 
 -- the superuser me --
-INSERT INTO users (public_id, username, email, email_verified_at) VALUES (
-    '01997349-0995-733e-8d23-eb14136f0486',
+INSERT INTO users (username, email, email_verified_at) VALUES (
     'root',
     'edb-root@antonyholmes.dev',
     now()
@@ -249,9 +309,10 @@ INSERT INTO users (public_id, username, email, email_verified_at) VALUES (
 
 DROP TABLE IF EXISTS user_groups;
 CREATE TABLE user_groups (
-    id SERIAL PRIMARY KEY, 
-    user_id INTEGER NOT NULL,
-    group_id INTEGER NOT NULL,
+    id UUID PRIMARY KEY DEFAULT uuidv7(), 
+    user_id UUID NOT NULL,
+    group_id UUID NOT NULL,
+    name TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -268,16 +329,38 @@ CREATE TRIGGER user_groups_updated_trigger
 EXECUTE PROCEDURE update_at_updated();
 
 
-INSERT INTO user_groups (user_id, group_id, description) VALUES(1, 1, 'Superuser all access');
-INSERT INTO user_groups (user_id, group_id, description) VALUES(1, 4, 'Superuser can login');
+INSERT INTO user_groups (user_id, group_id, name) 
+SELECT u.id, g.id, 'Add to superuser group'
+FROM users u, groups g
+WHERE u.username = 'root' AND g.name = 'superusers' ON CONFLICT DO NOTHING;
 
-INSERT INTO user_groups (user_id, group_id, description) VALUES(2, 2, 'Admin all access');
-INSERT INTO user_groups (user_id, group_id, description) VALUES(2, 4, 'Admin can login');
-INSERT INTO user_groups (user_id, group_id, description) VALUES(3, 2, 'Admin all access');
-INSERT INTO user_groups (user_id, group_id, description) VALUES(3, 4, 'Admin can login');
+INSERT INTO user_groups (user_id, group_id, name) 
+SELECT u.id, g.id, 'Add to superuser group'
+FROM users u, groups g
+WHERE u.username LIKE '%antony%' AND g.name = 'superusers' ON CONFLICT DO NOTHING;
 
-insert INTO user_groups (user_id, group_id, description) SELECT id, 4, 'Add to Login group' FROM users ON CONFLICT DO NOTHING;
-insert INTO user_groups (user_id, group_id, description) SELECT id, 5, 'Add to RDF group' FROM users ON CONFLICT DO NOTHING;
+
+INSERT INTO user_groups (user_id, group_id, name)
+SELECT u.id, g.id, 'Add to login group'
+FROM users u, groups g
+WHERE g.name = 'login' ON CONFLICT DO NOTHING;
+
+INSERT INTO user_groups (user_id, group_id, name)
+SELECT u.id, g.id, 'Add to rdf group'
+FROM users u, groups g
+WHERE u.email LIKE '%columbia%' AND g.name = 'rdf' ON CONFLICT DO NOTHING;
+
+
+-- VALUES(1, 1, 'Superuser all access');
+-- INSERT INTO user_groups (user_id, group_id, name) VALUES(1, 4, 'Superuser can login');
+
+-- INSERT INTO user_groups (user_id, group_id, name) VALUES(2, 2, 'Admin all access');
+-- INSERT INTO user_groups (user_id, group_id, name) VALUES(2, 4, 'Admin can login');
+-- INSERT INTO user_groups (user_id, group_id, name) VALUES(3, 2, 'Admin all access');
+-- INSERT INTO user_groups (user_id, group_id, name) VALUES(3, 4, 'Admin can login');
+
+-- insert INTO user_groups (user_id, group_id, name) SELECT id, 4, 'Add to Login group' FROM users ON CONFLICT DO NOTHING;
+-- insert INTO user_groups (user_id, group_id, name) SELECT id, 5, 'Add to RDF group' FROM users ON CONFLICT DO NOTHING;
 
 
 -- CREATE TABLE user_roles (
@@ -301,8 +384,8 @@ insert INTO user_groups (user_id, group_id, description) SELECT id, 5, 'Add to R
 
 DROP TABLE IF EXISTS api_keys; 
 CREATE TABLE api_keys (
-    id SERIAL PRIMARY KEY, 
-    user_id INTEGER NOT NULL,
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
+    user_id UUID NOT NULL,
     api_key TEXT NOT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,

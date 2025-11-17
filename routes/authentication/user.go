@@ -25,11 +25,11 @@ func UpdateUserRoute(c *gin.Context) {
 
 		//db, err := userdbcache.AutoConn(nil) //not clear on what is needed for the user and password
 
-		publicId := validator.Claims.UserId
+		userId := validator.Claims.UserId
 
-		log.Debug().Msgf("UpdateUserRoute: publicId: %s ", publicId)
+		log.Debug().Msgf("UpdateUserRoute: publicId: %s ", userId)
 
-		authUser, err := userdbcache.FindUserByPublicId(publicId)
+		authUser, err := userdbcache.FindUserById(userId)
 
 		if err != nil {
 			c.Error(err)
@@ -50,7 +50,7 @@ func UpdateUserRoute(c *gin.Context) {
 		//return SendUserInfoUpdatedEmail(c, authUser)
 
 		// reload user details
-		authUser, err = userdbcache.FindUserByPublicId(publicId)
+		authUser, err = userdbcache.FindUserById(userId)
 
 		if err != nil {
 			c.Error(err)

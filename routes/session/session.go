@@ -609,14 +609,14 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 	switch tokenType {
 	case "access":
 		// Generate encoded token and send it as response.
-		token, err = tokengen.AccessToken(c, authUser.PublicId, roles)
+		token, err = tokengen.AccessToken(c, authUser.Id, roles)
 
 		if err != nil {
 			err = fmt.Errorf("error creating access token: %w", err)
 		}
 	case "update":
 		// Generate encoded token and send it as response.
-		token, err = tokengen.UpdateToken(c, authUser.PublicId, roles)
+		token, err = tokengen.UpdateToken(c, authUser.Id, roles)
 
 		if err != nil {
 			err = fmt.Errorf("error creating update token: %w", err)
@@ -698,7 +698,7 @@ func SessionUpdatePasswordRoute(c *gin.Context) {
 	authUser := user.(*auth.AuthUser)
 
 	// use current session user
-	authUser, err := userdbcache.FindUserByPublicId(authUser.PublicId)
+	authUser, err := userdbcache.FindUserById(authUser.Id)
 
 	if err != nil {
 		web.BadReqResp(c, auth.ErrUserDoesNotExist)
