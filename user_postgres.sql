@@ -35,7 +35,7 @@ EXECUTE PROCEDURE update_at_updated();
 
 INSERT INTO groups (name, description) VALUES('superusers', 'Superusers');
 INSERT INTO groups (name, description) VALUES('admins', 'Administrators');
-INSERT INTO groups (name, description) VALUES('users', 'Standard users');
+-- INSERT INTO groups (name, description) VALUES('users', 'Standard users');
 INSERT INTO groups (name, description) VALUES('login', 'Users who can login');
 INSERT INTO groups (name, description) VALUES('rdf', 'For viewers of RDF data');
 
@@ -109,17 +109,17 @@ CREATE TRIGGER permissions_updated_trigger
 EXECUTE PROCEDURE update_at_updated();
 
 INSERT INTO permissions (resource_id, action_id, name) 
-SELECT r.id, a.id, 'All permissions'
+SELECT r.id, a.id, '*'
 FROM resources r, actions a
 WHERE r.name = '*' AND a.name = '*';
 
 INSERT INTO permissions (resource_id, action_id, name) 
-SELECT r.id, a.id, 'User can login'
+SELECT r.id, a.id, 'login'
 FROM resources r, actions a
 WHERE r.name = 'web' AND a.name = 'login';
 
 INSERT INTO permissions (resource_id, action_id, name) 
-SELECT r.id, a.id, 'RDF viewer access'
+SELECT r.id, a.id, 'rdf-viewer'
 FROM resources r, actions a
 WHERE r.name = 'rdf' AND a.name = 'view';
 
@@ -143,9 +143,9 @@ CREATE TRIGGER roles_updated_trigger
 EXECUTE PROCEDURE update_at_updated();
 
 
-INSERT INTO roles (name) VALUES('edb-root');
-INSERT INTO roles (name) VALUES('edb-admin');
-INSERT INTO roles (name) VALUES('edb-login');
+INSERT INTO roles (name) VALUES('root');
+INSERT INTO roles (name) VALUES('admin');
+INSERT INTO roles (name) VALUES('login');
 INSERT INTO roles (name) VALUES('rdf-viewer');
 
 
@@ -154,6 +154,7 @@ CREATE TABLE role_permissions (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     role_id UUID NOT NULL,
     permission_id UUID NOT NULL,
+    name TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -169,55 +170,37 @@ CREATE TRIGGER role_permissions_updated_trigger
 EXECUTE PROCEDURE update_at_updated();
 
 -- super/user admin
-INSERT INTO role_permissions (role_id, permission_id, description) 
+INSERT INTO role_permissions (role_id, permission_id, name) 
 SELECT r.id, p.id, 'Superuser all access'
 FROM roles r, permissions p
-WHERE r.name = 'edb-root' AND p.name = 'All permissions';
+WHERE r.name = 'root' AND p.name = '*';
 
 -- super/user can login
-INSERT INTO role_permissions (role_id, permission_id, description) 
+INSERT INTO role_permissions (role_id, permission_id, name) 
 SELECT r.id, p.id, 'Admin login access'
 FROM roles r, permissions p
-WHERE r.name = 'edb-admin' AND p.name = 'All permissions';
+WHERE r.name = 'admin' AND p.name = '*';
 
 -- super/user can login
-INSERT INTO role_permissions (role_id, permission_id, description) 
+INSERT INTO role_permissions (role_id, permission_id, name) 
 SELECT r.id, p.id, 'User can login'
 FROM roles r, permissions p
-WHERE r.name = 'edb-login' AND p.name = 'User can login';
+WHERE r.name = 'login' AND p.name = 'login';
 
 
-INSERT INTO role_permissions (role_id, permission_id, description) 
-SELECT r.id, p.id, 'RDF viewer access'
+INSERT INTO role_permissions (role_id, permission_id, name) 
+SELECT r.id, p.id, 'rdf-viewer'
 FROM roles r, permissions p
-WHERE r.name = 'rdf-viewer' AND p.name = 'RDF viewer access';
+WHERE r.name = 'rdf-viewer' AND p.name = 'rdf-viewer';
 
-
-
--- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(1, 1, 'Superuser all access');
--- -- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(1, 2, 'Super login access');
--- -- INSERT INTO role_permissions (role_id, permission_id) VALUES(1, 2);
--- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(2, 1, 'Admin all access');
--- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(2, 2, 'Admin login access');
-
--- -- standard
--- -- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(3, 2, 'Standard user read access');
-
--- -- users can login
--- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(3, 2, 'Login access');
--- -- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(4, 2, 'Login user read access');
-
-
--- -- rdf
--- -- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(4, 3, 'RDF read access');
--- INSERT INTO role_permissions (role_id, permission_id, description) VALUES(4, 4, 'RDF read access');
-
+ 
 
 DROP TABLE IF EXISTS group_roles;
 CREATE TABLE group_roles (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     group_id UUID NOT NULL,
     role_id UUID NOT NULL,
+    name TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -232,46 +215,30 @@ CREATE TRIGGER group_roles_updated_trigger
     FOR EACH ROW
 EXECUTE PROCEDURE update_at_updated();
 
-INSERT INTO group_roles (group_id, role_id, description)
-SELECT g.id, r.id, 'Superuser all access'
+INSERT INTO group_roles (group_id, role_id, name)
+SELECT g.id, r.id, 'superusers'
 FROM groups g, roles r
-WHERE g.name = 'superusers' AND r.name = 'edb-root' ON CONFLICT DO NOTHING;
+WHERE g.name = 'superusers' AND r.name = 'root' ON CONFLICT DO NOTHING;
 
-INSERT INTO group_roles (group_id, role_id, description)
-SELECT g.id, r.id, 'Admin all access'
+INSERT INTO group_roles (group_id, role_id, name)
+SELECT g.id, r.id, 'admins'
 FROM groups g, roles r
-WHERE g.name = 'admins' AND r.name = 'edb-admin' ON CONFLICT DO NOTHING;
+WHERE g.name = 'admins' AND r.name = 'admin' ON CONFLICT DO NOTHING;
 
-INSERT INTO group_roles (group_id, role_id, description)
-SELECT g.id, r.id, 'User can login'
+INSERT INTO group_roles (group_id, role_id, name)
+SELECT g.id, r.id, 'login'
 FROM groups g, roles r
-WHERE g.name = 'login' AND r.name = 'edb-login' ON CONFLICT DO NOTHING;
+WHERE g.name = 'login' AND r.name = 'login' ON CONFLICT DO NOTHING;
 
-INSERT INTO group_roles (group_id, role_id, description)
-SELECT g.id, r.id, 'RDF viewer access'
+INSERT INTO group_roles (group_id, role_id, name)
+SELECT g.id, r.id, 'rdf-viewer'
 FROM groups g, roles r
 WHERE g.name = 'rdf' AND r.name = 'rdf-viewer' ON CONFLICT DO NOTHING;
 
 
+ 
 
--- -- super/user are both part of the admin group
--- INSERT INTO group_roles (group_id, role_id, description) VALUES(1, 1, 'Superuser all access');
--- INSERT INTO group_roles (group_id, role_id, description) VALUES(1, 3, 'Superuser admin access');
-
--- -- INSERT INTO role_permissions (role_id, permission_id) VALUES(1, 2);
--- INSERT INTO group_roles (group_id, role_id, description) VALUES(2, 2, 'Admin all access');
--- INSERT INTO group_roles (group_id, role_id, description) VALUES(2, 3, 'Admin admin access');
-
--- -- standard
--- -- INSERT INTO group_roles (group_id, role_id, description) VALUES(3, 3, 'Standard user role');
-
--- -- login
--- INSERT INTO group_roles (group_id, role_id, description) VALUES(4, 3, 'Login access');
-
--- -- rdf
--- INSERT INTO group_roles (group_id, role_id, description) VALUES(5, 4, 'RDF access');
-
-
+-- fix original users table
 ALTER TABLE IF EXISTS users DROP column id;
 ALTER TABLE IF EXISTS users ADD COLUMN id UUID PRIMARY KEY DEFAULT uuidv7();
 ALTER TABLE IF EXISTS users DROP column public_id;
