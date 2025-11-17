@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "updated": "Nov 12, 2025",
+  "updated": "Nov 17, 2025",
   "rules": [
     {
       "path": "/admin/users",
@@ -10,7 +10,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
+              "roles": ["root::*:*", "super::*:*", "admin::*:*"]
             }
           ]
         }
@@ -24,7 +24,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
+              "roles": ["root::*:*", "super::*:*", "admin::*:*"]
             }
           ]
         }
@@ -38,7 +38,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
+              "roles": ["root::*:*", "super::*:*", "admin::*:*"]
             }
           ]
         }
@@ -52,7 +52,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
+              "roles": ["root::*:*", "super::*:*", "admin::*:*"]
             }
           ]
         }
@@ -66,7 +66,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
+              "roles": ["root::*:*", "super::*:*", "admin::*:*"]
             }
           ]
         }
@@ -80,7 +80,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
+              "roles": ["root::*:*", "super::*:*", "admin::*:*"]
             }
           ]
         }
@@ -94,7 +94,7 @@
           "tokens": [
             {
               "type": "access",
-              "roles": ["edb-root::*:*", "edb-super::*:*", "edb-admin::*:*"]
+              "roles": ["root::*:*", "super::*:*", "admin::*:*"]
             }
           ]
         }
