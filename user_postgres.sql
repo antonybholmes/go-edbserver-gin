@@ -17,6 +17,7 @@ DROP TABLE IF EXISTS api_keys;
 DROP TABLE IF EXISTS users;
 
 
+DROP TABLE IF EXISTS group_roles;
 DROP TABLE IF EXISTS user_groups;
 DROP TABLE IF EXISTS groups;
 CREATE TABLE groups (
@@ -39,7 +40,8 @@ INSERT INTO groups (name, description) VALUES('admins', 'Administrators');
 INSERT INTO groups (name, description) VALUES('login', 'Users who can login');
 INSERT INTO groups (name, description) VALUES('rdf', 'For viewers of RDF data');
 
-
+DROP TABLE IF EXISTS role_permissions;
+DROP TABLE IF EXISTS permissions;
 DROP TABLE IF EXISTS resources;
 CREATE TABLE resources (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
@@ -239,6 +241,7 @@ WHERE g.name = 'rdf' AND r.name = 'rdf-viewer' ON CONFLICT DO NOTHING;
  
 
 -- fix original users table
+DROP TABLE IF EXISTS api_keys;
 ALTER TABLE IF EXISTS users DROP column id;
 ALTER TABLE IF EXISTS users ADD COLUMN id UUID PRIMARY KEY DEFAULT uuidv7();
 ALTER TABLE IF EXISTS users DROP column public_id;

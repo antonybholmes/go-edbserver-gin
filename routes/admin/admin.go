@@ -6,7 +6,6 @@ import (
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
-	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/gin-gonic/gin"
@@ -87,7 +86,7 @@ func GroupsRoute(c *gin.Context) {
 
 func UpdateUserRoute(c *gin.Context) {
 
-	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().LoadAuthUserFromPublicId().Success(func(validator *authenticationroutes.Validator) {
+	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().LoadAuthUserFromId().Success(func(validator *authenticationroutes.Validator) {
 
 		//log.Debug().Msgf("roles here")
 
@@ -137,8 +136,6 @@ func UpdateUserRoute(c *gin.Context) {
 				return
 			}
 		}
-
-		log.Debug().Msgf("groups %s %v", authUser.Email, validator.UserBodyReq.Groups)
 
 		// set roles
 		err = userdbcache.SetUserGroups(authUser,

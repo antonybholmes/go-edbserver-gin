@@ -123,13 +123,13 @@ func (validator *Validator) CheckEmailIsWellFormed() *Validator {
 	return validator
 }
 
-func (validator *Validator) LoadAuthUserFromPublicId() *Validator {
+func (validator *Validator) LoadAuthUserFromId() *Validator {
 
 	if validator.Err != nil {
 		return validator
 	}
 
-	authUser, err := userdbcache.FindUserById(validator.UserBodyReq.PublicId)
+	authUser, err := userdbcache.FindUserById(validator.UserBodyReq.Id)
 
 	if err != nil {
 		validator.Err = auth.ErrUserDoesNotExist
