@@ -99,9 +99,9 @@ func ScrnaDatasetsRoute(c *gin.Context) {
 
 // Gets expression data from a given dataset
 func ScrnaGexRoute(c *gin.Context) {
-	publicId := c.Param("id")
+	id := c.Param("id")
 
-	if publicId == "" {
+	if id == "" {
 		c.Error(fmt.Errorf("missing id"))
 		return
 	}
@@ -114,7 +114,7 @@ func ScrnaGexRoute(c *gin.Context) {
 	}
 
 	// default to rna-seq
-	ret, err := scrnadbcache.Gex(publicId, params.Genes)
+	ret, err := scrnadbcache.Gex(id, params.Genes)
 
 	if err != nil {
 		c.Error(err)
@@ -143,14 +143,14 @@ func ScrnaGexRoute(c *gin.Context) {
 // }
 
 func ScrnaMetadataRoute(c *gin.Context) {
-	publicId := c.Param("id")
+	id := c.Param("id")
 
-	if publicId == "" {
+	if id == "" {
 		c.Error(fmt.Errorf("missing id"))
 		return
 	}
 
-	ret, err := scrnadbcache.Metadata(publicId)
+	ret, err := scrnadbcache.Metadata(id)
 
 	if err != nil {
 		c.Error(err)
