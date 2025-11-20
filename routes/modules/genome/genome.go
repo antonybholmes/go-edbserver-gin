@@ -14,13 +14,36 @@ import (
 	"github.com/antonybholmes/go-genome"
 	"github.com/antonybholmes/go-genome/genomedbcache"
 	basemath "github.com/antonybholmes/go-math"
+	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	"github.com/gin-gonic/gin"
 )
 
+// A GeneQuery contains info from query params.
+type (
+	GeneQuery struct {
+		Feature  genome.Feature
+		Db       genome.GeneDB
+		Assembly string
+		GeneType string // e.g. "protein_coding", "non_coding", etc.
+		// only show canonical genes
+		Canonical bool
+	}
+
+	GenesResp struct {
+		Location *dna.Location            `json:"location"`
+		Features []*genome.GenomicFeature `json:"features"`
+	}
+
+	AnnotationResponse struct {
+		Status int                      `json:"status"`
+		Data   []*genome.GeneAnnotation `json:"data"`
+	}
+)
+
 const (
 	DefaultClosestN uint = 5
-	MaxAnnotations  int  = 1000
+	MaxAnnotations  uint = 100
 )
 
 var (
@@ -28,38 +51,17 @@ var (
 	ErrSearchTooShort        = errors.New("search too short")
 )
 
-// A GeneQuery contains info from query params.
-type GeneQuery struct {
-	Feature  genome.Feature
-	Db       *genome.GeneDB
-	Assembly string
-	GeneType string // e.g. "protein_coding", "non_coding", etc.
-	// only show canonical genes
-	Canonical bool
-}
-
-type GenesResp struct {
-	Location *dna.Location            `json:"location"`
-	Features []*genome.GenomicFeature `json:"features"`
-}
-
-type AnnotationResponse struct {
-	Status int                      `json:"status"`
-	Data   []*genome.GeneAnnotation `json:"data"`
-}
-
 func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 
-	var feature genome.Feature = genome.FEATURE_GENE
+	var feature genome.Feature = genome.GeneFeature
 
 	switch c.Query("feature") {
 	case "exon":
-		feature = genome.FEATURE_EXON
+		feature = genome.ExonFeature
 	case "transcript":
-		feature = genome.FEATURE_TRANSCRIPT
+		feature = genome.TranscriptFeature
 	default:
-		feature = genome.FEATURE_GENE
-
+		feature = genome.GeneFeature
 	}
 
 	canonical := strings.HasPrefix(strings.ToLower(c.Query("canonical")), "t")
@@ -138,7 +140,7 @@ func OverlappingGenesRoute(c *gin.Context) {
 	ret := make([]*GenesResp, 0, len(locations))
 
 	for _, location := range locations {
-		features, err := query.Db.OverlappingGenes(location, query.Canonical, query.GeneType)
+		features, err := query.Db.OverlappingGenes(location, query.Feature, query.Canonical, query.GeneType)
 
 		if err != nil {
 			c.Error(err)
@@ -175,10 +177,10 @@ func SearchForGeneByNameRoute(c *gin.Context) {
 
 	features, _ := query.Db.SearchForGeneByName(search,
 		query.Feature,
-		uint16(n),
 		fuzzyMode,
 		canonical,
-		c.Query("type"))
+		c.Query("type"),
+		uint16(n))
 
 	// if err != nil {
 	// 	return web.ErrorReq(err)
@@ -246,7 +248,7 @@ func ClosestGeneRoute(c *gin.Context) {
 			return
 		}
 
-		data[li] = &genome.GenomicFeatures{Location: location, Feature: genome.FEATURE_GENE, Features: genes}
+		data[li] = &genome.GenomicFeatures{Location: location, Feature: genome.GeneFeature, Features: genes}
 	}
 
 	web.MakeDataResp(c, "", &data)
@@ -286,7 +288,7 @@ func AnnotateRoute(c *gin.Context) {
 	}
 
 	// limit amount of data returned per request to 1000 entries at a time
-	locations = locations[0:basemath.Min(len(locations), MaxAnnotations)]
+	locations = locations[0:basemath.Min(len(locations), int(MaxAnnotations))]
 
 	query, err := parseGeneQuery(c, c.Param("assembly"))
 
@@ -306,10 +308,13 @@ func AnnotateRoute(c *gin.Context) {
 	data := make([]*genome.GeneAnnotation, len(locations))
 
 	for li, location := range locations {
-		//log.Debug().Msgf("Annotating location %s", location)
-		annotations, err := annotationDb.Annotate(location)
+		log.Debug().Msgf("Annotating locationsss %s", location)
+		annotations, err := annotationDb.Annotate(location, genome.TranscriptFeature)
+
+		log.Debug().Msgf("Annotated location %v", annotations)
 
 		if err != nil {
+			log.Error().Msgf("Error annotating location %s: %v", location, err)
 			c.Error(err)
 			return
 		}
@@ -389,10 +394,10 @@ func MakeGeneTable(
 		}
 
 		row := []string{annotation.Location.String(),
-			strings.Join(geneIds, genome.OUTPUT_FEATURE_SEP),
-			strings.Join(geneNames, genome.OUTPUT_FEATURE_SEP),
-			strings.Join(promLabels, genome.OUTPUT_FEATURE_SEP),
-			strings.Join(tssDists, genome.OUTPUT_FEATURE_SEP)}
+			strings.Join(geneIds, genome.FeatureSeparator),
+			strings.Join(geneNames, genome.FeatureSeparator),
+			strings.Join(promLabels, genome.FeatureSeparator),
+			strings.Join(tssDists, genome.FeatureSeparator)}
 
 		for _, closestGene := range annotation.ClosestGenes {
 			row = append(row, closestGene.GeneId)
