@@ -28,6 +28,7 @@ type (
 		GeneType string // e.g. "protein_coding", "non_coding", etc.
 		// only show canonical genes
 		Canonical bool
+		Levels    genome.Level
 	}
 
 	GenesResp struct {
@@ -76,6 +77,12 @@ func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 		geneType = ""
 	}
 
+	levels := genome.Level(c.Query("levels"))
+
+	if levels == "" {
+		levels = genome.TranscriptLevels
+	}
+
 	db, err := genomedbcache.GeneDB(assembly)
 
 	if err != nil {
@@ -87,7 +94,8 @@ func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 			GeneType:  geneType,
 			Db:        db,
 			Feature:   feature,
-			Canonical: canonical},
+			Canonical: canonical,
+			Levels:    genome.Level(levels)},
 		nil
 }
 
@@ -309,7 +317,7 @@ func AnnotateRoute(c *gin.Context) {
 
 	for li, location := range locations {
 		log.Debug().Msgf("Annotating locationsss %s", location)
-		annotations, err := annotationDb.Annotate(location, genome.TranscriptFeature)
+		annotations, err := annotationDb.Annotate(location, query.Levels)
 
 		log.Debug().Msgf("Annotated location %v", annotations)
 
@@ -388,7 +396,7 @@ func MakeGeneTable(
 		for i, gene := range annotation.WithinGenes {
 			geneIds[i] = gene.GeneId
 			geneNames[i] = gene.GeneSymbol
-			promLabels[i] = gene.PromLabel
+			promLabels[i] = gene.Label
 			tssDists[i] = strconv.Itoa(gene.TssDist)
 
 		}
