@@ -74,11 +74,11 @@ func ConvertRoute(c *gin.Context) {
 	//toSpecies = strings.ToLower(toSpecies)
 
 	if fromSpecies == geneconv.SpeciesHuman {
-		ret.From = geneconv.HUMAN_TAX
-		ret.To = geneconv.MOUSE_TAX
+		ret.From = geneconv.HumanTaxo
+		ret.To = geneconv.MouseTaxo
 	} else {
-		ret.From = geneconv.MOUSE_TAX
-		ret.To = geneconv.HUMAN_TAX
+		ret.From = geneconv.MouseTaxo
+		ret.To = geneconv.HumanTaxo
 	}
 
 	//ret.Conversions = make([]geneconv.Conversion, len(params.Searches))

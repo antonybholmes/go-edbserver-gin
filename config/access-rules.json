@@ -216,6 +216,24 @@
           "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
         }
       ]
+    },
+    {
+      "path": "/modules/beds/search/:assembly",
+      "methods": [
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
+        }
+      ]
+    },
+    {
+      "path": "/modules/beds/regions",
+      "methods": [
+        {
+          "type": "POST",
+          "tokens": [{ "type": "access", "roles": ["rdf-viewer::rdf:view"] }]
+        }
+      ]
     }
   ]
 }
