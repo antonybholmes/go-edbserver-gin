@@ -28,7 +28,7 @@ type (
 		GeneType string // e.g. "protein_coding", "non_coding", etc.
 		// only show canonical genes
 		Canonical bool
-		Levels    genome.Level
+		Promoter  *dna.PromoterRegion
 	}
 
 	GenesResp struct {
@@ -52,18 +52,28 @@ var (
 	ErrSearchTooShort        = errors.New("search too short")
 )
 
-func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
+func parseGeneQuery(c *gin.Context) (*GeneQuery, error) {
 
-	var feature genome.Feature = genome.GeneFeature
+	assembly := c.Param("assembly")
 
-	switch c.Query("feature") {
-	case "exon":
-		feature = genome.ExonFeature
-	case "transcript":
-		feature = genome.TranscriptFeature
-	default:
-		feature = genome.GeneFeature
+	if assembly == "" {
+		return nil, fmt.Errorf("assembly cannot be empty")
 	}
+
+	feature := genome.Feature(c.Query("feature"))
+
+	if feature == "" {
+		feature = genome.AllLevels //TranscriptAndExonLevels
+	}
+
+	// switch c.Query("feature") {
+	// case "exon":
+	// 	feature = genome.ExonLevel
+	// case "transcript":
+	// 	feature = genome.TranscriptLevel
+	// default:
+	// 	feature = genome.GeneLevel
+	// }
 
 	canonical := strings.HasPrefix(strings.ToLower(c.Query("canonical")), "t")
 
@@ -77,11 +87,7 @@ func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 		geneType = ""
 	}
 
-	levels := genome.Level(c.Query("levels"))
-
-	if levels == "" {
-		levels = genome.TranscriptLevels
-	}
+	promoterRegion := ParsePromoterRegion(c)
 
 	db, err := genomedbcache.GeneDB(assembly)
 
@@ -95,7 +101,7 @@ func parseGeneQuery(c *gin.Context, assembly string) (*GeneQuery, error) {
 			Db:        db,
 			Feature:   feature,
 			Canonical: canonical,
-			Levels:    genome.Level(levels)},
+			Promoter:  promoterRegion},
 		nil
 }
 
@@ -134,7 +140,7 @@ func OverlappingGenesRoute(c *gin.Context) {
 		return
 	}
 
-	query, err := parseGeneQuery(c, c.Param("assembly"))
+	query, err := parseGeneQuery(c)
 
 	if err != nil {
 		c.Error(err)
@@ -148,7 +154,7 @@ func OverlappingGenesRoute(c *gin.Context) {
 	ret := make([]*GenesResp, 0, len(locations))
 
 	for _, location := range locations {
-		features, err := query.Db.OverlappingGenes(location, query.Feature, query.Canonical, query.GeneType)
+		features, err := query.Db.OverlappingGenes(location, query.Feature, query.Promoter, query.Canonical, query.GeneType)
 
 		if err != nil {
 			c.Error(err)
@@ -174,7 +180,7 @@ func SearchForGeneByNameRoute(c *gin.Context) {
 
 	n := web.ParseN(c, 20)
 
-	query, err := parseGeneQuery(c, c.Param("assembly"))
+	query, err := parseGeneQuery(c)
 
 	if err != nil {
 		c.Error(err)
@@ -205,7 +211,7 @@ func WithinGenesRoute(c *gin.Context) {
 		return
 	}
 
-	query, err := parseGeneQuery(c, c.Param("assembly"))
+	query, err := parseGeneQuery(c)
 
 	if err != nil {
 		c.Error(err)
@@ -237,7 +243,7 @@ func ClosestGeneRoute(c *gin.Context) {
 		return
 	}
 
-	query, err := parseGeneQuery(c, c.Param("assembly"))
+	query, err := parseGeneQuery(c)
 
 	if err != nil {
 		c.Error(err)
@@ -249,14 +255,14 @@ func ClosestGeneRoute(c *gin.Context) {
 	data := make([]*genome.GenomicFeatures, len(locations))
 
 	for li, location := range locations {
-		genes, err := query.Db.ClosestGenes(location, uint16(closestN))
+		genes, err := query.Db.ClosestGenes(location, query.Promoter, uint8(closestN))
 
 		if err != nil {
 			c.Error(err)
 			return
 		}
 
-		data[li] = &genome.GenomicFeatures{Location: location, Feature: genome.GeneFeature, Features: genes}
+		data[li] = &genome.GenomicFeatures{Location: location, Feature: genome.GeneLevel, Features: genes}
 	}
 
 	web.MakeDataResp(c, "", &data)
@@ -267,7 +273,7 @@ func ParsePromoterRegion(c *gin.Context) *dna.PromoterRegion {
 	v := c.Query("promoter")
 
 	if v == "" {
-		return &dna.DEFAULT_PROMOTER_REGION
+		return dna.DefaultPromoterRegion()
 	}
 
 	tokens := strings.Split(v, ",")
@@ -275,13 +281,13 @@ func ParsePromoterRegion(c *gin.Context) *dna.PromoterRegion {
 	s, err := strconv.ParseUint(tokens[0], 10, 0)
 
 	if err != nil {
-		return &dna.DEFAULT_PROMOTER_REGION
+		return dna.DefaultPromoterRegion()
 	}
 
 	e, err := strconv.ParseUint(tokens[1], 10, 0)
 
 	if err != nil {
-		return &dna.DEFAULT_PROMOTER_REGION
+		return dna.DefaultPromoterRegion()
 	}
 
 	return dna.NewPromoterRegion(uint(s), uint(e))
@@ -298,7 +304,7 @@ func AnnotateRoute(c *gin.Context) {
 	// limit amount of data returned per request to 1000 entries at a time
 	locations = locations[0:basemath.Min(len(locations), int(MaxAnnotations))]
 
-	query, err := parseGeneQuery(c, c.Param("assembly"))
+	query, err := parseGeneQuery(c)
 
 	if err != nil {
 		c.Error(err)
@@ -316,10 +322,7 @@ func AnnotateRoute(c *gin.Context) {
 	data := make([]*genome.GeneAnnotation, len(locations))
 
 	for li, location := range locations {
-		log.Debug().Msgf("Annotating locationsss %s", location)
-		annotations, err := annotationDb.Annotate(location, query.Levels)
-
-		log.Debug().Msgf("Annotated location %v", annotations)
+		annotations, err := annotationDb.Annotate(location, query.Feature)
 
 		if err != nil {
 			log.Error().Msgf("Error annotating location %s: %v", location, err)
@@ -362,8 +365,8 @@ func MakeGeneTable(
 	headers[2] = "Gene Symbol"
 	headers[3] = fmt.Sprintf(
 		"Relative To Gene (prom=-%d/+%dkb)",
-		ts.Offset5P()/1000,
-		ts.Offset3P()/1000)
+		ts.Upstream()/1000,
+		ts.Downstream()/1000)
 	headers[4] = "TSS Distance"
 	//headers[5] = "Gene Location"
 
@@ -374,8 +377,8 @@ func MakeGeneTable(
 		headers[idx] = fmt.Sprintf(
 			"#%d Relative To Closet Gene (prom=-%d/+%dkb)",
 			i,
-			ts.Offset5P()/1000,
-			ts.Offset3P()/1000)
+			ts.Upstream()/1000,
+			ts.Downstream()/1000)
 		headers[idx] = fmt.Sprintf("#%d TSS Closest Distance", i)
 		headers[idx] = fmt.Sprintf("#%d Gene Location", i)
 	}
@@ -409,8 +412,8 @@ func MakeGeneTable(
 
 		for _, closestGene := range annotation.ClosestGenes {
 			row = append(row, closestGene.GeneId)
-			row = append(row, genome.GeneWithStrandLabel(closestGene.GeneSymbol, closestGene.Strand))
-			row = append(row, closestGene.PromLabel)
+			row = append(row, genome.GeneWithStrandLabel(closestGene.GeneSymbol, closestGene.Location.Strand))
+			row = append(row, closestGene.Label)
 			row = append(row, strconv.Itoa(closestGene.TssDist))
 			//row = append(row, closestGene.Location.String())
 		}
