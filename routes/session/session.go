@@ -45,7 +45,7 @@ func NewSessionRoutes(otpRoutes *authentication.OTPRoutes) *SessionRoutes {
 	t := os.Getenv("SESSION_TTL_HOURS")
 
 	if t != "" {
-		v, err := strconv.ParseUint(t, 10, 32)
+		v, err := strconv.Atoi(t)
 
 		if err == nil {
 			maxAge = int((time.Duration(v) * time.Hour).Seconds())

@@ -14,8 +14,8 @@ import (
 const (
 	DefaultAssembly string = "grch38"
 	DefaultChr      string = "chr1" //"chr3"
-	DefaultStart    uint   = 100000 //187728170
-	DefaultEnd      uint   = 100100 //187752257
+	DefaultStart    int    = 100000 //187728170
+	DefaultEnd      int    = 100100 //187752257
 )
 
 type (
@@ -51,7 +51,6 @@ func ParseLocation(c *gin.Context) (*dna.Location, error) {
 
 	var v string
 	var err error
-	var n uint64
 
 	v = c.Query("chr")
 
@@ -62,30 +61,26 @@ func ParseLocation(c *gin.Context) (*dna.Location, error) {
 	v = c.Query("start")
 
 	if v != "" {
-		n, err = strconv.ParseUint(v, 10, 0)
+		start, err = strconv.Atoi(v)
 
 		if err != nil {
 			return nil, fmt.Errorf("%s is an invalid start", v)
 		}
 
-		start = uint(n)
 	}
 
 	v = c.Query("end")
 
 	if v != "" {
-		n, err = strconv.ParseUint(v, 10, 0)
+		end, err = strconv.Atoi(v)
 
 		if err != nil {
 			return nil, fmt.Errorf("%s is an invalid end", v)
 		}
 
-		end = uint(n)
 	}
 
-	loc := dna.NewLocation(chr, start, end)
-
-	return loc, nil
+	return dna.NewLocation(chr, start, end)
 }
 
 func ParseLocationsFromPost(c *gin.Context) ([]*dna.Location, error) {

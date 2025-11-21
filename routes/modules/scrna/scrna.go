@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const DefaultLimit uint16 = 20
+const DefaultLimit int16 = 20
 
 type ScrnaParams struct {
 	Genes []string `json:"genes"`
@@ -196,10 +196,10 @@ func ScrnaSearchGenesRoute(c *gin.Context) {
 	limit := DefaultLimit
 
 	if c.Query("limit") != "" {
-		v, err := strconv.ParseUint(c.Query("limit"), 10, 16)
+		v, err := strconv.Atoi(c.Query("limit"))
 
 		if err == nil {
-			limit = uint16(v)
+			limit = int16(v)
 		}
 	}
 

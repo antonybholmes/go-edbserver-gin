@@ -19,14 +19,14 @@ type (
 	ReqSeqParams struct {
 		Locations []string `json:"locations"`
 		Scale     float64  `json:"scale"`
-		BinSizes  []uint   `json:"binSizes"`
+		BinSizes  []int    `json:"binSizes"`
 		Tracks    []string `json:"tracks"`
 	}
 
 	SeqParams struct {
 		Locations []*dna.Location
 		Scale     float64
-		BinSizes  []uint
+		BinSizes  []int
 		Tracks    []string
 	}
 

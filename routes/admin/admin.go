@@ -12,12 +12,12 @@ import (
 )
 
 type UserListReq struct {
-	Offset  uint
-	Records uint
+	Offset  int
+	Records int
 }
 
 type UserStatResp struct {
-	Users uint `json:"users"`
+	Users int `json:"users"`
 }
 
 func UserStatsRoute(c *gin.Context) {

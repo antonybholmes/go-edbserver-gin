@@ -22,7 +22,7 @@ import (
 // A GeneQuery contains info from query params.
 type (
 	GeneQuery struct {
-		Feature  genome.Feature
+		Feature  string
 		Db       genome.GeneDB
 		Assembly string
 		GeneType string // e.g. "protein_coding", "non_coding", etc.
@@ -43,8 +43,8 @@ type (
 )
 
 const (
-	DefaultClosestN uint = 5
-	MaxAnnotations  uint = 100
+	DefaultClosestN int = 5
+	MaxAnnotations  int = 100
 )
 
 var (
@@ -60,11 +60,7 @@ func parseGeneQuery(c *gin.Context) (*GeneQuery, error) {
 		return nil, fmt.Errorf("assembly cannot be empty")
 	}
 
-	feature := genome.Feature(c.Query("feature"))
-
-	if feature == "" {
-		feature = genome.AllLevels //TranscriptAndExonLevels
-	}
+	feature := ParseFeature(c)
 
 	// switch c.Query("feature") {
 	// case "exon":
@@ -77,15 +73,7 @@ func parseGeneQuery(c *gin.Context) (*GeneQuery, error) {
 
 	canonical := strings.HasPrefix(strings.ToLower(c.Query("canonical")), "t")
 
-	geneType := c.Query("type")
-
-	// user can specify gene type in query string, but we sanitize it
-	switch {
-	case strings.Contains(geneType, "protein"):
-		geneType = "protein_coding"
-	default:
-		geneType = ""
-	}
+	geneType := ParseGeneType(c)
 
 	promoterRegion := ParsePromoterRegion(c)
 
@@ -194,7 +182,7 @@ func SearchForGeneByNameRoute(c *gin.Context) {
 		fuzzyMode,
 		canonical,
 		c.Query("type"),
-		uint16(n))
+		int16(n))
 
 	// if err != nil {
 	// 	return web.ErrorReq(err)
@@ -221,7 +209,7 @@ func WithinGenesRoute(c *gin.Context) {
 	data := make([]*genome.GenomicFeatures, len(locations))
 
 	for li, location := range locations {
-		genes, err := query.Db.WithinGenes(location, query.Feature)
+		genes, err := query.Db.WithinGenes(location, query.Feature, query.Promoter)
 
 		if err != nil {
 			c.Error(err)
@@ -255,7 +243,7 @@ func ClosestGeneRoute(c *gin.Context) {
 	data := make([]*genome.GenomicFeatures, len(locations))
 
 	for li, location := range locations {
-		genes, err := query.Db.ClosestGenes(location, query.Promoter, uint8(closestN))
+		genes, err := query.Db.ClosestGenes(location, query.Promoter, int8(closestN))
 
 		if err != nil {
 			c.Error(err)
@@ -268,6 +256,44 @@ func ClosestGeneRoute(c *gin.Context) {
 	web.MakeDataResp(c, "", &data)
 }
 
+func ParseGeneType(c *gin.Context) string {
+	geneType := c.Query("type")
+
+	// user can specify gene type in query string, but we sanitize it
+	switch {
+	case strings.Contains(geneType, "protein"):
+		return "protein_coding"
+	default:
+		return ""
+	}
+
+}
+
+func ParseFeature(c *gin.Context) string {
+
+	feature := strings.ToLower(c.Query("feature"))
+
+	switch {
+	case strings.Contains(feature, "gene,transcript,exon"):
+		return genome.AllLevels
+	case strings.Contains(feature, "gene,transcript"):
+		return genome.GeneAndTranscriptLevels
+	case strings.Contains(feature, "gene,exon"):
+		return genome.GeneAndExonLevels
+	case strings.Contains(feature, "transcript,exon"):
+		return genome.TranscriptAndExonLevels
+	case strings.Contains(feature, "gene"):
+		return genome.GeneLevel
+	case strings.Contains(feature, "transcript"):
+		return genome.TranscriptLevel
+	case strings.Contains(feature, "exon"):
+		return genome.ExonLevel
+	default:
+		return genome.AllLevels
+	}
+
+}
+
 func ParsePromoterRegion(c *gin.Context) *dna.PromoterRegion {
 
 	v := c.Query("promoter")
@@ -278,19 +304,19 @@ func ParsePromoterRegion(c *gin.Context) *dna.PromoterRegion {
 
 	tokens := strings.Split(v, ",")
 
-	s, err := strconv.ParseUint(tokens[0], 10, 0)
+	s, err := strconv.Atoi(tokens[0])
 
 	if err != nil {
 		return dna.DefaultPromoterRegion()
 	}
 
-	e, err := strconv.ParseUint(tokens[1], 10, 0)
+	e, err := strconv.Atoi(tokens[1])
 
 	if err != nil {
 		return dna.DefaultPromoterRegion()
 	}
 
-	return dna.NewPromoterRegion(uint(s), uint(e))
+	return dna.NewPromoterRegion(s, e)
 }
 
 func AnnotateRoute(c *gin.Context) {
@@ -302,7 +328,7 @@ func AnnotateRoute(c *gin.Context) {
 	}
 
 	// limit amount of data returned per request to 1000 entries at a time
-	locations = locations[0:basemath.Min(len(locations), int(MaxAnnotations))]
+	locations = locations[0:basemath.Min(len(locations), MaxAnnotations)]
 
 	query, err := parseGeneQuery(c)
 
@@ -317,7 +343,7 @@ func AnnotateRoute(c *gin.Context) {
 
 	output := web.ParseOutput(c)
 
-	annotationDb := genome.NewAnnotateDb(query.Db, tssRegion, uint8(closestN))
+	annotationDb := genome.NewAnnotateDb(query.Db, tssRegion, int8(closestN))
 
 	data := make([]*genome.GeneAnnotation, len(locations))
 
@@ -412,7 +438,7 @@ func MakeGeneTable(
 
 		for _, closestGene := range annotation.ClosestGenes {
 			row = append(row, closestGene.GeneId)
-			row = append(row, genome.GeneWithStrandLabel(closestGene.GeneSymbol, closestGene.Location.Strand))
+			row = append(row, genome.GeneWithStrandLabel(closestGene.GeneSymbol, closestGene.Location.Strand()))
 			row = append(row, closestGene.Label)
 			row = append(row, strconv.Itoa(closestGene.TssDist))
 			//row = append(row, closestGene.Location.String())
