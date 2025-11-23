@@ -24,7 +24,6 @@ import (
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/access"
 	"github.com/antonybholmes/go-web/auth"
-	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
@@ -125,7 +124,7 @@ func init() {
 	// 	Secure:   true,
 	// 	SameSite: http.SameSiteNoneMode}
 
-	userdbcache.InitCache() //"data/users.db")
+	//userdbcache.InitCache() //"data/users.db")
 
 	//mailserver.Init()
 

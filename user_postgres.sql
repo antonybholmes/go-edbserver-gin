@@ -320,6 +320,19 @@ SELECT u.id, g.id, 'Add to rdf group'
 FROM users u, groups g
 WHERE u.email LIKE '%columbia%' AND g.name = 'rdf' ON CONFLICT DO NOTHING;
 
+CREATE TABLE IF NOT EXISTS public_keys (
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
+    user_id UUID NOT NULL,
+    key TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE);
+CREATE TRIGGER public_keys_updated_trigger
+    BEFORE UPDATE
+    ON
+        public_keys
+    FOR EACH ROW
+EXECUTE PROCEDURE update_at_updated();
 
 -- VALUES(1, 1, 'Superuser all access');
 -- INSERT INTO user_groups (user_id, group_id, name) VALUES(1, 4, 'Superuser can login');
