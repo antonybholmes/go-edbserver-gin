@@ -142,7 +142,7 @@ func init() {
 
 	motifsdb.InitCache("data/modules/motifs/motifs.db")
 
-	pathwaydbcache.InitCache("data/modules/pathway/pathway-v2.db")
+	pathwaydbcache.InitCache("data/modules/pathway/pathway-v3.db")
 
 	seqsdbcache.InitCache("data/modules/seqs/")
 
