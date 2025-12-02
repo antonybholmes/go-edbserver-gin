@@ -39,13 +39,13 @@ replace github.com/antonybholmes/go-scrna => ../go-scrna
 require github.com/antonybholmes/go-edbmailserver v0.0.0-20251121215824-6ff0c5cf2c21
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20251121215600-3269f8a98aeb // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20251121215821-87b42eef25c5
+	github.com/antonybholmes/go-basemath v0.0.0-20251201172054-b807a31af9fa // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20251201172049-608170d85a85
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20251121215817-03ecd95f41c0
-	github.com/antonybholmes/go-web v0.0.0-20251121215821-60fa34e97242
+	github.com/antonybholmes/go-web v0.0.0-20251201172050-0421d6fcd976
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32
@@ -53,8 +53,8 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-mailserver v0.0.0-20251121215825-131a8c14bbc6
-	github.com/antonybholmes/go-sys v0.0.0-20251121215826-41c42c23076e
+	github.com/antonybholmes/go-mailserver v0.0.0-20251201172053-2a35fe773a23
+	github.com/antonybholmes/go-sys v0.0.0-20251201172055-50c02bde14ef
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -77,23 +77,23 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.40.0 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.32.2 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.19.2 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.14 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.14 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.14 // indirect
+	github.com/aws/aws-sdk-go-v2 v1.40.1 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.32.3 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.19.3 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.15 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.15 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.15 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.4 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.14 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.14 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.55.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.0.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.17 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.30.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.10 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.41.2 // indirect
-	github.com/aws/smithy-go v1.23.2 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.15 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.15 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.55.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.0.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.18 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.30.6 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.11 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.41.3 // indirect
+	github.com/aws/smithy-go v1.24.0 // indirect
 	github.com/bytedance/gopkg v0.1.3 // indirect
 	github.com/bytedance/sonic v1.14.2 // indirect
 	github.com/bytedance/sonic/loader v0.4.0 // indirect
@@ -132,8 +132,6 @@ require (
 	github.com/tiendc/go-deepcopy v1.7.2 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.3.1 // indirect
-	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
-	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/xuri/efp v0.0.1 // indirect
 	github.com/xuri/excelize/v2 v2.10.0 // indirect
 	github.com/xuri/nfp v0.0.2-0.20250530014748-2ddeb826f9a9 // indirect
