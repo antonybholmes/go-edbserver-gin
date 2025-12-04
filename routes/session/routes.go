@@ -4,12 +4,17 @@ import (
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	"github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/auth/oauth2"
 	"github.com/antonybholmes/go-web/middleware"
 	csrfmiddleware "github.com/antonybholmes/go-web/middleware/csrf"
+	omw "github.com/antonybholmes/go-web/middleware/oauth2"
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes(r *gin.Engine, otp *auth.OTP, jwtUserMiddleWare gin.HandlerFunc) {
+func RegisterRoutes(r *gin.Engine,
+	otp *auth.OTP,
+	oidcVerifer *oauth2.OIDCVerifier,
+	jwtUserMiddleWare gin.HandlerFunc) {
 
 	otpRoutes := authentication.NewOTPRoutes(otp)
 
@@ -17,11 +22,13 @@ func RegisterRoutes(r *gin.Engine, otp *auth.OTP, jwtUserMiddleWare gin.HandlerF
 
 	sessionMiddleware := middleware.SessionIsValidMiddleware()
 
-	jwtAuth0Middleware := middleware.JwtAuth0Middleware(consts.JwtAuth0RsaPublicKey)
+	jwtAuth0Middleware := omw.JwtAuth0Middleware(consts.JwtAuth0RsaPublicKey)
 
-	jwtClerkMiddleware := middleware.JwtClerkMiddleware(consts.JwtClerkRsaPublicKey)
+	jwtClerkMiddleware := omw.JwtClerkMiddleware(consts.JwtClerkRsaPublicKey)
 
-	jwtSupabaseMiddleware := middleware.JwtSupabaseMiddleware(consts.JwtSupabaseSecretKey)
+	jwtSupabaseMiddleware := omw.JwtSupabaseMiddleware(consts.JwtSupabaseSecretKey)
+
+	jwtCognitoMiddleware := omw.JwtOIDCMiddleware(oidcVerifer)
 
 	csrfMiddleware := csrfmiddleware.CSRFValidateMiddleware()
 
@@ -34,6 +41,10 @@ func RegisterRoutes(r *gin.Engine, otp *auth.OTP, jwtUserMiddleWare gin.HandlerF
 	sessionOAuth2Group.POST("/auth0/signin",
 		jwtAuth0Middleware,
 		sessionRoutes.SessionSignInUsingAuth0Route)
+
+	sessionOAuth2Group.POST("/cognito/signin",
+		jwtCognitoMiddleware,
+		sessionRoutes.SessionSignInUsingCognitoRoute)
 
 	sessionOAuth2Group.POST("/clerk/signin",
 		jwtClerkMiddleware,

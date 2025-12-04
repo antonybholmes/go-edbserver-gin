@@ -24,6 +24,7 @@ import (
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/access"
 	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/auth/oauth2"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
@@ -229,6 +230,15 @@ func main() {
 		}
 	}()
 
+	ctx := context.Background()
+
+	// so we can verify cognito tokens
+	congnitoOIDCVerifer, err := oauth2.NewOIDCVerifier(ctx, consts.CognitoDomain, consts.CognitoClientId)
+
+	if err != nil {
+		log.Fatal().Msgf("failed to create cognito oidc verifier: %v", err)
+	}
+
 	//r := gin.Default()
 	r := gin.New()
 
@@ -287,6 +297,7 @@ func main() {
 
 	sessionroutes.RegisterRoutes(r,
 		otp,
+		congnitoOIDCVerifer,
 		jwtUserMiddleWare)
 
 	//

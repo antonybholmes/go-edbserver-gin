@@ -77,6 +77,8 @@ require (
 )
 
 require (
+	github.com/MicahParks/jwkset v0.11.0 // indirect
+	github.com/MicahParks/keyfunc/v3 v3.7.0 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.40.1 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.32.3 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.3 // indirect
@@ -143,6 +145,7 @@ require (
 	golang.org/x/arch v0.23.0 // indirect
 	golang.org/x/exp v0.0.0-20251125195548-87e1e737ad39 // indirect
 	golang.org/x/sync v0.18.0 // indirect
+	golang.org/x/time v0.12.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20251124214823-79d6a2a48846 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251124214823-79d6a2a48846 // indirect
 	google.golang.org/grpc v1.77.0 // indirect

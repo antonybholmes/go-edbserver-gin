@@ -37,6 +37,9 @@ var (
 	RedisAddr     string
 	RedisPassword string
 
+	CognitoClientId string
+	CognitoDomain   string
+
 	PasswordlessTokenTtlMins time.Duration
 	AccessTokenTtlMins       time.Duration
 	OtpTokenTtlMins          time.Duration
@@ -75,6 +78,9 @@ func init() {
 	AccessTokenTtlMins = env.GetMin("ACCESS_TOKEN_TTL_MINS", auth.Ttl15Mins)
 	OtpTokenTtlMins = env.GetMin("OTP_TOKEN_TTL_MINS", auth.Ttl20Mins)
 	ShortTtlMins = env.GetMin("SHORT_TTL_MINS", auth.Ttl10Mins)
+
+	CognitoClientId = os.Getenv("COGNITO_CLIENT_ID")
+	CognitoDomain = os.Getenv("COGNITO_DOMAIN")
 
 	JwtSupabaseSecretKey = os.Getenv("JWT_SUPABASE_SECRET_KEY")
 

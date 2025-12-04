@@ -17,6 +17,7 @@ import (
 	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/auth/oauth2"
 	"github.com/antonybholmes/go-web/auth/userdb"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/antonybholmes/go-web/middleware"
@@ -290,6 +291,42 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context)
 	}
 
 	tokenClaims := user.(*auth.Auth0TokenClaims)
+
+	//myClaims := user.Claims.(*auth.TokenClaims) //hmm.Claims.(*TokenClaims)
+
+	//user := c.Get("user").(*jwt.Token)
+	//claims := user.Claims.(*TokenClaims)
+
+	//log.Debug().Msgf("auth0 claims %v", tokenClaims)
+	//log.Debug().Msgf("auth0 claims %v", tokenClaims.Email)
+
+	email, err := mail.ParseAddress(tokenClaims.Email)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	authUser, err := userdbcache.CreateUserFromOAuth2(tokenClaims.Name, email)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	sessionRoutes.sessionSignInUsingOAuth2(c, authUser)
+}
+
+func (sessionRoutes *SessionRoutes) SessionSignInUsingCognitoRoute(c *gin.Context) {
+	user, ok := c.Get(web.SessionUser)
+
+	if !ok {
+		auth.TokenErrorResp(c)
+
+		return
+	}
+
+	tokenClaims := user.(*oauth2.OIDCClaims)
 
 	//myClaims := user.Claims.(*auth.TokenClaims) //hmm.Claims.(*TokenClaims)
 
