@@ -7,7 +7,6 @@ import (
 
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
-	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -50,7 +49,7 @@ var (
 )
 
 func TokenInfoRoute(c *gin.Context) {
-	t, err := middleware.ParseToken(c)
+	t, err := auth.ParseToken(c)
 
 	if err != nil {
 		c.Error(err)
