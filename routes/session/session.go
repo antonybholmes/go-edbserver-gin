@@ -3,7 +3,6 @@ package session
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/mail"
 	"os"
@@ -30,7 +29,7 @@ import (
 const MaxAgeOneYearSecs = 31536000 // 60 * 60 * 24 * 365
 
 var (
-	ErrNoSessionUser  = errors.New("no auth user")
+	ErrNoSessionUser  = auth.NewAccountError("no auth user")
 	ErrSavingSession  = errors.New("error saving session")
 	ErrSessionExpired = errors.New("session not found or expired")
 )
@@ -649,17 +648,17 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 		token, err = tokengen.AccessToken(c, authUser.Id, roles)
 
 		if err != nil {
-			err = fmt.Errorf("error creating access token: %w", err)
+			err = auth.NewTokenError(err.Error())
 		}
 	case "update":
 		// Generate encoded token and send it as response.
 		token, err = tokengen.UpdateToken(c, authUser.Id, roles)
 
 		if err != nil {
-			err = fmt.Errorf("error creating update token: %w", err)
+			err = auth.NewTokenError(err.Error())
 		}
 	default:
-		err = fmt.Errorf("unknown token type")
+		err = auth.NewTokenError("unknown token type")
 	}
 
 	if err != nil {

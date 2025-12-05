@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/rand"
 	b64 "encoding/base64"
+	"errors"
 	"fmt"
 	"math/big"
 	"strconv"
@@ -17,7 +18,7 @@ import (
 const Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 var (
-	ErrLengthCannotBeZero = fmt.Errorf("length cannot be zero")
+	ErrLengthCannotBeZero = errors.New("length cannot be zero")
 )
 
 type XlsxReq struct {

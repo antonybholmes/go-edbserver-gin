@@ -1,6 +1,7 @@
 package scrna
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -146,7 +147,7 @@ func ScrnaMetadataRoute(c *gin.Context) {
 	id := c.Param("id")
 
 	if id == "" {
-		c.Error(fmt.Errorf("missing id"))
+		c.Error(errors.New("missing id"))
 		return
 	}
 
@@ -164,7 +165,7 @@ func ScrnaGenesRoute(c *gin.Context) {
 	publicId := c.Param("id")
 
 	if publicId == "" {
-		c.Error(fmt.Errorf("missing id"))
+		c.Error(errors.New("missing id"))
 		return
 	}
 
@@ -182,14 +183,14 @@ func ScrnaSearchGenesRoute(c *gin.Context) {
 	publicId := c.Param("id")
 
 	if publicId == "" {
-		c.Error(fmt.Errorf("id missing"))
+		c.Error(errors.New("id missing"))
 		return
 	}
 
 	query := c.Query("q")
 
 	if query == "" {
-		c.Error(fmt.Errorf("query missing"))
+		c.Error(errors.New("query missing"))
 		return
 	}
 

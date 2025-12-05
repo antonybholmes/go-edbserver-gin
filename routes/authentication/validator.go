@@ -1,7 +1,7 @@
 package authentication
 
 import (
-	"fmt"
+	"errors"
 	"net/mail"
 
 	"github.com/antonybholmes/go-sys/log"
@@ -193,7 +193,7 @@ func (validator *Validator) LoadAuthUserFromSession() *Validator {
 	sessionData, err := middleware.ReadSessionInfo(validator.c, session)
 
 	if err != nil {
-		validator.Err = fmt.Errorf("user not in session")
+		validator.Err = errors.New("user not in session")
 		validator.CheckIsValidRefreshToken().CheckUsernameIsWellFormed()
 	}
 
@@ -208,7 +208,7 @@ func (validator *Validator) CheckAuthUserIsLoaded() *Validator {
 	}
 
 	if validator.AuthUser == nil {
-		validator.Err = fmt.Errorf("no auth user")
+		validator.Err = auth.NewAccountError("no auth user")
 	}
 
 	return validator
@@ -222,7 +222,7 @@ func (validator *Validator) CheckUserHasVerifiedEmailAddress() *Validator {
 	}
 
 	if validator.AuthUser.EmailVerifiedAt == 0 {
-		validator.Err = fmt.Errorf("email address not verified")
+		validator.Err = auth.NewAccountError("email address not verified")
 	}
 
 	return validator
@@ -277,7 +277,7 @@ func (validator *Validator) CheckIsValidRefreshToken() *Validator {
 	}
 
 	if validator.Claims.Type != auth.TokenTypeRefresh {
-		validator.Err = fmt.Errorf("no refresh token")
+		validator.Err = auth.NewTokenError("no refresh token")
 	}
 
 	return validator
@@ -292,7 +292,7 @@ func (validator *Validator) CheckIsValidAccessToken() *Validator {
 	}
 
 	if validator.Claims.Type != auth.TokenTypeAccess {
-		validator.Err = fmt.Errorf("no access token")
+		validator.Err = auth.NewTokenError("no access token")
 	}
 
 	return validator

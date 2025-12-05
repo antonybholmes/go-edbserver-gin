@@ -57,7 +57,7 @@ func parseGeneQuery(c *gin.Context) (*GeneQuery, error) {
 	assembly := c.Param("assembly")
 
 	if assembly == "" {
-		return nil, fmt.Errorf("assembly cannot be empty")
+		return nil, errors.New("assembly cannot be empty")
 	}
 
 	feature := ParseFeature(c)

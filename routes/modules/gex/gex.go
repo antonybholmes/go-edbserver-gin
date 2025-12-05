@@ -1,7 +1,7 @@
 package gex
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/antonybholmes/go-gex"
 	"github.com/antonybholmes/go-gex/gexdbcache"
@@ -96,7 +96,7 @@ func GexGeneExprRoute(c *gin.Context) {
 	// they must all be of the same type so that we do not
 	// mix microarray and rna-seq searches together for example
 	if params.ExprType == nil {
-		web.BadReqResp(c, fmt.Errorf("exprType is required"))
+		web.BadReqResp(c, errors.New("exprType is required"))
 		return
 	}
 
