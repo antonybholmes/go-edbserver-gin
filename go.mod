@@ -40,12 +40,12 @@ require github.com/antonybholmes/go-edbmailserver v0.0.0-20251121215824-6ff0c5cf
 
 require (
 	github.com/antonybholmes/go-basemath v0.0.0-20251201172054-b807a31af9fa // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20251201172049-608170d85a85
+	github.com/antonybholmes/go-dna v0.0.0-20251202201834-d297c2ed0db0
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20251121215817-03ecd95f41c0
-	github.com/antonybholmes/go-web v0.0.0-20251201172050-0421d6fcd976
+	github.com/antonybholmes/go-web v0.0.0-20251202201607-b64dfb9f4196
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.32
@@ -53,7 +53,7 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-mailserver v0.0.0-20251201172053-2a35fe773a23
+	github.com/antonybholmes/go-mailserver v0.0.0-20251202201842-499bc3ee2bbd
 	github.com/antonybholmes/go-sys v0.0.0-20251201172055-50c02bde14ef
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
