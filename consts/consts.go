@@ -37,6 +37,11 @@ var (
 	RedisAddr     string
 	RedisPassword string
 
+	Auth0Audience   string
+	Auth0Domain     string
+	Auth0EmailClaim string
+	Auth0NameClaim  string
+
 	CognitoClientId string
 	CognitoDomain   string
 
@@ -78,6 +83,11 @@ func init() {
 	AccessTokenTtlMins = env.GetMin("ACCESS_TOKEN_TTL_MINS", auth.Ttl15Mins)
 	OtpTokenTtlMins = env.GetMin("OTP_TOKEN_TTL_MINS", auth.Ttl20Mins)
 	ShortTtlMins = env.GetMin("SHORT_TTL_MINS", auth.Ttl10Mins)
+
+	Auth0Audience = os.Getenv("AUTH0_AUDIENCE")
+	Auth0Domain = os.Getenv("AUTH0_DOMAIN")
+	Auth0EmailClaim = os.Getenv("AUTH0_EMAIL_CLAIM")
+	Auth0NameClaim = os.Getenv("AUTH0_NAME_CLAIM")
 
 	CognitoClientId = os.Getenv("COGNITO_CLIENT_ID")
 	CognitoDomain = os.Getenv("COGNITO_DOMAIN")

@@ -89,7 +89,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.15 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.15 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.55.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.56.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/signin v1.0.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.18 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.30.6 // indirect
@@ -165,7 +165,7 @@ require (
 	go.opentelemetry.io/otel/sdk v1.38.0
 	golang.org/x/crypto v0.45.0 // indirect
 	golang.org/x/net v0.47.0 // indirect
-	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 )

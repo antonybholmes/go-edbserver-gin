@@ -289,7 +289,8 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context)
 		return
 	}
 
-	tokenClaims := user.(*auth.Auth0TokenClaims)
+	//tokenClaims := user.(*auth.Auth0TokenClaims)
+	tokenClaims := user.(*oauth2.OIDCClaims)
 
 	//myClaims := user.Claims.(*auth.TokenClaims) //hmm.Claims.(*TokenClaims)
 

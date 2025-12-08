@@ -1,8 +1,11 @@
 package session
 
 import (
+	"context"
+
 	"github.com/antonybholmes/go-edbserver-gin/consts"
 	"github.com/antonybholmes/go-edbserver-gin/routes/authentication"
+	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/auth/oauth2"
 	"github.com/antonybholmes/go-web/middleware"
@@ -13,8 +16,30 @@ import (
 
 func RegisterRoutes(r *gin.Engine,
 	otp *auth.OTP,
-	oidcVerifer *oauth2.OIDCVerifier,
+
 	jwtUserMiddleWare gin.HandlerFunc) {
+
+	ctx := context.Background()
+
+	// so we can verify cognito tokens
+	congnitoOIDCVerifer, err := oauth2.NewStandardOIDCVerifier(ctx,
+		consts.CognitoDomain,
+		consts.CognitoClientId,
+	)
+
+	if err != nil {
+		log.Fatal().Msgf("failed to create cognito oidc verifier: %v", err)
+	}
+
+	auth0OIDCVerifer, err := oauth2.NewOIDCVerifier(ctx,
+		consts.Auth0Domain,
+		consts.Auth0Audience,
+		consts.Auth0EmailClaim,
+		consts.Auth0NameClaim)
+
+	if err != nil {
+		log.Fatal().Msgf("failed to create auth0 oidc verifier: %v", err)
+	}
 
 	otpRoutes := authentication.NewOTPRoutes(otp)
 
@@ -22,13 +47,14 @@ func RegisterRoutes(r *gin.Engine,
 
 	sessionMiddleware := middleware.SessionIsValidMiddleware()
 
-	jwtAuth0Middleware := omw.JwtAuth0Middleware(consts.JwtAuth0RsaPublicKey)
+	//jwtAuth0Middleware2 := omw.JwtAuth0Middleware(consts.JwtAuth0RsaPublicKey)
+	jwtAuth0Middleware := omw.JwtOIDCMiddleware(auth0OIDCVerifer)
 
 	jwtClerkMiddleware := omw.JwtClerkMiddleware(consts.JwtClerkRsaPublicKey)
 
 	jwtSupabaseMiddleware := omw.JwtSupabaseMiddleware(consts.JwtSupabaseSecretKey)
 
-	jwtCognitoMiddleware := omw.JwtOIDCMiddleware(oidcVerifer)
+	jwtCognitoMiddleware := omw.JwtOIDCMiddleware(congnitoOIDCVerifer)
 
 	csrfMiddleware := csrfmiddleware.CSRFValidateMiddleware()
 
