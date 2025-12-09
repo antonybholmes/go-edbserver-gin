@@ -104,7 +104,7 @@ func RegisterRoutes(r *gin.Engine,
 	sessionGroup.POST("/csrf-token/refresh",
 		sessionRoutes.SessionNewCSRFTokenRoute)
 
-	sessionGroup.POST("/signout",
+	sessionGroup.POST("/sign-out",
 		//csrfMiddleware,
 		sessionMiddleware,
 		SessionSignOutRoute)
