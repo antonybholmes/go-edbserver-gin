@@ -42,8 +42,11 @@ var (
 	Auth0EmailClaim string
 	Auth0NameClaim  string
 
-	CognitoClientId string
+	CognitoAudience string
 	CognitoDomain   string
+
+	ClerkDomain   string
+	ClerkAudience string
 
 	PasswordlessTokenTtlMins time.Duration
 	AccessTokenTtlMins       time.Duration
@@ -89,8 +92,11 @@ func init() {
 	Auth0EmailClaim = os.Getenv("AUTH0_EMAIL_CLAIM")
 	Auth0NameClaim = os.Getenv("AUTH0_NAME_CLAIM")
 
-	CognitoClientId = os.Getenv("COGNITO_CLIENT_ID")
+	CognitoAudience = os.Getenv("COGNITO_CLIENT_ID")
 	CognitoDomain = os.Getenv("COGNITO_DOMAIN")
+
+	ClerkDomain = os.Getenv("CLERK_DOMAIN")
+	ClerkAudience = os.Getenv("CLERK_AUDIENCE")
 
 	JwtSupabaseSecretKey = os.Getenv("JWT_SUPABASE_SECRET_KEY")
 

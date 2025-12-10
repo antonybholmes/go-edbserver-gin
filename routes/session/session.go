@@ -366,7 +366,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context)
 		return
 	}
 
-	tokenClaims := user.(*auth.ClerkTokenClaims)
+	tokenClaims := user.(*oauth2.OIDCClaims)
 
 	email, err := mail.ParseAddress(tokenClaims.Email)
 

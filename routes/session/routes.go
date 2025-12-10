@@ -21,16 +21,6 @@ func RegisterRoutes(r *gin.Engine,
 
 	ctx := context.Background()
 
-	// so we can verify cognito tokens
-	congnitoOIDCVerifer, err := oauth2.NewStandardOIDCVerifier(ctx,
-		consts.CognitoDomain,
-		consts.CognitoClientId,
-	)
-
-	if err != nil {
-		log.Fatal().Msgf("failed to create cognito oidc verifier: %v", err)
-	}
-
 	auth0OIDCVerifer, err := oauth2.NewOIDCVerifier(ctx,
 		consts.Auth0Domain,
 		consts.Auth0Audience,
@@ -39,6 +29,25 @@ func RegisterRoutes(r *gin.Engine,
 
 	if err != nil {
 		log.Fatal().Msgf("failed to create auth0 oidc verifier: %v", err)
+	}
+
+	// so we can verify cognito tokens
+	congnitoOIDCVerifer, err := oauth2.NewStandardOIDCVerifier(ctx,
+		consts.CognitoDomain,
+		consts.CognitoAudience,
+	)
+
+	if err != nil {
+		log.Fatal().Msgf("failed to create cognito oidc verifier: %v", err)
+	}
+
+	clerkOIDCVerifer, err := oauth2.NewStandardOIDCVerifier(ctx,
+		consts.ClerkDomain,
+		consts.ClerkAudience,
+	)
+
+	if err != nil {
+		log.Fatal().Msgf("failed to create cognito oidc verifier: %v", err)
 	}
 
 	otpRoutes := authentication.NewOTPRoutes(otp)
@@ -50,11 +59,12 @@ func RegisterRoutes(r *gin.Engine,
 	//jwtAuth0Middleware2 := omw.JwtAuth0Middleware(consts.JwtAuth0RsaPublicKey)
 	jwtAuth0Middleware := omw.JwtOIDCMiddleware(auth0OIDCVerifer)
 
-	jwtClerkMiddleware := omw.JwtClerkMiddleware(consts.JwtClerkRsaPublicKey)
+	jwtCognitoMiddleware := omw.JwtOIDCMiddleware(congnitoOIDCVerifer)
+
+	//jwtClerkMiddleware := omw.JwtClerkMiddleware(consts.JwtClerkRsaPublicKey)
+	jwtClerkMiddleware := omw.JwtOIDCMiddleware(clerkOIDCVerifer)
 
 	jwtSupabaseMiddleware := omw.JwtSupabaseMiddleware(consts.JwtSupabaseSecretKey)
-
-	jwtCognitoMiddleware := omw.JwtOIDCMiddleware(congnitoOIDCVerifer)
 
 	csrfMiddleware := csrfmiddleware.CSRFValidateMiddleware()
 
