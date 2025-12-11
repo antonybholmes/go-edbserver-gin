@@ -255,6 +255,8 @@ CREATE TABLE users (
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL DEFAULT '',
     name TEXT NOT NULL DEFAULT '',
+    first_name TEXT NOT NULL DEFAULT '',
+    last_name TEXT NOT NULL DEFAULT '',
     is_locked BOOLEAN NOT NULL DEFAULT false,
     email_verified_at TIMESTAMP DEFAULT 'epoch' NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -275,6 +277,44 @@ INSERT INTO users (username, email, email_verified_at) VALUES (
     'edb-root@antonyholmes.dev',
     now()
 );
+
+DROP TABLE IF EXISTS auth_providers;
+CREATE TABLE auth_providers (
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
+    name TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    UNIQUE(name));
+-- CREATE INDEX name ON users (first_name, last_name);
+CREATE INDEX auth_providers_name_idx ON auth_providers (name);
+CREATE TRIGGER auth_providers_updated_trigger
+    BEFORE UPDATE
+    ON
+        auth_providers
+    FOR EACH ROW
+EXECUTE PROCEDURE update_at_updated();
+
+INSERT INTO auth_providers (name) VALUES ('edb');
+INSERT INTO auth_providers (name) VALUES ('auth0');
+INSERT INTO auth_providers (name) VALUES ('google');
+INSERT INTO auth_providers (name) VALUES ('github');
+
+DROP TABLE IF EXISTS user_auth_providers;
+CREATE TABLE user_auth_providers (
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
+    user_id UUID NOT NULL,
+    provider_id UUID NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    UNIQUE(user_id, provider_id),
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(provider_id) REFERENCES auth_providers(id) ON DELETE CASCADE);
+CREATE TRIGGER users_updated_trigger
+    BEFORE UPDATE
+    ON
+        user_auth_providers
+    FOR EACH ROW
+EXECUTE PROCEDURE update_at_updated();
 
 DROP TABLE IF EXISTS user_groups;
 CREATE TABLE user_groups (
