@@ -279,10 +279,6 @@ func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 func (sessionRoutes *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
 	user, ok := c.Get(web.SessionUser)
 
-	for key := range c.Keys {
-		log.Debug().Msgf("key %s", key)
-	}
-
 	if !ok {
 		auth.TokenErrorResp(c)
 
@@ -356,10 +352,6 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingCognitoRoute(c *gin.Contex
 func (sessionRoutes *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context) {
 	user, ok := c.Get(web.SessionUser)
 
-	for key := range c.Keys {
-		log.Debug().Msgf("key %s", key)
-	}
-
 	if !ok {
 		auth.TokenErrorResp(c)
 
@@ -387,10 +379,6 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context)
 
 func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Context) {
 	user, ok := c.Get(web.SessionUser)
-
-	for key := range c.Keys {
-		log.Debug().Msgf("key %s", key)
-	}
 
 	if !ok {
 		auth.TokenErrorResp(c)
@@ -420,7 +408,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Conte
 		return
 	}
 
-	log.Debug().Msgf("user %v", authUser)
+	//log.Debug().Msgf("user %v", authUser)
 
 	sessionRoutes.sessionSignInUsingOAuth2(c, authUser)
 }
