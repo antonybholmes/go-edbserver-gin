@@ -398,7 +398,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Conte
 		return
 	}
 
-	tokenClaims := user.(*auth.SupabaseTokenClaims)
+	tokenClaims := user.(*oauth2.OIDCClaims)
 
 	email, err := mail.ParseAddress(tokenClaims.Email)
 

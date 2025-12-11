@@ -48,6 +48,9 @@ var (
 	ClerkDomain   string
 	ClerkAudience string
 
+	SupabaseDomain   string
+	SupabaseAudience string
+
 	PasswordlessTokenTtlMins time.Duration
 	AccessTokenTtlMins       time.Duration
 	OtpTokenTtlMins          time.Duration
@@ -97,6 +100,9 @@ func init() {
 
 	ClerkDomain = os.Getenv("CLERK_DOMAIN")
 	ClerkAudience = os.Getenv("CLERK_AUDIENCE")
+
+	SupabaseDomain = os.Getenv("SUPABASE_DOMAIN")
+	SupabaseAudience = os.Getenv("SUPABASE_AUDIENCE")
 
 	JwtSupabaseSecretKey = os.Getenv("JWT_SUPABASE_SECRET_KEY")
 

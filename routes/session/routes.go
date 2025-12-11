@@ -47,7 +47,16 @@ func RegisterRoutes(r *gin.Engine,
 	)
 
 	if err != nil {
-		log.Fatal().Msgf("failed to create cognito oidc verifier: %v", err)
+		log.Fatal().Msgf("failed to create clerk oidc verifier: %v", err)
+	}
+
+	supabaseOIDCVerifer, err := oauth2.NewStandardOIDCVerifier(ctx,
+		consts.SupabaseDomain,
+		consts.SupabaseAudience,
+	)
+
+	if err != nil {
+		log.Fatal().Msgf("failed to create supabase oidc verifier: %v", err)
 	}
 
 	otpRoutes := authentication.NewOTPRoutes(otp)
@@ -64,7 +73,7 @@ func RegisterRoutes(r *gin.Engine,
 	//jwtClerkMiddleware := omw.JwtClerkMiddleware(consts.JwtClerkRsaPublicKey)
 	jwtClerkMiddleware := omw.JwtOIDCMiddleware(clerkOIDCVerifer)
 
-	jwtSupabaseMiddleware := omw.JwtSupabaseMiddleware(consts.JwtSupabaseSecretKey)
+	jwtSupabaseMiddleware := omw.JwtOIDCMiddleware(supabaseOIDCVerifer)
 
 	csrfMiddleware := csrfmiddleware.CSRFValidateMiddleware()
 
