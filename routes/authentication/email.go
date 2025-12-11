@@ -54,7 +54,7 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 		// 	req.VisitUrl)
 
 		email := mailserver.MailItem{
-			Name:      authUser.FirstName,
+			Name:      authUser.Name,
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
 			EmailType: edbmail.EmailQueueTypeEmailReset,
@@ -108,7 +108,7 @@ func UpdateEmailRoute(c *gin.Context) {
 		//return SendEmailChangedEmail(c, authUser)
 
 		email := mailserver.MailItem{
-			Name:      authUser.FirstName,
+			Name:      authUser.Name,
 			To:        authUser.Email,
 			EmailType: edbmail.EmailQueueTypeEmailUpdated}
 		mailqueue.SendMail(&email)

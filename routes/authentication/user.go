@@ -38,8 +38,7 @@ func UpdateUserRoute(c *gin.Context) {
 
 		err = userdbcache.SetUserInfo(authUser,
 			validator.UserBodyReq.Username,
-			validator.UserBodyReq.FirstName,
-			validator.UserBodyReq.LastName,
+			validator.UserBodyReq.Name,
 			false)
 
 		if err != nil {
@@ -58,7 +57,7 @@ func UpdateUserRoute(c *gin.Context) {
 		}
 
 		// send email notification of change
-		email := mailserver.MailItem{Name: authUser.FirstName,
+		email := mailserver.MailItem{Name: authUser.Name,
 			To:        authUser.Email,
 			EmailType: edbmail.EmailQueueTypeAccountUpdated}
 		mailqueue.SendMail(&email)

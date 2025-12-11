@@ -53,7 +53,7 @@ func SignupRoute(c *gin.Context) {
 		//}
 
 		email := mailserver.MailItem{
-			Name:      authUser.FirstName,
+			Name:      authUser.Name,
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "jwt", Data: token},
 			EmailType: edbmail.EmailQueueTypeVerify,
@@ -94,7 +94,7 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 		// 	"")
 
 		email := mailserver.MailItem{
-			Name:      authUser.FirstName,
+			Name:      authUser.Name,
 			To:        authUser.Email,
 			EmailType: edbmail.EmailQueueTypeVerified}
 		mailqueue.SendMail(&email)

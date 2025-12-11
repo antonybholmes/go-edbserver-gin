@@ -108,8 +108,7 @@ func UpdateUserRoute(c *gin.Context) {
 
 		err := userdbcache.SetUserInfo(authUser,
 			validator.UserBodyReq.Username,
-			validator.UserBodyReq.FirstName,
-			validator.UserBodyReq.LastName,
+			validator.UserBodyReq.Name,
 			true)
 
 		if err != nil {
@@ -160,8 +159,7 @@ func AddUserRoute(c *gin.Context) {
 			validator.UserBodyReq.Username,
 			validator.Address,
 			validator.UserBodyReq.Password,
-			validator.UserBodyReq.FirstName,
-			validator.UserBodyReq.LastName,
+			validator.UserBodyReq.Name,
 			validator.UserBodyReq.EmailIsVerified)
 
 		if err != nil {
@@ -173,7 +171,7 @@ func AddUserRoute(c *gin.Context) {
 		//go SendAccountCreatedEmail(authUser, validator.Address)
 
 		email := mailserver.MailItem{
-			Name:      authUser.FirstName,
+			Name:      authUser.Name,
 			To:        authUser.Email,
 			EmailType: edbmail.EmailQueueTypeAccountCreated,
 			LinkUrl:   consts.AppUrl}

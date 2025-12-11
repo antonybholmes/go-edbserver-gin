@@ -407,8 +407,14 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Conte
 		return
 	}
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(tokenClaims.UserMetadata.DisplayName, email)
+	name := tokenClaims.UserMetadata.DisplayName
 
+	if name == "" {
+		// google uses full name instead of display name
+		name = tokenClaims.UserMetadata.FullName
+	}
+
+	authUser, err := userdbcache.CreateUserFromOAuth2(name, email)
 	if err != nil {
 		c.Error(err)
 		return
@@ -706,8 +712,7 @@ func SessionUpdateUserRoute(c *gin.Context) {
 
 		err = userdbcache.SetUserInfo(authUser,
 			validator.UserBodyReq.Username,
-			validator.UserBodyReq.FirstName,
-			validator.UserBodyReq.LastName,
+			validator.UserBodyReq.Name,
 			false)
 
 		if err != nil {
@@ -718,7 +723,7 @@ func SessionUpdateUserRoute(c *gin.Context) {
 		//SendUserInfoUpdatedEmail(c, authUser)
 
 		email := mailserver.MailItem{
-			Name: authUser.FirstName,
+			Name: authUser.Name,
 			To:   authUser.Email,
 			//Token:     passwordlessToken,
 			EmailType: edbmail.EmailQueueTypeAccountUpdated,

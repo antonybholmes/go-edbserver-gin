@@ -47,7 +47,7 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 		// 	req.VisitUrl)
 
 		email := mailserver.MailItem{
-			Name:      authUser.FirstName,
+			Name:      authUser.Name,
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
 			EmailType: edbmail.EmailQueueTypePasswordReset,
@@ -90,7 +90,7 @@ func UpdatePasswordRoute(c *gin.Context) {
 		//return SendPasswordEmail(c, validator.AuthUser, validator.Req.Password)
 
 		email := mailserver.MailItem{
-			Name:      authUser.FirstName,
+			Name:      authUser.Name,
 			To:        authUser.Email,
 			EmailType: edbmail.EmailQueueTypePasswordUpdated}
 		mailqueue.SendMail(&email)

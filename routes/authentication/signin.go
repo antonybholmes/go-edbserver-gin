@@ -121,7 +121,7 @@ func PasswordlessSignInEmailRoute(c *gin.Context, validator *Validator) {
 		//log.Debug().Msgf("t %s ", passwordlessToken)
 
 		email := mailserver.MailItem{
-			Name:      authUser.FirstName,
+			Name:      authUser.Name,
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "code", Data: passwordlessToken},
 			EmailType: edbmail.EmailQueueTypePasswordless,
