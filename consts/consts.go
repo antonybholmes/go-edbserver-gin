@@ -28,7 +28,7 @@ var (
 	JwtRsaPublicKey      *rsa.PublicKey  //[]byte
 	JwtAuth0RsaPublicKey *rsa.PublicKey
 	JwtClerkRsaPublicKey *rsa.PublicKey
-	JwtSupabaseSecretKey string
+	SupabaseJwtSecretKey string
 	SessionName          string
 	SessionKey           string
 	SessionEncryptionKey string
@@ -103,8 +103,7 @@ func init() {
 
 	SupabaseDomain = os.Getenv("SUPABASE_DOMAIN")
 	SupabaseAudience = os.Getenv("SUPABASE_AUDIENCE")
-
-	JwtSupabaseSecretKey = os.Getenv("JWT_SUPABASE_SECRET_KEY")
+	SupabaseJwtSecretKey = os.Getenv("SUPABASE_JWT_SECRET_KEY")
 
 	SqsQueueUrl = os.Getenv("SQS_QUEUE_URL")
 

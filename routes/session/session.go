@@ -398,7 +398,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Conte
 		return
 	}
 
-	tokenClaims := user.(*oauth2.OIDCClaims)
+	tokenClaims := user.(*auth.SupabaseTokenClaims)
 
 	email, err := mail.ParseAddress(tokenClaims.Email)
 
@@ -407,12 +407,14 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Conte
 		return
 	}
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(tokenClaims.Email, email)
+	authUser, err := userdbcache.CreateUserFromOAuth2(tokenClaims.UserMetadata.DisplayName, email)
 
 	if err != nil {
 		c.Error(err)
 		return
 	}
+
+	log.Debug().Msgf("user %v", authUser)
 
 	sessionRoutes.sessionSignInUsingOAuth2(c, authUser)
 }
@@ -465,7 +467,7 @@ func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, aut
 
 	//roleClaim := auth.MakeClaim(roles)
 
-	//log.Debug().Msgf("user %v", authUser)
+	log.Debug().Msgf("user login %v %v", authUser, auth.UserHasWebLoginInRole(authUser))
 
 	if !auth.UserHasWebLoginInRole(authUser) {
 		web.UserNotAllowedToSignInErrorResp(c)
