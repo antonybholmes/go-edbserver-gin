@@ -7,6 +7,7 @@ import (
 	"net/mail"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
@@ -303,7 +304,19 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context)
 		return
 	}
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(tokenClaims.Name, email)
+	// determine auth provider from sub
+	authProvider := ""
+
+	switch {
+	case strings.Contains(tokenClaims.Subject, "google"):
+		authProvider = "google"
+	case strings.Contains(tokenClaims.Subject, "github"):
+		authProvider = "github"
+	default:
+		authProvider = "auth0"
+	}
+
+	authUser, err := userdbcache.CreateUserFromOAuth2(email, tokenClaims.Name, authProvider)
 
 	if err != nil {
 		c.Error(err)
@@ -339,7 +352,9 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingCognitoRoute(c *gin.Contex
 		return
 	}
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(tokenClaims.Name, email)
+	authProvider := "cognito"
+
+	authUser, err := userdbcache.CreateUserFromOAuth2(email, tokenClaims.Name, authProvider)
 
 	if err != nil {
 		c.Error(err)
@@ -367,7 +382,9 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context)
 		return
 	}
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(tokenClaims.Name, email)
+	authProvider := "clerk"
+
+	authUser, err := userdbcache.CreateUserFromOAuth2(email, tokenClaims.Name, authProvider)
 
 	if err != nil {
 		c.Error(err)
@@ -402,7 +419,9 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Conte
 		name = tokenClaims.UserMetadata.FullName
 	}
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(name, email)
+	authProvider := "supabase"
+
+	authUser, err := userdbcache.CreateUserFromOAuth2(email, name, authProvider)
 	if err != nil {
 		c.Error(err)
 		return
@@ -440,7 +459,9 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Co
 		return
 	}
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(username, validator.Address)
+	authProvider := "email_otp"
+
+	authUser, err := userdbcache.CreateUserFromOAuth2(validator.Address, username, authProvider)
 
 	if err != nil {
 		log.Debug().Msgf("error creating user from otp sign in: %v", err)

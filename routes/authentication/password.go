@@ -80,7 +80,7 @@ func UpdatePasswordRoute(c *gin.Context) {
 			return
 		}
 
-		err = userdbcache.SetPassword(authUser, validator.UserBodyReq.Password)
+		_, err = userdbcache.SetPassword(authUser, validator.UserBodyReq.Password)
 
 		if err != nil {
 			web.BadReqResp(c, err)

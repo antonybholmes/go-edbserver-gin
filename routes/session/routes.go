@@ -21,11 +21,15 @@ func RegisterRoutes(r *gin.Engine,
 
 	ctx := context.Background()
 
-	auth0OIDCVerifer, err := oauth2.NewOIDCVerifier(ctx,
+	// auth0OIDCVerifer, err := oauth2.NewOIDCVerifier(ctx,
+	// 	consts.Auth0Domain,
+	// 	consts.Auth0Audience,
+	// 	consts.Auth0EmailClaim,
+	// 	consts.Auth0NameClaim)
+
+	auth0OIDCVerifer, err := oauth2.NewStandardOIDCVerifier(ctx,
 		consts.Auth0Domain,
-		consts.Auth0Audience,
-		consts.Auth0EmailClaim,
-		consts.Auth0NameClaim)
+		consts.Auth0Audience)
 
 	if err != nil {
 		log.Fatal().Msgf("failed to create auth0 oidc verifier: %v", err)

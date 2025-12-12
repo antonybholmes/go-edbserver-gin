@@ -156,11 +156,12 @@ func AddUserRoute(c *gin.Context) {
 
 		// assume email is not verified
 		authUser, err := userdbcache.Instance().CreateUser(
-			validator.UserBodyReq.Username,
 			validator.Address,
+			validator.UserBodyReq.Username,
 			validator.UserBodyReq.Password,
 			validator.UserBodyReq.Name,
-			validator.UserBodyReq.EmailIsVerified)
+			validator.UserBodyReq.EmailIsVerified,
+			"edb")
 
 		if err != nil {
 			c.Error(err)
