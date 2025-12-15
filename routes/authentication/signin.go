@@ -38,7 +38,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		if authUser.EmailVerifiedAt == 0 {
+		if authUser.EmailVerifiedAt == nil {
 			web.EmailNotVerifiedReq(c)
 			return
 		}

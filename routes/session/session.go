@@ -161,7 +161,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 		return
 	}
 
-	if authUser.EmailVerifiedAt == userdb.EmailNotVerifiedDate {
+	if authUser.EmailVerifiedAt == nil {
 		web.EmailNotVerifiedReq(c)
 		return
 	}
@@ -238,7 +238,7 @@ func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 		return
 	}
 
-	if authUser.EmailVerifiedAt == userdb.EmailNotVerifiedDate {
+	if authUser.EmailVerifiedAt == nil {
 		web.EmailNotVerifiedReq(c)
 		return
 	}
@@ -600,6 +600,8 @@ func (sessionRoutes *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 	// refresh user
 	authUser, err := userdbcache.FindUserById(user.(*auth.AuthUser).Id)
 
+	log.Debug().Msgf("sdfsfdsdfsdfdsfsfdsfdsf %v", err)
+
 	if err != nil {
 		web.UnauthorizedResp(c, auth.ErrUserDoesNotExist)
 		return
@@ -781,7 +783,7 @@ func SessionUpdatePasswordRoute(c *gin.Context) {
 		return
 	}
 
-	err = userdbcache.SetPassword(authUser, req.NewPassword)
+	_, err = userdbcache.SetPassword(authUser, req.NewPassword, false)
 
 	if err != nil {
 		web.BadReqResp(c, auth.ErrCouldNotUpdatePassword)

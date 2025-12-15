@@ -126,8 +126,8 @@ func UpdateUserRoute(c *gin.Context) {
 		}
 
 		if validator.UserBodyReq.Password != "" {
-			err = userdbcache.SetPassword(authUser,
-				validator.UserBodyReq.Password)
+			_, err = userdbcache.SetPassword(authUser,
+				validator.UserBodyReq.Password, true)
 
 			if err != nil {
 				c.Error(err)
@@ -155,7 +155,7 @@ func AddUserRoute(c *gin.Context) {
 	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().Success(func(validator *authenticationroutes.Validator) {
 
 		// assume email is not verified
-		authUser, err := userdbcache.Instance().CreateUser(
+		authUser, err := userdbcache.CreateUser(
 			validator.Address,
 			validator.UserBodyReq.Username,
 			validator.UserBodyReq.Password,

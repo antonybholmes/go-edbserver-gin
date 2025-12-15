@@ -221,7 +221,7 @@ func (validator *Validator) CheckUserHasVerifiedEmailAddress() *Validator {
 		return validator
 	}
 
-	if validator.AuthUser.EmailVerifiedAt == 0 {
+	if validator.AuthUser.EmailVerifiedAt == nil {
 		validator.Err = auth.NewAccountError("email address not verified")
 	}
 

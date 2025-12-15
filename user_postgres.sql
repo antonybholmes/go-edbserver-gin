@@ -260,7 +260,7 @@ CREATE TABLE users (
     first_name TEXT NOT NULL DEFAULT '',
     last_name TEXT NOT NULL DEFAULT '',
     is_locked BOOLEAN NOT NULL DEFAULT false,
-    email_verified_at TIMESTAMP DEFAULT 'epoch' NOT NULL,
+    email_verified_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
 -- CREATE INDEX name ON users (first_name, last_name);
@@ -305,12 +305,12 @@ DROP TABLE IF EXISTS user_auth_providers;
 CREATE TABLE user_auth_providers (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     user_id UUID NOT NULL,
-    provider_id UUID NOT NULL,
+    auth_provider_id UUID NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    UNIQUE(user_id, provider_id),
+    UNIQUE(user_id, auth_provider_id),
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY(provider_id) REFERENCES auth_providers(id) ON DELETE CASCADE);
+    FOREIGN KEY(auth_provider_id) REFERENCES auth_providers(id) ON DELETE CASCADE);
 CREATE TRIGGER users_updated_trigger
     BEFORE UPDATE
     ON

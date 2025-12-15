@@ -74,11 +74,11 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 		authUser := validator.AuthUser
 
 		// if verified, stop and just return true
-		if authUser.EmailVerifiedAt == 0 {
+		if authUser.EmailVerifiedAt != nil {
 			web.MakeOkResp(c, "")
 		}
 
-		err := userdbcache.SetIsVerified(authUser.Id)
+		_, err := userdbcache.SetEmailIsVerified(authUser)
 
 		if err != nil {
 			web.MakeSuccessResp(c, "unable to verify user", false)
