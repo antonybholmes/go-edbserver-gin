@@ -361,9 +361,11 @@ SELECT u.id, g.id, 'Add to rdf group'
 FROM users u, groups g
 WHERE u.email LIKE '%columbia%' AND g.name = 'rdf' ON CONFLICT DO NOTHING;
 
+DROP TABLE IF EXISTS public_keys;
 CREATE TABLE IF NOT EXISTS public_keys (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     user_id UUID NOT NULL,
+    name TEXT NOT NULL,
     key TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
