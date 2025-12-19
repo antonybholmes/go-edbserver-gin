@@ -140,7 +140,7 @@ func init() {
 
 	geneconvdbcache.InitCache("data/modules/geneconv/geneconv.db")
 
-	motifsdb.InitCache("data/modules/motifs/motifs-v20251218.db")
+	motifsdb.InitMotifDB(consts.MotifsDB)
 
 	pathwaydbcache.InitCache("data/modules/pathway/pathway-v3.db")
 

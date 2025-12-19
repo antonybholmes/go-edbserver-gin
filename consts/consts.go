@@ -61,6 +61,8 @@ var (
 	UrlVerifyEmail   string
 
 	SqsQueueUrl string
+
+	MotifsDB string
 )
 
 func init() {
@@ -106,6 +108,8 @@ func init() {
 	SupabaseJwtSecretKey = os.Getenv("SUPABASE_JWT_SECRET_KEY")
 
 	SqsQueueUrl = os.Getenv("SQS_QUEUE_URL")
+
+	MotifsDB = os.Getenv("MOTIFS_DB")
 
 	bytes, err := os.ReadFile("jwtRS256.key")
 	if err != nil {

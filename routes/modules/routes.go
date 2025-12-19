@@ -86,7 +86,6 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
 
 	scrnaProtectedGroup := scrnaGroup.Group("",
-
 		rulesMiddleware,
 		//jwtUserMiddleWare,
 	//accessTokenMiddleware,
@@ -133,7 +132,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 
 	motifsGroup := moduleGroup.Group("/motifs")
 	motifsGroup.GET("/datasets", motifroutes.DatasetsRoute)
-	motifsGroup.POST("/search", motifroutes.SearchRoute)
+	motifsGroup.GET("/search", motifroutes.SearchRoute)
 
 	pathwayGroup := moduleGroup.Group("/pathway")
 	pathwayGroup.GET("/genes", pathwayroutes.GenesRoute)

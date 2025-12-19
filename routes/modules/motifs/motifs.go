@@ -2,7 +2,9 @@ package motifs
 
 import (
 	"errors"
+	"strconv"
 
+	basemath "github.com/antonybholmes/go-math"
 	"github.com/antonybholmes/go-motifs"
 	"github.com/antonybholmes/go-motifs/motifsdb"
 	"github.com/antonybholmes/go-sys/log"
@@ -10,7 +12,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const MinSearchLen = 3
+const (
+	MinSearchLen = 3
+	MinPageSize  = 10
+	MaxPageSize  = 100
+)
 
 var (
 	ErrSearchTooShort = errors.New("search too short")
@@ -62,24 +68,38 @@ func DatasetsRoute(c *gin.Context) {
 
 func SearchRoute(c *gin.Context) {
 
-	params, err := ParseParamsFromPost(c)
+	// params, err := ParseParamsFromPost(c)
 
-	if err != nil {
-		c.Error(err)
-		return
-	}
+	// if err != nil {
+	// 	c.Error(err)
+	// 	return
+	// }
 
-	search := params.Search
+	search := c.Query("q")
 
 	if len(search) < MinSearchLen {
 		web.BadReqResp(c, ErrSearchTooShort)
 		return
 	}
 
+	page, err := strconv.Atoi(c.Query("page"))
+
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	pageSize, err := strconv.Atoi(c.Query("pageSize"))
+
+	if err != nil {
+		pageSize = MinPageSize
+	}
+
+	pageSize = basemath.Min(basemath.Max(pageSize, MinPageSize), MaxPageSize)
+
 	//log.Debug().Msgf("motif %v", params)
 
 	// Don't care about the errors, just plug empty list into failures
-	motifs, err := motifsdb.Search(search, params.Reverse, params.Complement)
+	result, err := motifsdb.Search(search, page, pageSize, false, false)
 
 	if err != nil {
 		log.Debug().Msgf("motif %s", err)
@@ -88,12 +108,7 @@ func SearchRoute(c *gin.Context) {
 	}
 
 	web.MakeDataResp(c, "",
-		MotifRes{
-			Search:     search,
-			Motifs:     motifs,
-			Reverse:    params.Reverse,
-			Complement: params.Complement,
-		})
+		result)
 
 	//web.MakeDataResp(c, "", mutationdbcache.GetInstance().List())
 }
