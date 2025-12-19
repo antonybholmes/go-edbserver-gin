@@ -62,7 +62,7 @@ require (
 	github.com/antonybholmes/go-beds v0.0.0-20251121231947-7748047af425
 	github.com/antonybholmes/go-geneconv v0.0.0-20251121222738-b6e5c9016658
 	github.com/antonybholmes/go-hubs v0.0.0-00010101000000-000000000000
-	github.com/antonybholmes/go-math v0.0.0-20251121215600-3269f8a98aeb
+	github.com/antonybholmes/go-math v0.0.0-20251211184815-6e7285b975dd
 	github.com/antonybholmes/go-motifs v0.0.0-20251121222735-b9b35b49f4ee
 	github.com/antonybholmes/go-mutations v0.0.0-20251121215822-986cf4492199
 	github.com/antonybholmes/go-pathway v0.0.0-20251121222731-16f8a04f47da
