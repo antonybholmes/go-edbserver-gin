@@ -140,7 +140,7 @@ func (sessionRoutes *SessionRoutes) initSession(c *gin.Context, authUser *auth.A
 // }
 
 func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
-	validator, err := authentication.NewValidator(c).LoadAuthUserFromUsername().Ok()
+	validator, err := middleware.NewValidator(c).LoadAuthUserFromUsername().Ok()
 
 	if err != nil {
 		c.Error(err)
@@ -224,7 +224,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 }
 
 func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
-	validator, err := authentication.NewValidator(c).ParseSignInRequestBody().Ok()
+	validator, err := middleware.NewValidator(c).ParseSignInRequestBody().Ok()
 
 	if err != nil {
 		c.Error(err)
@@ -438,7 +438,7 @@ func (sessionRoutes *SessionRoutes) SessionEmailOTPRoute(c *gin.Context) {
 
 func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Context) {
 
-	validator, err := authentication.NewValidator(c).CheckEmailIsWellFormed().Ok()
+	validator, err := middleware.NewValidator(c).CheckEmailIsWellFormed().Ok()
 
 	if err != nil {
 		web.BadReqResp(c, err)
@@ -507,7 +507,7 @@ func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, aut
 // can be used to generate access tokens to use resources
 func (sessionRoutes *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) {
 
-	authentication.NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *authentication.Validator) {
+	middleware.NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *middleware.Validator) {
 
 		if validator.Claims.Type != auth.TokenTypePasswordless {
 			auth.WrongTokenTypeReq(c)
@@ -599,8 +599,6 @@ func (sessionRoutes *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 
 	// refresh user
 	authUser, err := userdbcache.FindUserById(user.(*auth.AuthUser).Id)
-
-	log.Debug().Msgf("sdfsfdsdfsdfdsfsfdsfdsf %v", err)
 
 	if err != nil {
 		web.UnauthorizedResp(c, auth.ErrUserDoesNotExist)
@@ -719,7 +717,7 @@ func SessionUpdateUserRoute(c *gin.Context) {
 
 	authUser := sessionData.AuthUser
 
-	authentication.NewValidator(c).CheckUsernameIsWellFormed().Success(func(validator *authentication.Validator) {
+	middleware.NewValidator(c).CheckUsernameIsWellFormed().Success(func(validator *middleware.Validator) {
 
 		err = userdbcache.SetUserInfo(authUser,
 			validator.UserBodyReq.Username,

@@ -2,17 +2,17 @@ package modules
 
 import (
 	bedroutes "github.com/antonybholmes/go-beds/routes"
+	cytobandroutes "github.com/antonybholmes/go-cytobands/routes"
 	dnaroutes "github.com/antonybholmes/go-dna/routes"
-	cytobandroutes "github.com/antonybholmes/go-edbserver-gin/routes/modules/cytobands"
-	geneconvroutes "github.com/antonybholmes/go-edbserver-gin/routes/modules/geneconv"
-	genomeroutes "github.com/antonybholmes/go-edbserver-gin/routes/modules/genome"
-	mutationroutes "github.com/antonybholmes/go-edbserver-gin/routes/modules/mutation"
-	pathwayroutes "github.com/antonybholmes/go-edbserver-gin/routes/modules/pathway"
-	scrnaroutes "github.com/antonybholmes/go-edbserver-gin/routes/modules/scrna"
-	seqroutes "github.com/antonybholmes/go-edbserver-gin/routes/modules/seqs"
+	geneconvroutes "github.com/antonybholmes/go-geneconv/routes"
+	genomeroutes "github.com/antonybholmes/go-genome/routes"
 	gexroutes "github.com/antonybholmes/go-gex/routes"
 	hubroutes "github.com/antonybholmes/go-hubs/routes"
 	motifroutes "github.com/antonybholmes/go-motifs/routes"
+	mutationroutes "github.com/antonybholmes/go-mutations/routes"
+	pathwayroutes "github.com/antonybholmes/go-pathway/routes"
+	scrnaroutes "github.com/antonybholmes/go-scrna/routes"
+	seqroutes "github.com/antonybholmes/go-seqs/routes"
 	"github.com/gin-gonic/gin"
 )
 

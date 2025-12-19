@@ -7,6 +7,7 @@ import (
 
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -76,7 +77,7 @@ func TokenInfoRoute(c *gin.Context) {
 }
 
 func NewAccessTokenRoute(c *gin.Context) {
-	NewValidator(c).CheckIsValidRefreshToken().Success(func(validator *Validator) {
+	middleware.NewValidator(c).CheckIsValidRefreshToken().Success(func(validator *middleware.Validator) {
 
 		// Generate encoded token and send it as response.
 		accessToken, err := tokengen.AccessToken(c,

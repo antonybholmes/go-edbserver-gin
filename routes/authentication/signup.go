@@ -9,12 +9,13 @@ import (
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
+	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-gonic/gin"
 )
 
 func SignupRoute(c *gin.Context) {
-	NewValidator(c).CheckEmailIsWellFormed().Success(func(validator *Validator) {
+	middleware.NewValidator(c).CheckEmailIsWellFormed().Success(func(validator *middleware.Validator) {
 		req := validator.UserBodyReq
 
 		authUser, err := userdbcache.CreateUserFromSignup(req)
@@ -69,7 +70,7 @@ func SignupRoute(c *gin.Context) {
 }
 
 func EmailAddressVerifiedRoute(c *gin.Context) {
-	NewValidator(c).LoadAuthUserFromToken().Success(func(validator *Validator) {
+	middleware.NewValidator(c).LoadAuthUserFromToken().Success(func(validator *middleware.Validator) {
 
 		authUser := validator.AuthUser
 

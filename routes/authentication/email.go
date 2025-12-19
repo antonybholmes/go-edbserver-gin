@@ -11,6 +11,7 @@ import (
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
+	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/tokengen"
 
 	"github.com/antonybholmes/go-mailserver/mailqueue"
@@ -19,7 +20,7 @@ import (
 
 // Start passwordless login by sending an email
 func SendResetEmailEmailRoute(c *gin.Context) {
-	NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Success(func(validator *Validator) {
+	middleware.NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Success(func(validator *middleware.Validator) {
 		authUser := validator.AuthUser
 		req := validator.UserBodyReq
 
@@ -72,7 +73,7 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 }
 
 func UpdateEmailRoute(c *gin.Context) {
-	NewValidator(c).CheckEmailIsWellFormed().LoadAuthUserFromToken().Success(func(validator *Validator) {
+	middleware.NewValidator(c).CheckEmailIsWellFormed().LoadAuthUserFromToken().Success(func(validator *middleware.Validator) {
 
 		if validator.Claims.Type != auth.TokenTypeChangeEmail {
 			auth.WrongTokenTypeReq(c)

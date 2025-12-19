@@ -9,6 +9,7 @@ import (
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/middleware"
 
 	"github.com/antonybholmes/go-sys/log"
 	"github.com/gin-gonic/gin"
@@ -26,7 +27,7 @@ func NewOTPRoutes(otp *auth.OTP) *OTPRoutes {
 
 func (otpr *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
 
-	validator, err := NewValidator(c).CheckEmailIsWellFormed().Ok()
+	validator, err := middleware.NewValidator(c).CheckEmailIsWellFormed().Ok()
 
 	if err != nil {
 		web.BadReqResp(c, err)

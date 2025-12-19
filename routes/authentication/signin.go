@@ -11,6 +11,7 @@ import (
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
+	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +25,7 @@ func PasswordlessEmailSentResp(c *gin.Context) {
 }
 
 func UsernamePasswordSignInRoute(c *gin.Context) {
-	NewValidator(c).ParseSignInRequestBody().Success(func(validator *Validator) {
+	middleware.NewValidator(c).ParseSignInRequestBody().Success(func(validator *middleware.Validator) {
 
 		if validator.UserBodyReq.Password == "" {
 			PasswordlessSignInEmailRoute(c, validator)
@@ -85,12 +86,12 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 }
 
 // Start passwordless login by sending an email
-func PasswordlessSignInEmailRoute(c *gin.Context, validator *Validator) {
+func PasswordlessSignInEmailRoute(c *gin.Context, validator *middleware.Validator) {
 	if validator == nil {
-		validator = NewValidator(c)
+		validator = middleware.NewValidator(c)
 	}
 
-	validator.LoadAuthUserFromUsername().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
+	validator.LoadAuthUserFromUsername().CheckUserHasVerifiedEmailAddress().Success(func(validator *middleware.Validator) {
 
 		authUser := validator.AuthUser
 
@@ -141,7 +142,7 @@ func PasswordlessSignInEmailRoute(c *gin.Context, validator *Validator) {
 }
 
 func PasswordlessSignInRoute(c *gin.Context) {
-	NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
+	middleware.NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *middleware.Validator) {
 
 		if validator.Claims.Type != auth.TokenTypePasswordless {
 			auth.WrongTokenTypeReq(c)

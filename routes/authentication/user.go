@@ -7,6 +7,7 @@ import (
 	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
+	"github.com/antonybholmes/go-web/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,7 +22,7 @@ func UserUpdatedResp(c *gin.Context) {
 
 func UpdateUserRoute(c *gin.Context) {
 
-	NewValidator(c).ParseSignInRequestBody().LoadTokenClaims().Success(func(validator *Validator) {
+	middleware.NewValidator(c).ParseSignInRequestBody().LoadTokenClaims().Success(func(validator *middleware.Validator) {
 
 		//db, err := userdbcache.AutoConn(nil) //not clear on what is needed for the user and password
 
@@ -68,9 +69,9 @@ func UpdateUserRoute(c *gin.Context) {
 }
 
 func UserRoute(c *gin.Context) {
-	NewValidator(c).
+	middleware.NewValidator(c).
 		LoadAuthUserFromToken().
-		Success(func(validator *Validator) {
+		Success(func(validator *middleware.Validator) {
 			web.MakeDataResp(c, "", validator.AuthUser)
 		})
 }

@@ -3,11 +3,11 @@ package admin
 import (
 	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
 	"github.com/antonybholmes/go-edbserver-gin/consts"
-	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
+	"github.com/antonybholmes/go-web/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -86,7 +86,7 @@ func GroupsRoute(c *gin.Context) {
 
 func UpdateUserRoute(c *gin.Context) {
 
-	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().LoadAuthUserFromId().Success(func(validator *authenticationroutes.Validator) {
+	middleware.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().LoadAuthUserFromId().Success(func(validator *middleware.Validator) {
 
 		//log.Debug().Msgf("roles here")
 
@@ -152,7 +152,7 @@ func UpdateUserRoute(c *gin.Context) {
 
 func AddUserRoute(c *gin.Context) {
 
-	authenticationroutes.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().Success(func(validator *authenticationroutes.Validator) {
+	middleware.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().Success(func(validator *middleware.Validator) {
 
 		// assume email is not verified
 		authUser, err := userdbcache.CreateUser(

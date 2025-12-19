@@ -10,6 +10,7 @@ import (
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
+	"github.com/antonybholmes/go-web/middleware"
 	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-gonic/gin"
 )
@@ -20,7 +21,7 @@ func PasswordUpdatedResp(c *gin.Context) {
 
 // Start passwordless login by sending an email
 func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
-	NewValidator(c).LoadAuthUserFromUsername().CheckUserHasVerifiedEmailAddress().Success(func(validator *Validator) {
+	middleware.NewValidator(c).LoadAuthUserFromUsername().CheckUserHasVerifiedEmailAddress().Success(func(validator *middleware.Validator) {
 		authUser := validator.AuthUser
 		//req := validator.SignInBodyReq
 
@@ -64,7 +65,7 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 }
 
 func UpdatePasswordRoute(c *gin.Context) {
-	NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Success(func(validator *Validator) {
+	middleware.NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Success(func(validator *middleware.Validator) {
 
 		if validator.Claims.Type != auth.TokenTypeResetPassword {
 			web.BadReqResp(c, auth.ErrInvalidTokenType)
