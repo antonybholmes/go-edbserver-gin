@@ -2,39 +2,39 @@ module github.com/antonybholmes/go-edbserver-gin
 
 go 1.25
 
-// replace github.com/antonybholmes/go-web => ../go-web
+replace github.com/antonybholmes/go-web => ../go-web
 
-// replace github.com/antonybholmes/go-dna => ../go-dna
+replace github.com/antonybholmes/go-dna => ../go-dna
 
-// replace github.com/antonybholmes/go-genome => ../go-genome
+replace github.com/antonybholmes/go-genome => ../go-genome
 
-// replace github.com/antonybholmes/go-mutations => ../go-mutations
+replace github.com/antonybholmes/go-mutations => ../go-mutations
 
-// replace github.com/antonybholmes/go-basemath => ../go-basemath
+replace github.com/antonybholmes/go-basemath => ../go-basemath
 
-// replace github.com/antonybholmes/go-sys => ../go-sys
+replace github.com/antonybholmes/go-sys => ../go-sys
 
-// replace github.com/antonybholmes/go-mailserver => ../go-mailserver
+replace github.com/antonybholmes/go-mailserver => ../go-mailserver
 
-// replace github.com/antonybholmes/go-edbmailserver => ../go-edbmailserver
+replace github.com/antonybholmes/go-edbmailserver => ../go-edbmailserver
 
-// replace github.com/antonybholmes/go-geneconv => ../go-geneconv
+replace github.com/antonybholmes/go-geneconv => ../go-geneconv
 
-// replace github.com/antonybholmes/go-motifs => ../go-motifs
+replace github.com/antonybholmes/go-motifs => ../go-motifs
 
-// replace github.com/antonybholmes/go-pathway => ../go-pathway
+replace github.com/antonybholmes/go-pathway => ../go-pathway
 
-// replace github.com/antonybholmes/go-gex => ../go-gex
+replace github.com/antonybholmes/go-gex => ../go-gex
 
-// replace github.com/antonybholmes/go-seqs => ../go-seqs
+replace github.com/antonybholmes/go-seqs => ../go-seqs
 
-// replace github.com/antonybholmes/go-cytobands => ../go-cytobands
+replace github.com/antonybholmes/go-cytobands => ../go-cytobands
 
-// replace github.com/antonybholmes/go-beds => ../go-beds
+replace github.com/antonybholmes/go-beds => ../go-beds
 
-// replace github.com/antonybholmes/go-hubs => ../go-hubs
+replace github.com/antonybholmes/go-hubs => ../go-hubs
 
-// replace github.com/antonybholmes/go-scrna => ../go-scrna
+replace github.com/antonybholmes/go-scrna => ../go-scrna
 
 require github.com/antonybholmes/go-edbmailserver v0.0.0-20251121215824-6ff0c5cf2c21
 
@@ -62,7 +62,6 @@ require (
 	github.com/antonybholmes/go-beds v0.0.0-20251121231947-7748047af425
 	github.com/antonybholmes/go-geneconv v0.0.0-20251121222738-b6e5c9016658
 	github.com/antonybholmes/go-hubs v0.0.0-00010101000000-000000000000
-	github.com/antonybholmes/go-math v0.0.0-20251211184815-6e7285b975dd
 	github.com/antonybholmes/go-motifs v0.0.0-20251121222735-b9b35b49f4ee
 	github.com/antonybholmes/go-mutations v0.0.0-20251121215822-986cf4492199
 	github.com/antonybholmes/go-pathway v0.0.0-20251121222731-16f8a04f47da
@@ -79,6 +78,7 @@ require (
 require (
 	github.com/MicahParks/jwkset v0.11.0 // indirect
 	github.com/MicahParks/keyfunc/v3 v3.7.0 // indirect
+	github.com/antonybholmes/go-math v0.0.0-20251211184815-6e7285b975dd // indirect
 	github.com/aws/aws-sdk-go-v2 v1.41.0 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.32.6 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.6 // indirect
