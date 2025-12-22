@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/antonybholmes/go-beds/bedsdbcache"
-	"github.com/antonybholmes/go-cytobands/cytobandsdbcache"
-	"github.com/antonybholmes/go-dna/dnadbcache"
+	"github.com/antonybholmes/go-beds/beddb"
+	"github.com/antonybholmes/go-cytobands/cytobanddb"
+	"github.com/antonybholmes/go-dna/dnadb"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 
 	"github.com/antonybholmes/go-edbserver-gin/consts"
@@ -18,7 +18,7 @@ import (
 	sessionroutes "github.com/antonybholmes/go-edbserver-gin/routes/session"
 
 	"github.com/antonybholmes/go-edbserver-gin/routes/modules"
-	"github.com/antonybholmes/go-hubs/hubsdbcache"
+	"github.com/antonybholmes/go-hubs/hubdb"
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
@@ -34,15 +34,15 @@ import (
 	"github.com/antonybholmes/go-web/middleware"
 
 	utilsroutes "github.com/antonybholmes/go-edbserver-gin/routes/utils"
-	"github.com/antonybholmes/go-geneconv/geneconvdbcache"
+	"github.com/antonybholmes/go-geneconv/geneconvdb"
 	"github.com/antonybholmes/go-genome/genomedbcache"
-	"github.com/antonybholmes/go-gex/gexdbcache"
+	"github.com/antonybholmes/go-gex/gexdb"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-motifs/motifsdb"
-	"github.com/antonybholmes/go-mutations/mutationdbcache"
-	"github.com/antonybholmes/go-pathway/pathwaydbcache"
-	scrnadbcache "github.com/antonybholmes/go-scrna/cache"
-	"github.com/antonybholmes/go-seqs/seqsdbcache"
+	"github.com/antonybholmes/go-mutations/mutationdb"
+	"github.com/antonybholmes/go-pathway/pathwaydb"
+	"github.com/antonybholmes/go-scrna/scrnadb"
+	"github.com/antonybholmes/go-seqs/seqdb"
 	"github.com/antonybholmes/go-sys/env"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -128,29 +128,29 @@ func init() {
 
 	//mailserver.Init()
 
-	dnadbcache.InitCache("data/modules/dna")
+	dnadb.InitDnaDB("data/modules/dna")
 	genomedbcache.InitCache("data/modules/genome")
 	//microarraydb.InitDB("data/microarray")
 
-	gexdbcache.InitCache("data/modules/gex")
+	gexdb.InitGexDB("data/modules/gex")
 
-	scrnadbcache.InitCache("data/modules/scrna")
+	scrnadb.InitScrnaDB("data/modules/scrna")
 
-	mutationdbcache.InitCache("data/modules/mutations")
+	mutationdb.InitMutationDB("data/modules/mutations")
 
-	geneconvdbcache.InitCache("data/modules/geneconv/geneconv.db")
+	geneconvdb.InitGeneConvDB("data/modules/geneconv/geneconv.db")
 
 	motifsdb.InitMotifDB(consts.MotifsDB)
 
-	pathwaydbcache.InitCache("data/modules/pathway/pathway-v3.db")
+	pathwaydb.InitPathwayDB("data/modules/pathway/pathway-v3.db")
 
-	seqsdbcache.InitCache("data/modules/seqs/")
+	seqdb.InitSeqDB("data/modules/seqs/")
 
-	cytobandsdbcache.InitCache("data/modules/cytobands/")
+	cytobanddb.InitCytobandDB("data/modules/cytobands/")
 
-	bedsdbcache.InitCache("data/modules/beds/")
+	beddb.InitBedDB("data/modules/beds/")
 
-	hubsdbcache.InitCache("data/modules/hubs/")
+	hubdb.InitHubDB("data/modules/hubs/")
 
 	rdb = redis.NewClient(&redis.Options{
 		Addr:     consts.RedisAddr,
