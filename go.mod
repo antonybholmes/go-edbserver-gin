@@ -39,22 +39,22 @@ replace github.com/antonybholmes/go-scrna => ../go-scrna
 require github.com/antonybholmes/go-edbmailserver v0.0.0-20251121215824-6ff0c5cf2c21
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20251211184815-6e7285b975dd // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20251219174959-949288f128af
+	github.com/antonybholmes/go-basemath v0.0.0-20251222161838-164f0a0354bb // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20251222161834-554612b2b749
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20251121215817-03ecd95f41c0
-	github.com/antonybholmes/go-web v0.0.0-20251219174959-6de96ad55634
+	github.com/antonybholmes/go-web v0.0.0-20251221050652-939170da5e01
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/joho/godotenv v1.5.1 // indirect
-	github.com/mattn/go-sqlite3 v1.14.32
+	github.com/mattn/go-sqlite3 v1.14.33
 	github.com/rs/zerolog v1.34.0 // indirect
 )
 
 require (
 	github.com/antonybholmes/go-mailserver v0.0.0-20251219163933-c9667772077f
-	github.com/antonybholmes/go-sys v0.0.0-20251215211105-61a3d71011f7
+	github.com/antonybholmes/go-sys v0.0.0-20251221180058-882857878f72
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -109,7 +109,7 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-playground/validator/v10 v10.30.0 // indirect
+	github.com/go-playground/validator/v10 v10.30.1 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/goccy/go-yaml v1.19.1 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.3 // indirect
@@ -129,7 +129,7 @@ require (
 	github.com/pierrec/lz4/v4 v4.1.23 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
 	github.com/quic-go/quic-go v0.58.0 // indirect
-	github.com/richardlehane/mscfb v1.0.4 // indirect
+	github.com/richardlehane/mscfb v1.0.5 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
 	github.com/segmentio/kafka-go v0.4.49 // indirect
 	github.com/tiendc/go-deepcopy v1.7.2 // indirect
