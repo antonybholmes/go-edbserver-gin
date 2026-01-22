@@ -26,7 +26,7 @@ func UpdateUserRoute(c *gin.Context) {
 
 		//db, err := userdbcache.AutoConn(nil) //not clear on what is needed for the user and password
 
-		userId := validator.Claims.UserId
+		userId := validator.Claims.Subject
 
 		log.Debug().Msgf("UpdateUserRoute: publicId: %s ", userId)
 

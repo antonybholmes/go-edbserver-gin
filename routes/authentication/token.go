@@ -69,7 +69,7 @@ func TokenInfoRoute(c *gin.Context) {
 	}
 
 	web.MakeDataResp(c, "", &auth.JwtInfo{
-		UserId: claims.UserId,
+		UserId: claims.Subject,
 		Type:   claims.Type, //.TokenTypeString(claims.Type),
 		//IpAddr:  claims.IpAddr,
 		Expires: claims.ExpiresAt.UTC().String()})
@@ -81,7 +81,7 @@ func NewAccessTokenRoute(c *gin.Context) {
 
 		// Generate encoded token and send it as response.
 		accessToken, err := tokengen.AccessTokenUsingPermissions(c,
-			validator.Claims.UserId,
+			validator.Claims.Subject,
 			validator.Claims.Permissions)
 
 		if err != nil {
