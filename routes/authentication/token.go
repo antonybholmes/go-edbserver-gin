@@ -80,9 +80,9 @@ func NewAccessTokenRoute(c *gin.Context) {
 	middleware.NewValidator(c).CheckIsValidRefreshToken().Success(func(validator *middleware.Validator) {
 
 		// Generate encoded token and send it as response.
-		accessToken, err := tokengen.AccessToken(c,
+		accessToken, err := tokengen.AccessTokenUsingPermissions(c,
 			validator.Claims.UserId,
-			validator.Claims.Roles)
+			validator.Claims.Permissions)
 
 		if err != nil {
 			web.BadReqResp(c, ErrCreatingToken)

@@ -661,13 +661,6 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 	roles := auth.GetRolesFromUser(authUser)
 
 	switch tokenType {
-	case "access":
-		// Generate encoded token and send it as response.
-		token, err = tokengen.AccessToken(c, authUser.Id, roles)
-
-		if err != nil {
-			err = auth.NewTokenError(err.Error())
-		}
 	case "update":
 		// Generate encoded token and send it as response.
 		token, err = tokengen.UpdateToken(c, authUser.Id, roles)
@@ -676,7 +669,12 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 			err = auth.NewTokenError(err.Error())
 		}
 	default:
-		err = auth.NewTokenError("unknown token type")
+		// Generate access token and send it as response.
+		token, err = tokengen.AccessToken(c, authUser.Id, roles)
+
+		if err != nil {
+			err = auth.NewTokenError(err.Error())
+		}
 	}
 
 	if err != nil {
