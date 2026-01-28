@@ -147,8 +147,9 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 		//rdfRoleMiddleware
 	)
 
-	seqsGroup.GET("/genomes", seqroutes.GenomeRoute)
-	seqsGroup.GET("/platforms/:assembly", seqroutes.PlatformRoute)
+	//seqsGroup.GET("/genomes", seqroutes.GenomeRoute)
+	//seqsGroup.GET("/platforms/:assembly", seqroutes.PlatformRoute)
+	seqsGroup.GET("/platforms", seqroutes.PlatformsRoute)
 	//tracksGroup.GET("/:platform/:assembly/tracks", seqroutes.TracksRoute)
 	seqsGroup.GET("/search/:assembly", seqroutes.SearchSeqRoute)
 	seqsGroup.POST("/bins", seqroutes.BinsRoute)
