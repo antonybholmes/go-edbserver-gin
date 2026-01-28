@@ -163,8 +163,8 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	//accessTokenMiddleware,
 	//rdfRoleMiddleware
 	)
-	bedsGroup.GET("/genomes", bedroutes.GenomeRoute)
-	bedsGroup.GET("/platforms/:assembly", bedroutes.PlatformRoute)
+	//bedsGroup.GET("/genomes", bedroutes.GenomeRoute)
+	bedsGroup.GET("/platforms/:assembly", bedroutes.PlatformsRoute)
 	bedsGroup.GET("/search/:assembly", bedroutes.SearchBedsRoute)
 	bedsGroup.POST("/regions", bedroutes.BedRegionsRoute)
 }
