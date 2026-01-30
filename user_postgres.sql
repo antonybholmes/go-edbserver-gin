@@ -41,55 +41,75 @@ INSERT INTO groups (name, description) VALUES('admins', 'Administrators');
 -- INSERT INTO groups (name, description) VALUES('users', 'Standard users');
 INSERT INTO groups (name, description) VALUES('login', 'Users who can login');
 INSERT INTO groups (name, description) VALUES('rdf', 'For viewers of RDF data');
+INSERT INTO groups (name, description) VALUES('rdf', 'For viewers of RDF data');
+INSERT INTO groups (name, description) VALUES('ngs', 'For viewers of NGS data');
+-- DROP TABLE IF EXISTS role_permissions;
+-- DROP TABLE IF EXISTS permissions;
+-- DROP TABLE IF EXISTS resources;
+-- CREATE TABLE resources (
+--     id UUID PRIMARY KEY DEFAULT uuidv7(),
+--     name TEXT NOT NULL UNIQUE,
+--     description TEXT NOT NULL DEFAULT '',
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
+-- CREATE INDEX resources_name_idx ON resources (name);
+-- CREATE TRIGGER resources_updated_trigger
+--     BEFORE UPDATE
+--     ON
+--         resources
+--     FOR EACH ROW
+-- EXECUTE PROCEDURE update_at_updated();
 
-DROP TABLE IF EXISTS role_permissions;
-DROP TABLE IF EXISTS permissions;
-DROP TABLE IF EXISTS resources;
-CREATE TABLE resources (
-    id UUID PRIMARY KEY DEFAULT uuidv7(),
-    name TEXT NOT NULL UNIQUE,
-    description TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
-CREATE INDEX resources_name_idx ON resources (name);
-CREATE TRIGGER resources_updated_trigger
-    BEFORE UPDATE
-    ON
-        resources
-    FOR EACH ROW
-EXECUTE PROCEDURE update_at_updated();
+-- INSERT INTO resources (name, description) VALUES('*', 'All resources');
+-- INSERT INTO resources (name, description) VALUES('web', 'Web access');
+-- INSERT INTO resources (name, description) VALUES('rdf', 'RDF access');
+-- INSERT INTO resources (name, description) VALUES('ngs', 'Next generation sequencing access'); 
 
-INSERT INTO resources (name, description) VALUES('*', 'All resources');
-INSERT INTO resources (name, description) VALUES('web', 'Web access');
-INSERT INTO resources (name, description) VALUES('rdf', 'RDF access');
- 
+-- DROP TABLE IF EXISTS role_permissions;
+-- DROP TABLE IF EXISTS permissions;
+-- DROP TABLE IF EXISTS actions;
+-- CREATE TABLE actions (
+--     id UUID PRIMARY KEY DEFAULT uuidv7(),
+--     name TEXT NOT NULL UNIQUE,
+--     description TEXT NOT NULL DEFAULT '',
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
+-- CREATE INDEX actions_name_idx ON actions (name);
+-- CREATE TRIGGER actions_updated_trigger
+--     BEFORE UPDATE
+--     ON
+--         actions
+--     FOR EACH ROW
+-- EXECUTE PROCEDURE update_at_updated();
 
-DROP TABLE IF EXISTS role_permissions;
-DROP TABLE IF EXISTS permissions;
-DROP TABLE IF EXISTS actions;
-CREATE TABLE actions (
-    id UUID PRIMARY KEY DEFAULT uuidv7(),
-    name TEXT NOT NULL UNIQUE,
-    description TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
-CREATE INDEX actions_name_idx ON actions (name);
-CREATE TRIGGER actions_updated_trigger
-    BEFORE UPDATE
-    ON
-        actions
-    FOR EACH ROW
-EXECUTE PROCEDURE update_at_updated();
-
-INSERT INTO actions (name, description) VALUES('*', 'All actions');
-INSERT INTO actions (name, description) VALUES('read', 'Read access');
-INSERT INTO actions (name, description) VALUES('write', 'Write access');
-INSERT INTO actions (name, description) VALUES('delete', 'Delete access');
-INSERT INTO actions (name, description) VALUES('login', 'Login access');
-INSERT INTO actions (name, description) VALUES('view', 'View resources');
+-- INSERT INTO actions (name, description) VALUES('*', 'All actions');
+-- INSERT INTO actions (name, description) VALUES('read', 'Read access');
+-- INSERT INTO actions (name, description) VALUES('write', 'Write access');
+-- INSERT INTO actions (name, description) VALUES('delete', 'Delete access');
+-- INSERT INTO actions (name, description) VALUES('login', 'Login access');
+-- INSERT INTO actions (name, description) VALUES('view', 'View resources');
 
 
-
+-- DROP TABLE IF EXISTS role_permissions;
+-- DROP TABLE IF EXISTS permissions;
+-- CREATE TABLE permissions (
+--     id UUID PRIMARY KEY DEFAULT uuidv7(),
+--     name TEXT NOT NULL DEFAULT '',
+--     description TEXT NOT NULL DEFAULT '',
+--     resource_id UUID NOT NULL,
+--     action_id UUID NOT NULL,
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+--     UNIQUE(resource_id, action_id),
+--     FOREIGN KEY(resource_id) REFERENCES resources(id) ON DELETE CASCADE,
+--     FOREIGN KEY(action_id) REFERENCES actions(id) ON DELETE CASCADE);
+-- CREATE INDEX permissions_resource_action_idx ON permissions (resource_id, action_id);
+-- CREATE TRIGGER permissions_updated_trigger
+--     BEFORE UPDATE
+--     ON
+--         permissions
+--     FOR EACH ROW
+-- EXECUTE PROCEDURE update_at_updated();
 
 DROP TABLE IF EXISTS role_permissions;
 DROP TABLE IF EXISTS permissions;
@@ -97,14 +117,8 @@ CREATE TABLE permissions (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     name TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
-    resource_id UUID NOT NULL,
-    action_id UUID NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    UNIQUE(resource_id, action_id),
-    FOREIGN KEY(resource_id) REFERENCES resources(id) ON DELETE CASCADE,
-    FOREIGN KEY(action_id) REFERENCES actions(id) ON DELETE CASCADE);
-CREATE INDEX permissions_resource_action_idx ON permissions (resource_id, action_id);
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
 CREATE TRIGGER permissions_updated_trigger
     BEFORE UPDATE
     ON
@@ -112,20 +126,35 @@ CREATE TRIGGER permissions_updated_trigger
     FOR EACH ROW
 EXECUTE PROCEDURE update_at_updated();
 
-INSERT INTO permissions (resource_id, action_id, name) 
-SELECT r.id, a.id, '*'
-FROM resources r, actions a
-WHERE r.name = '*' AND a.name = '*';
+INSERT INTO permissions (name, description) VALUES('*:*', 'Admin all access');
+INSERT INTO permissions (name, description) VALUES('ngs:view', 'Admin all access');
+-- INSERT INTO permissions (name, description) VALUES('read', 'Read access');
+-- INSERT INTO permissions (name, description) VALUES('write', 'Write access');
+-- INSERT INTO permissions (name, description) VALUES('delete', 'Delete access');
+INSERT INTO permissions (name, description) VALUES('web:login', 'Login access');
+INSERT INTO permissions (name, description) VALUES('rdf:view', 'View resources');
 
-INSERT INTO permissions (resource_id, action_id, name) 
-SELECT r.id, a.id, 'login'
-FROM resources r, actions a
-WHERE r.name = 'web' AND a.name = 'login';
 
-INSERT INTO permissions (resource_id, action_id, name) 
-SELECT r.id, a.id, 'rdf-viewer'
-FROM resources r, actions a
-WHERE r.name = 'rdf' AND a.name = 'view';
+
+-- INSERT INTO permissions (resource_id, action_id, name) 
+-- SELECT r.id, a.id, '*'
+-- FROM resources r, actions a
+-- WHERE r.name = '*' AND a.name = '*';
+
+-- INSERT INTO permissions (resource_id, action_id, name) 
+-- SELECT r.id, a.id, 'login'
+-- FROM resources r, actions a
+-- WHERE r.name = 'web' AND a.name = 'login';
+
+-- INSERT INTO permissions (resource_id, action_id, name) 
+-- SELECT r.id, a.id, 'rdf-viewer'
+-- FROM resources r, actions a
+-- WHERE r.name = 'rdf' AND a.name = 'view';
+
+-- INSERT INTO permissions (resource_id, action_id, name) 
+-- SELECT r.id, a.id, 'ngs-viewer'
+-- FROM resources r, actions a
+-- WHERE r.name = 'ngs' AND a.name = 'view';
 
 
 DROP TABLE IF EXISTS group_roles;
@@ -151,18 +180,18 @@ INSERT INTO roles (name) VALUES('root');
 INSERT INTO roles (name) VALUES('admin');
 INSERT INTO roles (name) VALUES('login');
 INSERT INTO roles (name) VALUES('rdf-viewer');
+INSERT INTO roles (name) VALUES('ngs-viewer');
 
 
 DROP TABLE IF EXISTS role_permissions;
 CREATE TABLE role_permissions (
-    id UUID PRIMARY KEY DEFAULT uuidv7(),
     role_id UUID NOT NULL,
     permission_id UUID NOT NULL,
     name TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    UNIQUE(role_id, permission_id),
+    PRIMARY KEY(role_id, permission_id),
     FOREIGN KEY(role_id) REFERENCES roles(id) ON DELETE CASCADE,
     FOREIGN KEY(permission_id) REFERENCES permissions(id) ON DELETE CASCADE);
 CREATE INDEX role_permissions_role_permission_idx ON role_permissions (role_id, permission_id);
@@ -177,38 +206,42 @@ EXECUTE PROCEDURE update_at_updated();
 INSERT INTO role_permissions (role_id, permission_id, name) 
 SELECT r.id, p.id, 'Superuser all access'
 FROM roles r, permissions p
-WHERE r.name = 'root' AND p.name = '*';
+WHERE r.name = 'root' AND p.name = '*:*';
 
 -- super/user can login
 INSERT INTO role_permissions (role_id, permission_id, name) 
 SELECT r.id, p.id, 'Admin login access'
 FROM roles r, permissions p
-WHERE r.name = 'admin' AND p.name = '*';
+WHERE r.name = 'admin' AND p.name = '*:*';
 
 -- super/user can login
 INSERT INTO role_permissions (role_id, permission_id, name) 
 SELECT r.id, p.id, 'User can login'
 FROM roles r, permissions p
-WHERE r.name = 'login' AND p.name = 'login';
+WHERE r.name = 'login' AND p.name = 'web:login';
 
 
 INSERT INTO role_permissions (role_id, permission_id, name) 
 SELECT r.id, p.id, 'rdf-viewer'
 FROM roles r, permissions p
-WHERE r.name = 'rdf-viewer' AND p.name = 'rdf-viewer';
+WHERE r.name = 'rdf-viewer' AND p.name = 'rdf:view';
+
+INSERT INTO role_permissions (role_id, permission_id, name) 
+SELECT r.id, p.id, 'ngs-viewer'
+FROM roles r, permissions p
+WHERE r.name = 'ngs-viewer' AND p.name = 'ngs:view';
 
  
 
 DROP TABLE IF EXISTS group_roles;
 CREATE TABLE group_roles (
-    id UUID PRIMARY KEY DEFAULT uuidv7(),
     group_id UUID NOT NULL,
     role_id UUID NOT NULL,
     name TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    UNIQUE(group_id, role_id),
+    PRIMARY KEY(group_id, role_id),
     FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE,
     FOREIGN KEY(role_id) REFERENCES roles(id) ON DELETE CASCADE);
 CREATE INDEX group_roles_group_role_idx ON group_roles (group_id, role_id);
@@ -238,6 +271,11 @@ INSERT INTO group_roles (group_id, role_id, name)
 SELECT g.id, r.id, 'rdf-viewer'
 FROM groups g, roles r
 WHERE g.name = 'rdf' AND r.name = 'rdf-viewer' ON CONFLICT DO NOTHING;
+
+INSERT INTO group_roles (group_id, role_id, name)
+SELECT g.id, r.id, 'ngs-viewer'
+FROM groups g, roles r
+WHERE g.name = 'ngs' AND r.name = 'ngs-viewer' ON CONFLICT DO NOTHING;
 
 
  
@@ -303,12 +341,11 @@ INSERT INTO auth_providers (name) VALUES ('github');
 
 DROP TABLE IF EXISTS user_auth_providers;
 CREATE TABLE user_auth_providers (
-    id UUID PRIMARY KEY DEFAULT uuidv7(),
     user_id UUID NOT NULL,
     auth_provider_id UUID NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    UNIQUE(user_id, auth_provider_id),
+    PRIMARY KEY(user_id, auth_provider_id),
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY(auth_provider_id) REFERENCES auth_providers(id) ON DELETE CASCADE);
 CREATE TRIGGER users_updated_trigger
@@ -320,14 +357,13 @@ EXECUTE PROCEDURE update_at_updated();
 
 DROP TABLE IF EXISTS user_groups;
 CREATE TABLE user_groups (
-    id UUID PRIMARY KEY DEFAULT uuidv7(), 
     user_id UUID NOT NULL,
     group_id UUID NOT NULL,
     name TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    UNIQUE(user_id, group_id),
+    PRIMARY KEY(user_id, group_id),
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE);
 CREATE INDEX user_groups_user_group_idx ON user_groups (user_id, group_id);
@@ -360,6 +396,11 @@ INSERT INTO user_groups (user_id, group_id, name)
 SELECT u.id, g.id, 'Add to rdf group'
 FROM users u, groups g
 WHERE u.email LIKE '%columbia%' AND g.name = 'rdf' ON CONFLICT DO NOTHING;
+
+INSERT INTO user_groups (user_id, group_id, name)
+SELECT u.id, g.id, 'Add to ngs group'
+FROM users u, groups g
+WHERE u.email LIKE '%columbia%' AND g.name = 'ngs' ON CONFLICT DO NOTHING;
 
 DROP TABLE IF EXISTS public_keys;
 CREATE TABLE IF NOT EXISTS public_keys (

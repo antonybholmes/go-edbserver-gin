@@ -132,7 +132,7 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "permissions": ["rdf:view"] }]
+          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
         }
       ]
     },
@@ -141,7 +141,7 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "permissions": ["rdf:view"] }]
+          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
         }
       ]
     },
@@ -150,7 +150,7 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "permissions": ["rdf:view"] }]
+          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
         }
       ]
     },
@@ -159,7 +159,7 @@
       "methods": [
         {
           "type": "POST",
-          "tokens": [{ "type": "access", "permissions": ["rdf:view"] }]
+          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
         }
       ]
     },
@@ -213,7 +213,7 @@
       "methods": [
         {
           "type": "POST",
-          "tokens": [{ "type": "access", "permissions": ["rdf:view"] }]
+          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
         }
       ]
     },
@@ -222,7 +222,7 @@
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "permissions": ["rdf:view"] }]
+          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
         }
       ]
     },
@@ -231,7 +231,7 @@
       "methods": [
         {
           "type": "POST",
-          "tokens": [{ "type": "access", "permissions": ["rdf:view"] }]
+          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
         }
       ]
     }
