@@ -42,18 +42,20 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	// 	NewJwtPermissionsMiddleware("rdf"))
 
 	mutationsGroup := moduleGroup.Group("/mutations")
-	mutationsGroup.GET("/datasets/:assembly",
-		mutationroutes.MutationDatasetsRoute)
+
 	mutationsGroup.POST("/:assembly/:name",
 		mutationroutes.MutationsRoute)
 	mutationsGroup.POST("/maf/:assembly",
 		mutationroutes.PileupRoute)
 
-	mutationsGroup.POST("/pileup/:assembly",
+	mutationsProtectedGroup := mutationsGroup.Group("",
 		rulesMiddleware,
-		//jwtUserMiddleWare,
-		//accessTokenMiddleware,
-		//rdfRoleMiddleware,
+	)
+
+	mutationsProtectedGroup.GET("/datasets/:assembly",
+		mutationroutes.MutationDatasetsRoute)
+
+	mutationsProtectedGroup.POST("/pileup/:assembly",
 		mutationroutes.PileupRoute,
 	)
 

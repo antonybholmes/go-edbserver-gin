@@ -164,6 +164,15 @@
       ]
     },
     {
+      "path": "/modules/mutations/datasets/:assembly",
+      "methods": [
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "permissions": ["rdf:view"] }]
+        }
+      ]
+    },
+    {
       "path": "/modules/mutations/pileup/:assembly",
       "methods": [
         {
