@@ -101,7 +101,7 @@
       ]
     },
     {
-      "path": "/modules/scrna/datasets/:species/:assembly",
+      "path": "/modules/scrna/datasets/:genome/:assembly",
       "methods": [
         {
           "type": "GET",
@@ -124,6 +124,15 @@
         {
           "type": "GET",
           "tokens": [{ "type": "access", "permissions": ["rdf:view"] }]
+        }
+      ]
+    },
+    {
+      "path": "/modules/scrna/gex/:id",
+      "methods": [
+        {
+          "type": "POST",
+          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
         }
       ]
     },
@@ -182,7 +191,7 @@
       ]
     },
     {
-      "path": "/modules/gex/datasets/:species/:technology",
+      "path": "/modules/gex/datasets/:genome/:technology",
       "methods": [
         {
           "type": "GET",
@@ -191,7 +200,7 @@
       ]
     },
     {
-      "path": "/modules/gex/expr",
+      "path": "/modules/gex/expression/:genome/:technology/:type",
       "methods": [
         {
           "type": "POST",
@@ -217,15 +226,7 @@
         }
       ]
     },
-    {
-      "path": "/modules/scrna/gex/:id",
-      "methods": [
-        {
-          "type": "POST",
-          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
-        }
-      ]
-    },
+
     {
       "path": "/modules/beds/search/:assembly",
       "methods": [

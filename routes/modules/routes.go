@@ -60,7 +60,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	)
 
 	gexGroup := moduleGroup.Group("/gex")
-	gexGroup.GET("/species", gexroutes.SpeciesRoute)
+	gexGroup.GET("/genomes", gexroutes.GenomesRoute)
 	gexGroup.GET("/technologies", gexroutes.TechnologiesRoute)
 
 	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
@@ -73,18 +73,18 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 		//rdfRoleMiddleware
 	)
 
-	gexProtectedGroup.GET("/datasets/:species/:technology",
-		gexroutes.GexDatasetsRoute)
+	gexProtectedGroup.GET("/datasets/:genome/:technology",
+		gexroutes.DatasetsRoute)
 
-	gexProtectedGroup.POST("/expr/types",
-		gexroutes.ExprTypesRoute,
-	)
+	// gexProtectedGroup.POST("/expr/types",
+	// 	gexroutes.ExprTypesRoute,
+	// )
 
-	gexProtectedGroup.POST("/expr", gexroutes.GexGeneExprRoute)
+	gexProtectedGroup.POST("/expression/:genome/:technology/:type", gexroutes.GeneExpressionRoute)
 
 	scrnaGroup := moduleGroup.Group("/scrna")
-	scrnaGroup.GET("/species", scrnaroutes.ScrnaSpeciesRoute)
-	scrnaGroup.GET("/assemblies/:species", scrnaroutes.ScrnaAssembliesRoute)
+	scrnaGroup.GET("/genomes", scrnaroutes.ScrnaGenomesRoute)
+	scrnaGroup.GET("/assemblies/:genome", scrnaroutes.ScrnaAssembliesRoute)
 	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
 
 	scrnaProtectedGroup := scrnaGroup.Group("",
@@ -94,7 +94,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	//rdfRoleMiddleware
 	)
 
-	scrnaProtectedGroup.GET("/datasets/:species/:assembly",
+	scrnaProtectedGroup.GET("/datasets/:genome/:assembly",
 		scrnaroutes.ScrnaDatasetsRoute)
 
 	// scrnaGroup.GET("/clusters/:id",
