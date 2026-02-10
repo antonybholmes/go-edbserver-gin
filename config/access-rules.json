@@ -101,7 +101,7 @@
       ]
     },
     {
-      "path": "/modules/scrna/datasets/:genome/:assembly",
+      "path": "/modules/scrna/datasets",
       "methods": [
         {
           "type": "GET",
@@ -110,7 +110,7 @@
       ]
     },
     {
-      "path": "/modules/scrna/genes/search/:id",
+      "path": "/modules/scrna/genes/search/:dataset",
       "methods": [
         {
           "type": "GET",
@@ -119,7 +119,7 @@
       ]
     },
     {
-      "path": "/modules/scrna/metadata/:id",
+      "path": "/modules/scrna/metadata/:dataset",
       "methods": [
         {
           "type": "GET",
@@ -128,7 +128,7 @@
       ]
     },
     {
-      "path": "/modules/scrna/gex/:id",
+      "path": "/modules/scrna/gex/:dataset",
       "methods": [
         {
           "type": "POST",
@@ -146,7 +146,7 @@
       ]
     },
     {
-      "path": "/modules/seqs/platforms/:assembly",
+      "path": "/modules/seqs/platforms",
       "methods": [
         {
           "type": "GET",
@@ -155,7 +155,7 @@
       ]
     },
     {
-      "path": "/modules/seqs/search/:assembly",
+      "path": "/modules/seqs/search",
       "methods": [
         {
           "type": "GET",
@@ -173,7 +173,7 @@
       ]
     },
     {
-      "path": "/modules/mutations/datasets/:assembly",
+      "path": "/modules/mutations/datasets",
       "methods": [
         {
           "type": "GET",
@@ -182,7 +182,7 @@
       ]
     },
     {
-      "path": "/modules/mutations/pileup/:assembly",
+      "path": "/modules/mutations/pileup",
       "methods": [
         {
           "type": "POST",
@@ -191,7 +191,7 @@
       ]
     },
     {
-      "path": "/modules/gex/datasets/:genome/:technology",
+      "path": "/modules/gex/datasets",
       "methods": [
         {
           "type": "GET",
@@ -209,7 +209,7 @@
       ]
     },
     {
-      "path": "/modules/gex/expr/types",
+      "path": "/modules/gex/types",
       "methods": [
         {
           "type": "GET",

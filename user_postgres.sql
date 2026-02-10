@@ -41,7 +41,6 @@ INSERT INTO groups (name, description) VALUES('admins', 'Administrators');
 -- INSERT INTO groups (name, description) VALUES('users', 'Standard users');
 INSERT INTO groups (name, description) VALUES('login', 'Users who can login');
 INSERT INTO groups (name, description) VALUES('rdf', 'For viewers of RDF data');
-INSERT INTO groups (name, description) VALUES('rdf', 'For viewers of RDF data');
 INSERT INTO groups (name, description) VALUES('ngs', 'For viewers of NGS data');
 -- DROP TABLE IF EXISTS role_permissions;
 -- DROP TABLE IF EXISTS permissions;
