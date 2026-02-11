@@ -80,7 +80,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	// 	gexroutes.ExprTypesRoute,
 	// )
 
-	gexProtectedGroup.POST("/expression", gexroutes.GeneExpressionRoute)
+	gexProtectedGroup.POST("/expression/:type", gexroutes.ExpressionRoute)
 
 	scrnaGroup := moduleGroup.Group("/scrna")
 	scrnaGroup.GET("/genomes", scrnaroutes.ScrnaGenomesRoute)
@@ -148,7 +148,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 
 	//seqsGroup.GET("/genomes", seqroutes.GenomeRoute)
 	//seqsGroup.GET("/platforms/:assembly", seqroutes.PlatformRoute)
-	seqsGroup.GET("/platforms", seqroutes.PlatformsRoute)
+	//seqsGroup.GET("/platforms", seqroutes.PlatformsRoute)
 	//tracksGroup.GET("/:platform/:assembly/tracks", seqroutes.TracksRoute)
 	seqsGroup.GET("/search", seqroutes.SearchSeqRoute)
 	seqsGroup.POST("/bins", seqroutes.BinsRoute)
@@ -163,7 +163,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	//rdfRoleMiddleware
 	)
 	//bedsGroup.GET("/genomes", bedroutes.GenomeRoute)
-	bedsGroup.GET("/platforms/:assembly", bedroutes.PlatformsRoute)
+	//bedsGroup.GET("/platforms/:assembly", bedroutes.PlatformsRoute)
 	bedsGroup.GET("/search/:assembly", bedroutes.SearchBedsRoute)
 	bedsGroup.POST("/regions", bedroutes.BedRegionsRoute)
 }
