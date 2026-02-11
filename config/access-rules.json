@@ -200,7 +200,7 @@
       ]
     },
     {
-      "path": "/modules/gex/expression/:genome/:technology/:type",
+      "path": "/modules/gex/expression",
       "methods": [
         {
           "type": "POST",

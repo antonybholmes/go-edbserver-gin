@@ -107,8 +107,8 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	scrnaProtectedGroup.GET("/metadata/:dataset",
 		scrnaroutes.ScrnaMetadataRoute)
 
-	scrnaProtectedGroup.GET("/genes/:dataset",
-		scrnaroutes.ScrnaGenesRoute)
+	// scrnaProtectedGroup.GET("/genes/:dataset",
+	// 	scrnaroutes.ScrnaGenesRoute)
 
 	scrnaProtectedGroup.GET("/genes/search/:dataset",
 		scrnaroutes.ScrnaSearchGenesRoute)
