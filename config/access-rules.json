@@ -147,7 +147,7 @@
     },
 
     {
-      "path": "/modules/seqs/search",
+      "path": "/modules/seqs/assemblies/:assembly/samples",
       "methods": [
         {
           "type": "GET",
@@ -183,7 +183,7 @@
       ]
     },
     {
-      "path": "/modules/mutations/datasets",
+      "path": "/modules/mutations/assemblies/:assembly/datasets",
       "methods": [
         {
           "type": "GET",
@@ -192,7 +192,7 @@
       ]
     },
     {
-      "path": "/modules/mutations/pileup",
+      "path": "/modules/mutations/assemblies/:assembly/pileup",
       "methods": [
         {
           "type": "POST",

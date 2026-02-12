@@ -43,19 +43,19 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 
 	mutationsGroup := moduleGroup.Group("/mutations")
 
-	mutationsGroup.POST("/:assembly/:name",
-		mutationroutes.MutationsRoute)
-	mutationsGroup.POST("/maf/:assembly",
-		mutationroutes.PileupRoute)
+	// mutationsGroup.POST("/:assembly/:name",
+	// 	mutationroutes.MutationsRoute)
+	// mutationsGroup.POST("/maf/:assembly",
+	// 	mutationroutes.PileupRoute)
 
 	mutationsProtectedGroup := mutationsGroup.Group("",
 		rulesMiddleware,
 	)
 
-	mutationsProtectedGroup.GET("/datasets",
+	mutationsProtectedGroup.GET("/assemblies/:assembly/datasets",
 		mutationroutes.MutationDatasetsRoute)
 
-	mutationsProtectedGroup.POST("/pileup",
+	mutationsProtectedGroup.POST("/assemblies/:assembly/pileup",
 		mutationroutes.PileupRoute,
 	)
 
@@ -151,7 +151,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	//seqsGroup.GET("/platforms/:assembly", seqroutes.PlatformRoute)
 	//seqsGroup.GET("/platforms", seqroutes.PlatformsRoute)
 	//tracksGroup.GET("/:platform/:assembly/tracks", seqroutes.TracksRoute)
-	seqsGroup.GET("/search", seqroutes.SearchSeqRoute)
+	seqsGroup.GET("/assemblies/:assembly/samples", seqroutes.SearchSamplesRoute)
 	seqsGroup.POST("/bins", seqroutes.BinsRoute)
 
 	cytobandsGroup := moduleGroup.Group("/cytobands")
