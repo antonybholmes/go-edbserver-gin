@@ -48,12 +48,12 @@ require (
 	github.com/antonybholmes/go-web v0.0.0-20260211001438-f1eb9ee902b4
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1 // indirect
-	github.com/mattn/go-sqlite3 v1.14.33
+	github.com/mattn/go-sqlite3 v1.14.34
 	github.com/rs/zerolog v1.34.0 // indirect
 )
 
 require (
-	github.com/antonybholmes/go-mailserver v0.0.0-20260105204538-217d34fed80c
+	github.com/antonybholmes/go-mailserver v0.0.0-20260209231211-e846a7725b0b
 	github.com/antonybholmes/go-sys v0.0.0-20260209231212-cfd21298d6eb
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
@@ -66,7 +66,7 @@ require (
 	github.com/antonybholmes/go-mutations v0.0.0-20251121215822-986cf4492199
 	github.com/antonybholmes/go-pathway v0.0.0-20251121222731-16f8a04f47da
 	github.com/antonybholmes/go-scrna v0.0.0-20251121215820-17e42e152320
-	github.com/antonybholmes/go-seqs v0.0.0-20260105204534-bb18b6f2c6e3
+	github.com/antonybholmes/go-seqs v0.0.0-20260212162516-42dd49690793
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/sessions v1.0.4
 	github.com/gin-gonic/gin v1.11.0
