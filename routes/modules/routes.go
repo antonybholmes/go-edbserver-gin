@@ -83,19 +83,23 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	gexProtectedGroup.POST("/expression/:type", gexroutes.ExpressionRoute)
 
 	scrnaGroup := moduleGroup.Group("/scrna")
-	scrnaGroup.GET("/genomes", scrnaroutes.ScrnaGenomesRoute)
-	scrnaGroup.GET("/assemblies/:genome", scrnaroutes.ScrnaAssembliesRoute)
+	//genomesGroup := scrnaGroup.Group("/genomes")
+	//genomesGroup.GET("", scrnaroutes.ScrnaGenomesRoute)
+	//genomesGroup.GET("/:genome/assemblies", scrnaroutes.ScrnaAssembliesRoute)
+	//scrnaGroup.GET("/genomes", scrnaroutes.ScrnaGenomesRoute)
+	//scrnaGroup.GET("/assemblies/:genome", scrnaroutes.ScrnaAssembliesRoute)
 	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
 
-	scrnaProtectedGroup := scrnaGroup.Group("",
-		rulesMiddleware,
-		//jwtUserMiddleWare,
-	//accessTokenMiddleware,
-	//rdfRoleMiddleware
-	)
+	scrnaProtectedGroup := scrnaGroup.Group("", rulesMiddleware)
+	datasetsGroup := scrnaProtectedGroup.Group("/datasets")
+	datasetsGroup.GET("", scrnaroutes.ScrnaDatasetsRoute)
+	//datasetsGroup.GET("/:dataset/clusters", scrnaroutes.ScrnaClustersRoute)
+	datasetsGroup.GET("/:dataset/metadata", scrnaroutes.ScrnaMetadataRoute)
+	datasetsGroup.GET("/:dataset/genes", scrnaroutes.ScrnaSearchGenesRoute)
+	datasetsGroup.POST("/:dataset/gex", scrnaroutes.ScrnaGexRoute)
 
-	scrnaProtectedGroup.GET("/datasets",
-		scrnaroutes.ScrnaDatasetsRoute)
+	// scrnaProtectedGroup.GET("/datasets",
+	//	scrnaroutes.ScrnaDatasetsRoute)
 
 	// scrnaGroup.GET("/clusters/:id",
 	// 	jwtUserMiddleWare,
@@ -104,25 +108,22 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	// 	scrnaroutes.ScrnaClustersRoute,
 	// )
 
-	scrnaProtectedGroup.GET("/metadata/:dataset",
-		scrnaroutes.ScrnaMetadataRoute)
+	// scrnaProtectedGroup.GET("/metadata/:dataset",
+	// 	scrnaroutes.ScrnaMetadataRoute)
 
-	// scrnaProtectedGroup.GET("/genes/:dataset",
-	// 	scrnaroutes.ScrnaGenesRoute)
+	// // scrnaProtectedGroup.GET("/genes/:dataset",
+	// // 	scrnaroutes.ScrnaGenesRoute)
 
-	scrnaProtectedGroup.GET("/genes/search/:dataset",
-		scrnaroutes.ScrnaSearchGenesRoute)
+	// scrnaProtectedGroup.GET("/genes/search/:dataset",
+	// 	scrnaroutes.ScrnaSearchGenesRoute)
 
-	scrnaProtectedGroup.POST("/gex/:dataset",
-		scrnaroutes.ScrnaGexRoute)
+	// scrnaProtectedGroup.POST("/gex/:dataset",
+	// 	scrnaroutes.ScrnaGexRoute)
 
 	hubsGroup := moduleGroup.Group("/hubs")
-	hubsGroup.GET("/:assembly",
+	hubsGroup.GET("/assemblies/:assembly/datasets",
 		rulesMiddleware,
-		//jwtUserMiddleWare,
-		//accessTokenMiddleware,
-		//rdfRoleMiddleware,
-		hubroutes.HubsRoute,
+		hubroutes.DatasetsRoute,
 	)
 
 	geneConvGroup := moduleGroup.Group("/geneconv")
@@ -156,14 +157,14 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	cytobandsGroup := moduleGroup.Group("/cytobands")
 	cytobandsGroup.GET("/:assembly/:chr", cytobandroutes.CytobandsRoute)
 
-	bedsGroup := moduleGroup.Group("/beds",
-		rulesMiddleware,
-	//jwtUserMiddleWare,
-	//accessTokenMiddleware,
-	//rdfRoleMiddleware
-	)
+	bedsGroup := moduleGroup.Group("/beds", rulesMiddleware)
+
+	//samplesGroup := bedsGroup.Group("/samples")
+	//samplesGroup.GET("/:assembly", bedroutes.SearchBedsRoute)
+	//samplesGroup.POST("/regions", bedroutes.BedRegionsRoute)
+
 	//bedsGroup.GET("/genomes", bedroutes.GenomeRoute)
 	//bedsGroup.GET("/platforms/:assembly", bedroutes.PlatformsRoute)
-	bedsGroup.GET("/search/:assembly", bedroutes.SearchBedsRoute)
+	bedsGroup.GET("/assemblies/:assembly/samples", bedroutes.SearchSamplesRoute)
 	bedsGroup.POST("/regions", bedroutes.BedRegionsRoute)
 }

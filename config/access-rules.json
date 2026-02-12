@@ -110,7 +110,7 @@
       ]
     },
     {
-      "path": "/modules/scrna/genes/search/:dataset",
+      "path": "/modules/scrna/datasets/:dataset/genes",
       "methods": [
         {
           "type": "GET",
@@ -119,7 +119,7 @@
       ]
     },
     {
-      "path": "/modules/scrna/metadata/:dataset",
+      "path": "/modules/scrna/datasets/:dataset/metadata",
       "methods": [
         {
           "type": "GET",
@@ -128,7 +128,7 @@
       ]
     },
     {
-      "path": "/modules/scrna/gex/:dataset",
+      "path": "/modules/scrna/datasets/:dataset/gex",
       "methods": [
         {
           "type": "POST",
@@ -157,6 +157,24 @@
     },
     {
       "path": "/modules/seqs/bins",
+      "methods": [
+        {
+          "type": "POST",
+          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
+        }
+      ]
+    },
+    {
+      "path": "/modules/beds/assemblies/:assembly/samples",
+      "methods": [
+        {
+          "type": "GET",
+          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
+        }
+      ]
+    },
+    {
+      "path": "/modules/beds/regions",
       "methods": [
         {
           "type": "POST",
@@ -210,29 +228,10 @@
       ]
     },
     {
-      "path": "/modules/hubs/:assembly",
+      "path": "/modules/hubs/assemblies/:assembly/datasets",
       "methods": [
         {
           "type": "GET",
-          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
-        }
-      ]
-    },
-
-    {
-      "path": "/modules/beds/search/:assembly",
-      "methods": [
-        {
-          "type": "GET",
-          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
-        }
-      ]
-    },
-    {
-      "path": "/modules/beds/regions",
-      "methods": [
-        {
-          "type": "POST",
           "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
         }
       ]
