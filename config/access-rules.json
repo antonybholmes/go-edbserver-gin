@@ -101,7 +101,7 @@
       ]
     },
     {
-      "path": "/modules/scrna/datasets",
+      "path": "/modules/scrna/assemblies/:assembly/datasets",
       "methods": [
         {
           "type": "GET",

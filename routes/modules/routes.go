@@ -91,8 +91,8 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	//gexGroup.GET("/types", gexroutes.GexValueTypesRoute)
 
 	scrnaProtectedGroup := scrnaGroup.Group("", rulesMiddleware)
+	scrnaProtectedGroup.GET("/assemblies/:assembly/datasets", scrnaroutes.ScrnaDatasetsRoute)
 	datasetsGroup := scrnaProtectedGroup.Group("/datasets")
-	datasetsGroup.GET("", scrnaroutes.ScrnaDatasetsRoute)
 	//datasetsGroup.GET("/:dataset/clusters", scrnaroutes.ScrnaClustersRoute)
 	datasetsGroup.GET("/:dataset/metadata", scrnaroutes.ScrnaMetadataRoute)
 	datasetsGroup.GET("/:dataset/genes", scrnaroutes.ScrnaSearchGenesRoute)
