@@ -140,7 +140,7 @@ func init() {
 
 	geneconvdb.InitGeneConvDB("data/modules/geneconv/geneconv.db")
 
-	motifsdb.InitMotifDB(consts.MotifsDB)
+	motifsdb.InitMotifDB("data/modules/motifs/motifs-2026-02-12.db")
 
 	pathwaydb.InitPathwayDB("data/modules/pathway/pathway-v3.db")
 
