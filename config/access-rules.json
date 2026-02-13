@@ -210,19 +210,10 @@
       ]
     },
     {
-      "path": "/modules/gex/expression/:type",
+      "path": "/modules/gex/types/:type/expression",
       "methods": [
         {
           "type": "POST",
-          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
-        }
-      ]
-    },
-    {
-      "path": "/modules/gex/types",
-      "methods": [
-        {
-          "type": "GET",
           "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
         }
       ]
