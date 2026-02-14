@@ -30,11 +30,12 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 
 	genomeGroup := moduleGroup.Group("/genome")
 	genomeGroup.GET("/genomes", genomeroutes.GenomesRoute)
-	genomeGroup.POST("/within/:assembly", genomeroutes.WithinGenesRoute)
-	genomeGroup.POST("/closest/:assembly", genomeroutes.ClosestGeneRoute)
-	genomeGroup.POST("/annotate/:assembly", genomeroutes.AnnotateRoute)
-	genomeGroup.POST("/overlap/:assembly", genomeroutes.OverlappingGenesRoute)
-	genomeGroup.GET("/info/:assembly", genomeroutes.SearchForGeneByNameRoute)
+	assembliesGroup := moduleGroup.Group("/assemblies")
+	assembliesGroup.POST("/within/:assembly", genomeroutes.WithinGenesRoute)
+	assembliesGroup.POST("/closest/:assembly", genomeroutes.ClosestGeneRoute)
+	assembliesGroup.POST("/annotate/:assembly", genomeroutes.AnnotateRoute)
+	assembliesGroup.POST("/overlap/:assembly", genomeroutes.OverlappingGenesRoute)
+	assembliesGroup.GET("/info/:assembly", genomeroutes.SearchForGeneByNameRoute)
 
 	// mutationsGroup := moduleGroup.Group("/mutations",
 	// 	jwtMiddleWare,
