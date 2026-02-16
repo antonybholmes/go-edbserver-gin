@@ -35,7 +35,7 @@ import (
 
 	utilsroutes "github.com/antonybholmes/go-edbserver-gin/routes/utils"
 	"github.com/antonybholmes/go-geneconv/geneconvdb"
-	"github.com/antonybholmes/go-genome/genomedbcache"
+	"github.com/antonybholmes/go-genome/genomedb"
 	"github.com/antonybholmes/go-gex/gexdb"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-motifs/motifsdb"
@@ -129,7 +129,7 @@ func init() {
 	//mailserver.Init()
 
 	dnadb.InitDnaDB("data/modules/dna")
-	genomedbcache.InitCache("data/modules/genome")
+	genomedb.InitCache("data/modules/genome")
 	//microarraydb.InitDB("data/microarray")
 
 	gexdb.InitGexDB("data/modules/gex")
