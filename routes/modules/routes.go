@@ -30,12 +30,12 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 
 	genomeGroup := moduleGroup.Group("/genome")
 	genomeGroup.GET("/genomes", genomeroutes.GenomesRoute)
-	assembliesGroup := moduleGroup.Group("/assemblies")
-	assembliesGroup.POST("/within/:assembly", genomeroutes.WithinGenesRoute)
-	assembliesGroup.POST("/closest/:assembly", genomeroutes.ClosestGeneRoute)
-	assembliesGroup.POST("/annotate/:assembly", genomeroutes.AnnotateRoute)
-	assembliesGroup.POST("/overlap/:assembly", genomeroutes.OverlappingGenesRoute)
-	assembliesGroup.GET("/info/:assembly", genomeroutes.SearchForGeneByNameRoute)
+	assembliesGroup := genomeGroup.Group("/assemblies")
+	assembliesGroup.POST("/:assembly/within", genomeroutes.WithinGenesRoute)
+	assembliesGroup.POST("/:assembly/closest", genomeroutes.ClosestGeneRoute)
+	assembliesGroup.POST("/:assembly/annotate", genomeroutes.AnnotateRoute)
+	assembliesGroup.POST("/:assembly/overlap", genomeroutes.OverlappingGenesRoute)
+	assembliesGroup.GET("/:assembly/search", genomeroutes.SearchForGeneByNameRoute)
 
 	// mutationsGroup := moduleGroup.Group("/mutations",
 	// 	jwtMiddleWare,
@@ -156,7 +156,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	seqsGroup.POST("/bins", seqroutes.BinsRoute)
 
 	cytobandsGroup := moduleGroup.Group("/cytobands")
-	cytobandsGroup.GET("/:assembly/:chr", cytobandroutes.CytobandsRoute)
+	cytobandsGroup.GET("/assemblies/:assembly/chrs/:chr", cytobandroutes.CytobandsRoute)
 
 	bedsGroup := moduleGroup.Group("/beds", rulesMiddleware)
 
