@@ -29,7 +29,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	dnaGroup.GET("/genomes", dnaroutes.GenomesRoute)
 
 	genomeGroup := moduleGroup.Group("/genome")
-	genomeGroup.GET("/genomes", genomeroutes.GenomesRoute)
+	genomeGroup.GET("/gtfs", genomeroutes.GtfsRoute)
 	assembliesGroup := genomeGroup.Group("/assemblies")
 	assembliesGroup.POST("/:assembly/within", genomeroutes.WithinGenesRoute)
 	assembliesGroup.POST("/:assembly/closest", genomeroutes.ClosestGeneRoute)
