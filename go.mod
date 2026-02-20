@@ -40,12 +40,12 @@ require github.com/antonybholmes/go-edbmailserver v0.0.0-20251121215824-6ff0c5cf
 
 require (
 	github.com/antonybholmes/go-basemath v0.0.0-20260204001030-d512600734fa // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20260212180504-ca50711b47d7
+	github.com/antonybholmes/go-dna v0.0.0-20260217230140-e57c465f5f15
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20251121215817-03ecd95f41c0
-	github.com/antonybholmes/go-web v0.0.0-20260211001438-f1eb9ee902b4
+	github.com/antonybholmes/go-web v0.0.0-20260213183935-aaedefa50d12
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.34
@@ -53,8 +53,8 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-mailserver v0.0.0-20260212180512-1942dceaad61
-	github.com/antonybholmes/go-sys v0.0.0-20260212180605-968a7a2e270d
+	github.com/antonybholmes/go-mailserver v0.0.0-20260217230144-5fcd4ef8bcee
+	github.com/antonybholmes/go-sys v0.0.0-20260216173437-1755a134eb0d
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -66,7 +66,7 @@ require (
 	github.com/antonybholmes/go-mutations v0.0.0-20251121215822-986cf4492199
 	github.com/antonybholmes/go-pathway v0.0.0-20251121222731-16f8a04f47da
 	github.com/antonybholmes/go-scrna v0.0.0-20251121215820-17e42e152320
-	github.com/antonybholmes/go-seqs v0.0.0-20260212180503-54ce1827c8d9
+	github.com/antonybholmes/go-seqs v0.0.0-20260217230139-27eede5c0922
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/sessions v1.0.4
 	github.com/gin-gonic/gin v1.11.0
@@ -80,8 +80,8 @@ require (
 	github.com/MicahParks/keyfunc/v3 v3.7.0 // indirect
 	github.com/antonybholmes/go-math v0.0.0-20251211184815-6e7285b975dd // indirect
 	github.com/aws/aws-sdk-go-v2 v1.41.1 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.32.8 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.19.8 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.32.9 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.19.9 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.17 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.17 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.17 // indirect
@@ -92,7 +92,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.59.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/signin v1.0.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.21 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.30.9 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.30.10 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.14 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.41.6 // indirect
 	github.com/aws/smithy-go v1.24.0 // indirect

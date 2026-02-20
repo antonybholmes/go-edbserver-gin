@@ -29,6 +29,8 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	dnaGroup.GET("/genomes", dnaroutes.GenomesRoute)
 
 	genomeGroup := moduleGroup.Group("/genome")
+	assemblyGroup := genomeGroup.Group("/assemblies")
+	assemblyGroup.GET("/:assembly/search", genomeroutes.SearchForGeneByNameRoute)
 
 	gtfGroup := genomeGroup.Group("/gtfs")
 	gtfGroup.GET("", genomeroutes.GtfsRoute)
@@ -36,7 +38,6 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	gtfGroup.POST("/:id/closest", genomeroutes.ClosestGeneRoute)
 	gtfGroup.POST("/:id/annotate", genomeroutes.AnnotateRoute)
 	gtfGroup.POST("/:id/overlap", genomeroutes.OverlappingGenesRoute)
-	gtfGroup.GET("/:id/search", genomeroutes.SearchForGeneByNameRoute)
 
 	// mutationsGroup := moduleGroup.Group("/mutations",
 	// 	jwtMiddleWare,
