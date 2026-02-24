@@ -8,9 +8,9 @@ import (
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
+	"github.com/antonybholmes/go-web/auth/token/tokengen"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/antonybholmes/go-web/middleware"
-	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-gonic/gin"
 )
 

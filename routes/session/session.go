@@ -18,11 +18,12 @@ import (
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/auth/oauth2"
+	"github.com/antonybholmes/go-web/auth/token"
+	"github.com/antonybholmes/go-web/auth/token/tokengen"
 	"github.com/antonybholmes/go-web/auth/userdb"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/antonybholmes/go-web/middleware"
 	csrfmiddleware "github.com/antonybholmes/go-web/middleware/csrf"
-	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -289,6 +290,8 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context)
 	//tokenClaims := user.(*auth.Auth0TokenClaims)
 	tokenClaims := user.(*oauth2.OIDCClaims)
 
+	log.Debug().Msgf("auth0 claims %v %v", tokenClaims.Issuer, tokenClaims.Audience)
+
 	//myClaims := user.Claims.(*auth.TokenClaims) //hmm.Claims.(*TokenClaims)
 
 	//user := c.Get("user").(*jwt.Token)
@@ -403,7 +406,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Conte
 		return
 	}
 
-	tokenClaims := user.(*auth.SupabaseTokenClaims)
+	tokenClaims := user.(*token.SupabaseTokenClaims)
 
 	email, err := mail.ParseAddress(tokenClaims.Email)
 
@@ -509,7 +512,7 @@ func (sessionRoutes *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gi
 
 	middleware.NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *middleware.Validator) {
 
-		if validator.Claims.Type != auth.TokenTypePasswordless {
+		if validator.Claims.Type != token.TokenTypePasswordless {
 			auth.WrongTokenTypeReq(c)
 			return
 		}
@@ -655,7 +658,7 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 
 	authUser := user.(*auth.AuthUser)
 
-	var token string
+	var tokenStr string
 	var err error
 
 	roles := auth.GetRolesFromUser(authUser)
@@ -663,17 +666,17 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 	switch tokenType {
 	case "update":
 		// Generate encoded token and send it as response.
-		token, err = tokengen.UpdateToken(c, authUser.Id, roles)
+		tokenStr, err = tokengen.UpdateToken(c, authUser.Id, roles)
 
 		if err != nil {
-			err = auth.NewTokenError(err.Error())
+			err = token.NewTokenError(err.Error())
 		}
 	default:
 		// Generate access token and send it as response.
-		token, err = tokengen.AccessToken(c, authUser.Id, roles)
+		tokenStr, err = tokengen.AccessToken(c, authUser.Id, roles)
 
 		if err != nil {
-			err = auth.NewTokenError(err.Error())
+			err = token.NewTokenError(err.Error())
 		}
 	}
 
@@ -682,7 +685,7 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 		return
 	}
 
-	web.MakeDataResp(c, "", &web.TokenResp{Token: token})
+	web.MakeDataResp(c, "", &web.TokenResp{Token: tokenStr})
 
 }
 

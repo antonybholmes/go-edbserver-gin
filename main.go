@@ -24,7 +24,8 @@ import (
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/access"
 	"github.com/antonybholmes/go-web/auth"
-	"github.com/antonybholmes/go-web/tokengen"
+	"github.com/antonybholmes/go-web/auth/token"
+	"github.com/antonybholmes/go-web/auth/token/tokengen"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -184,7 +185,8 @@ func main() {
 
 	//consts.Init()
 
-	tokengen.Init(consts.JwtRsaPrivateKey)
+	//tokengen.Init(token.NewRSATokenSigner(consts.JwtRsaPrivateKey))
+	tokengen.Init(token.NewES256TokenSigner(consts.JwtEcdsaPrivateKey))
 
 	//env.Load()
 
@@ -202,7 +204,9 @@ func main() {
 	//
 
 	// all subsequent middleware is reliant on this to function
-	claimsParser := middleware.JwtClaimsRSAParser(consts.JwtRsaPublicKey)
+	//claimsParser := middleware.NewUserJWTParser(middleware.NewJwtClaimsRSAParser(consts.JwtRsaPublicKey))
+	claimsParser := middleware.NewUserJWTParser(middleware.NewJwtClaimsES256Parser(consts.JwtEcdsaPublicKey))
+
 	jwtUserMiddleWare := middleware.UserJWTMiddleware(claimsParser)
 
 	//accessTokenMiddleware := middleware.JwtIsAccessTokenMiddleware()

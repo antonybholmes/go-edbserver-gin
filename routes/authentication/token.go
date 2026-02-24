@@ -7,8 +7,9 @@ import (
 
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/auth/token"
+	"github.com/antonybholmes/go-web/auth/token/tokengen"
 	"github.com/antonybholmes/go-web/middleware"
-	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -50,14 +51,14 @@ var (
 )
 
 func TokenInfoRoute(c *gin.Context) {
-	t, err := auth.ParseToken(c)
+	t, err := token.ParseToken(c)
 
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	claims := auth.AuthUserJwtClaims{}
+	claims := token.AuthUserJwtClaims{}
 
 	_, err = jwt.ParseWithClaims(t, &claims, func(token *jwt.Token) (any, error) {
 		return consts.JwtRsaPublicKey, nil

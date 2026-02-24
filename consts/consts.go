@@ -1,6 +1,7 @@
 package consts
 
 import (
+	"crypto/ecdsa"
 	"crypto/rsa"
 	"os"
 	"time"
@@ -24,8 +25,12 @@ var (
 	AppDomain string
 	Version   sys.VersionInfo
 
-	JwtRsaPrivateKey     *rsa.PrivateKey //[]byte
-	JwtRsaPublicKey      *rsa.PublicKey  //[]byte
+	JwtRsaPrivateKey *rsa.PrivateKey //[]byte
+	JwtRsaPublicKey  *rsa.PublicKey  //[]byte
+
+	JwtEcdsaPrivateKey *ecdsa.PrivateKey
+	JwtEcdsaPublicKey  *ecdsa.PublicKey
+
 	JwtAuth0RsaPublicKey *rsa.PublicKey
 	JwtClerkRsaPublicKey *rsa.PublicKey
 	SupabaseJwtSecretKey string
@@ -131,6 +136,33 @@ func init() {
 		log.Fatal().Msgf("%s", err)
 	}
 
+	//
+	// Load EC keys
+	//
+
+	bytes, err = os.ReadFile("ec_private.pem")
+	if err != nil {
+		log.Fatal().Msgf("%s", err)
+	}
+
+	JwtEcdsaPrivateKey, err = jwt.ParseECPrivateKeyFromPEM(bytes)
+	if err != nil {
+		log.Fatal().Msgf("%s", err)
+	}
+
+	bytes, err = os.ReadFile("ec_public.pem")
+	if err != nil {
+		log.Fatal().Msgf("%s", err)
+	}
+
+	JwtEcdsaPublicKey, err = jwt.ParseECPublicKeyFromPEM(bytes)
+	if err != nil {
+		log.Fatal().Msgf("%s", err)
+	}
+
+	//
+	// Keys for OAuth providers
+	//
 	bytes, err = os.ReadFile("auth0.key.pub")
 	if err != nil {
 		log.Fatal().Msgf("%s", err)

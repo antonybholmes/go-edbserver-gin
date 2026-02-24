@@ -9,9 +9,10 @@ import (
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/auth/token"
+	"github.com/antonybholmes/go-web/auth/token/tokengen"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/antonybholmes/go-web/middleware"
-	"github.com/antonybholmes/go-web/tokengen"
 	"github.com/gin-gonic/gin"
 )
 
@@ -67,8 +68,8 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 func UpdatePasswordRoute(c *gin.Context) {
 	middleware.NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Success(func(validator *middleware.Validator) {
 
-		if validator.Claims.Type != auth.TokenTypeResetPassword {
-			web.BadReqResp(c, auth.ErrInvalidTokenType)
+		if validator.Claims.Type != token.TokenTypeResetPassword {
+			web.BadReqResp(c, token.ErrInvalidTokenType)
 			return
 		}
 
