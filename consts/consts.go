@@ -25,11 +25,11 @@ var (
 	AppDomain string
 	Version   sys.VersionInfo
 
-	JwtRsaPrivateKey *rsa.PrivateKey //[]byte
-	JwtRsaPublicKey  *rsa.PublicKey  //[]byte
+	//JwtRsaPrivateKey *rsa.PrivateKey //[]byte
+	//JwtRsaPublicKey  *rsa.PublicKey  //[]byte
 
-	JwtEcdsaPrivateKey *ecdsa.PrivateKey
-	JwtEcdsaPublicKey  *ecdsa.PublicKey
+	JwtES256PrivateKey *ecdsa.PrivateKey
+	JwtES256PublicKey  *ecdsa.PublicKey
 
 	JwtAuth0RsaPublicKey *rsa.PublicKey
 	JwtClerkRsaPublicKey *rsa.PublicKey
@@ -116,36 +116,36 @@ func init() {
 
 	MotifsDB = os.Getenv("MOTIFS_DB")
 
-	bytes, err := os.ReadFile("jwtRS256.key")
-	if err != nil {
-		log.Fatal().Msgf("%s", err)
-	}
+	// bytes, err := os.ReadFile("jwtRS256.key")
+	// if err != nil {
+	// 	log.Fatal().Msgf("%s", err)
+	// }
 
-	JwtRsaPrivateKey, err = jwt.ParseRSAPrivateKeyFromPEM(bytes)
-	if err != nil {
-		log.Fatal().Msgf("%s", err)
-	}
+	// JwtRsaPrivateKey, err = jwt.ParseRSAPrivateKeyFromPEM(bytes)
+	// if err != nil {
+	// 	log.Fatal().Msgf("%s", err)
+	// }
 
-	bytes, err = os.ReadFile("jwtRS256.key.pub")
-	if err != nil {
-		log.Fatal().Msgf("%s", err)
-	}
+	// bytes, err = os.ReadFile("jwtRS256.key.pub")
+	// if err != nil {
+	// 	log.Fatal().Msgf("%s", err)
+	// }
 
-	JwtRsaPublicKey, err = jwt.ParseRSAPublicKeyFromPEM(bytes)
-	if err != nil {
-		log.Fatal().Msgf("%s", err)
-	}
+	// JwtRsaPublicKey, err = jwt.ParseRSAPublicKeyFromPEM(bytes)
+	// if err != nil {
+	// 	log.Fatal().Msgf("%s", err)
+	// }
 
 	//
 	// Load EC keys
 	//
 
-	bytes, err = os.ReadFile("jwt.es256.private.pem")
+	bytes, err := os.ReadFile("jwt.es256.private.pem")
 	if err != nil {
 		log.Fatal().Msgf("%s", err)
 	}
 
-	JwtEcdsaPrivateKey, err = jwt.ParseECPrivateKeyFromPEM(bytes)
+	JwtES256PrivateKey, err = jwt.ParseECPrivateKeyFromPEM(bytes)
 	if err != nil {
 		log.Fatal().Msgf("%s", err)
 	}
@@ -155,7 +155,7 @@ func init() {
 		log.Fatal().Msgf("%s", err)
 	}
 
-	JwtEcdsaPublicKey, err = jwt.ParseECPublicKeyFromPEM(bytes)
+	JwtES256PublicKey, err = jwt.ParseECPublicKeyFromPEM(bytes)
 	if err != nil {
 		log.Fatal().Msgf("%s", err)
 	}

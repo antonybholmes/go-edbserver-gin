@@ -3,15 +3,11 @@ package authentication
 import (
 	"errors"
 
-	"github.com/antonybholmes/go-edbserver-gin/consts"
-
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
-	"github.com/antonybholmes/go-web/auth/token"
 	"github.com/antonybholmes/go-web/auth/token/tokengen"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 // func RenewTokenRoute(c *gin.Context) {
@@ -51,18 +47,14 @@ var (
 )
 
 func TokenInfoRoute(c *gin.Context) {
-	t, err := token.ParseToken(c)
+
+	// user is a jwt
+	user, err := middleware.GetJwtUser(c)
 
 	if err != nil {
 		c.Error(err)
 		return
 	}
-
-	claims := token.AuthUserJwtClaims{}
-
-	_, err = jwt.ParseWithClaims(t, &claims, func(token *jwt.Token) (any, error) {
-		return consts.JwtRsaPublicKey, nil
-	})
 
 	if err != nil {
 		c.Error(err)
@@ -70,10 +62,10 @@ func TokenInfoRoute(c *gin.Context) {
 	}
 
 	web.MakeDataResp(c, "", &auth.JwtInfo{
-		UserId: claims.Subject,
-		Type:   claims.Type, //.TokenTypeString(claims.Type),
+		UserId: user.Subject,
+		Type:   user.Type, //.TokenTypeString(claims.Type),
 		//IpAddr:  claims.IpAddr,
-		Expires: claims.ExpiresAt.UTC().String()})
+		Expires: user.ExpiresAt.UTC().String()})
 
 }
 

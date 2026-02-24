@@ -186,7 +186,7 @@ func main() {
 	//consts.Init()
 
 	//tokengen.Init(token.NewRSATokenSigner(consts.JwtRsaPrivateKey))
-	tokengen.Init(token.NewES256TokenSigner(consts.JwtEcdsaPrivateKey))
+	tokengen.Init(token.NewES256TokenSigner(consts.JwtES256PrivateKey))
 
 	//env.Load()
 
@@ -205,7 +205,7 @@ func main() {
 
 	// all subsequent middleware is reliant on this to function
 	//claimsParser := middleware.NewUserJWTParser(middleware.NewJwtClaimsRSAParser(consts.JwtRsaPublicKey))
-	claimsParser := middleware.NewUserJWTParser(middleware.NewJwtClaimsES256Parser(consts.JwtEcdsaPublicKey))
+	claimsParser := middleware.NewUserJWTParser(middleware.NewJwtClaimsES256Parser(consts.JwtES256PublicKey))
 
 	jwtUserMiddleWare := middleware.UserJWTMiddleware(claimsParser)
 
