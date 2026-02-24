@@ -140,7 +140,7 @@ func init() {
 	// Load EC keys
 	//
 
-	bytes, err = os.ReadFile("ec_private.pem")
+	bytes, err = os.ReadFile("jwt.es256.private.pem")
 	if err != nil {
 		log.Fatal().Msgf("%s", err)
 	}
@@ -150,7 +150,7 @@ func init() {
 		log.Fatal().Msgf("%s", err)
 	}
 
-	bytes, err = os.ReadFile("ec_public.pem")
+	bytes, err = os.ReadFile("jwt.es256.public.pem")
 	if err != nil {
 		log.Fatal().Msgf("%s", err)
 	}
