@@ -40,11 +40,11 @@ import (
 	"github.com/antonybholmes/go-gex/gexdb"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-motifs/motifsdb"
-	"github.com/antonybholmes/go-mutations/mutationdb"
 	"github.com/antonybholmes/go-pathway/pathwaydb"
 	"github.com/antonybholmes/go-scrna/scrnadb"
 	"github.com/antonybholmes/go-seqs/seqdb"
 	"github.com/antonybholmes/go-sys/env"
+	"github.com/antonybholmes/go-wgs/wgsdb"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -137,7 +137,7 @@ func init() {
 
 	scrnadb.InitScrnaDB("data/modules/scrna")
 
-	mutationdb.InitMutationDB("data/modules/mutations")
+	wgsdb.InitDB("data/modules/wgs")
 
 	geneconvdb.InitGeneConvDB("data/modules/geneconv/geneconv.db")
 

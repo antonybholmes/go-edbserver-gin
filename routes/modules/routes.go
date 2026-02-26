@@ -9,10 +9,10 @@ import (
 	gexroutes "github.com/antonybholmes/go-gex/routes"
 	hubroutes "github.com/antonybholmes/go-hubs/routes"
 	motifroutes "github.com/antonybholmes/go-motifs/routes"
-	mutationroutes "github.com/antonybholmes/go-mutations/routes"
 	pathwayroutes "github.com/antonybholmes/go-pathway/routes"
 	scrnaroutes "github.com/antonybholmes/go-scrna/routes"
 	seqroutes "github.com/antonybholmes/go-seqs/routes"
+	wgsroutes "github.com/antonybholmes/go-wgs/routes"
 	"github.com/gin-gonic/gin"
 )
 
@@ -45,22 +45,22 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	// 	JwtIsAccessTokenMiddleware,
 	// 	NewJwtPermissionsMiddleware("rdf"))
 
-	mutationsGroup := moduleGroup.Group("/mutations")
+	wgsGroup := moduleGroup.Group("/wgs")
 
 	// mutationsGroup.POST("/:assembly/:name",
 	// 	mutationroutes.MutationsRoute)
 	// mutationsGroup.POST("/maf/:assembly",
 	// 	mutationroutes.PileupRoute)
 
-	mutationsProtectedGroup := mutationsGroup.Group("",
+	wgsProtectedGroup := wgsGroup.Group("",
 		rulesMiddleware,
 	)
 
-	mutationsProtectedGroup.GET("/assemblies/:assembly/datasets",
-		mutationroutes.MutationDatasetsRoute)
+	wgsProtectedGroup.GET("/assemblies/:assembly/datasets",
+		wgsroutes.MutationDatasetsRoute)
 
-	mutationsProtectedGroup.POST("/assemblies/:assembly/pileup",
-		mutationroutes.PileupRoute,
+	wgsProtectedGroup.POST("/assemblies/:assembly/pileup",
+		wgsroutes.PileupRoute,
 	)
 
 	gexGroup := moduleGroup.Group("/gex")

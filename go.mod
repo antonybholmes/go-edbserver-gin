@@ -8,7 +8,7 @@ replace github.com/antonybholmes/go-dna => ../go-dna
 
 replace github.com/antonybholmes/go-genome => ../go-genome
 
-replace github.com/antonybholmes/go-mutations => ../go-mutations
+replace github.com/antonybholmes/go-wgs => ../go-wgs
 
 replace github.com/antonybholmes/go-basemath => ../go-basemath
 
@@ -63,10 +63,10 @@ require (
 	github.com/antonybholmes/go-geneconv v0.0.0-20251121222738-b6e5c9016658
 	github.com/antonybholmes/go-hubs v0.0.0-00010101000000-000000000000
 	github.com/antonybholmes/go-motifs v0.0.0-20251121222735-b9b35b49f4ee
-	github.com/antonybholmes/go-mutations v0.0.0-20251121215822-986cf4492199
 	github.com/antonybholmes/go-pathway v0.0.0-20251121222731-16f8a04f47da
 	github.com/antonybholmes/go-scrna v0.0.0-20251121215820-17e42e152320
 	github.com/antonybholmes/go-seqs v0.0.0-20260224183321-e92af13d14bd
+	github.com/antonybholmes/go-wgs v0.0.0-00010101000000-000000000000
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/sessions v1.0.4
 	github.com/gin-gonic/gin v1.11.0
