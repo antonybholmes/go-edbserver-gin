@@ -87,7 +87,7 @@
       ]
     },
     {
-      "path": "/admin/users/delete/:id",
+      "path": "/admin/users/:id/delete",
       "methods": [
         {
           "type": "DELETE",

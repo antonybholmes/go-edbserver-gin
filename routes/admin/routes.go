@@ -21,5 +21,5 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	adminUsersGroup.GET("/stats", UserStatsRoute)
 	adminUsersGroup.POST("/update", UpdateUserRoute)
 	adminUsersGroup.POST("/add", AddUserRoute)
-	adminUsersGroup.DELETE("/delete/:id", DeleteUserRoute)
+	adminUsersGroup.DELETE("/:id/delete", DeleteUserRoute)
 }
