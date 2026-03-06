@@ -26,7 +26,7 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 		authUser := validator.AuthUser
 		//req := validator.SignInBodyReq
 
-		otpToken, err := tokengen.MakeResetPasswordToken(c, authUser)
+		otpToken, err := tokengen.MakeResetPasswordToken(c, authUser, "reset-password")
 
 		if err != nil {
 			c.Error(err)

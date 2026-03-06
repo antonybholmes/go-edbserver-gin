@@ -5,6 +5,7 @@ import (
 
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
+	"github.com/antonybholmes/go-web/auth/token"
 	"github.com/antonybholmes/go-web/auth/token/tokengen"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/gin-gonic/gin"
@@ -71,10 +72,14 @@ func TokenInfoRoute(c *gin.Context) {
 
 func NewAccessTokenRoute(c *gin.Context) {
 	middleware.NewValidator(c).CheckIsValidRefreshToken().Success(func(validator *middleware.Validator) {
+		var req token.TokenRequest
+
+		err := c.ShouldBindJSON(&req)
 
 		// Generate encoded token and send it as response.
 		accessToken, err := tokengen.AccessTokenUsingPermissions(c,
 			validator.Claims.Subject,
+			req.Audience,
 			validator.Claims.Permissions)
 
 		if err != nil {

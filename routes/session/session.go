@@ -651,7 +651,23 @@ func (sessionRoutes *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 
 func CreateTokenFromSessionRoute(c *gin.Context) {
 
-	tokenType := c.Param("type")
+	//tokenType := c.Param("type")
+	//audience := c.Query("audience")
+
+	var req token.TokenRequest
+
+	err := c.ShouldBindJSON(&req)
+
+	if err != nil {
+		web.BadReqResp(c, web.ErrInvalidBody)
+		return
+	}
+
+	audience := req.Audience
+
+	if audience == "" {
+		audience = req.Type
+	}
 
 	// user must exist or middleware would have failed
 	user, _ := c.Get(web.SessionUser)
@@ -659,21 +675,20 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 	authUser := user.(*auth.AuthUser)
 
 	var tokenStr string
-	var err error
 
 	roles := auth.GetRolesFromUser(authUser)
 
-	switch tokenType {
+	switch req.Type {
 	case "update":
 		// Generate encoded token and send it as response.
-		tokenStr, err = tokengen.UpdateToken(c, authUser.Id, roles)
+		tokenStr, err = tokengen.UpdateToken(c, authUser.Id, audience, roles)
 
 		if err != nil {
 			err = token.NewTokenError(err.Error())
 		}
 	default:
 		// Generate access token and send it as response.
-		tokenStr, err = tokengen.AccessToken(c, authUser.Id, roles)
+		tokenStr, err = tokengen.AccessToken(c, authUser.Id, audience, roles)
 
 		if err != nil {
 			err = token.NewTokenError(err.Error())

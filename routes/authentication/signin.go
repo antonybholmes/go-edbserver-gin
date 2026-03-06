@@ -66,14 +66,14 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		refreshToken, err := tokengen.RefreshToken(c, authUser) //auth.MakeClaim(authUser.Roles))
+		refreshToken, err := tokengen.RefreshToken(c, authUser, "refresh") //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			auth.TokenErrorResp(c)
 			return
 		}
 
-		accessToken, err := tokengen.AccessToken(c, authUser.Id, auth.GetRolesFromUser(authUser)) //auth.MakeClaim(authUser.Roles))
+		accessToken, err := tokengen.AccessToken(c, authUser.Id, "access", auth.GetRolesFromUser(authUser)) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			auth.TokenErrorResp(c)
@@ -98,6 +98,7 @@ func PasswordlessSignInEmailRoute(c *gin.Context, validator *middleware.Validato
 
 		passwordlessToken, err := tokengen.MakePasswordlessToken(c,
 			authUser.Id,
+			"passwordless",
 			validator.UserBodyReq.RedirectUrl)
 
 		if err != nil {
@@ -166,7 +167,7 @@ func PasswordlessSignInRoute(c *gin.Context) {
 			return
 		}
 
-		t, err := tokengen.RefreshToken(c, authUser) //auth.MakeClaim(authUser.Roles))
+		t, err := tokengen.RefreshToken(c, authUser, "refresh") //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			auth.TokenErrorResp(c)

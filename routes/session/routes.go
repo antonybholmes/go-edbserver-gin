@@ -146,7 +146,7 @@ func RegisterRoutes(r *gin.Engine,
 	//		authenticationroutes.NewAccessTokenFromSessionRoute)
 
 	// issue tokens
-	sessionTokensGroup.POST("/create/:type",
+	sessionTokensGroup.POST("",
 		CreateTokenFromSessionRoute)
 
 	// update session info
