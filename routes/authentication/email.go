@@ -14,6 +14,7 @@ import (
 	"github.com/antonybholmes/go-web/auth/token/tokengen"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/antonybholmes/go-web/middleware"
+	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/gin-gonic/gin"
@@ -32,7 +33,7 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 			return
 		}
 
-		otpToken, err := tokengen.MakeResetEmailToken(c, authUser, "reset-password", newEmail)
+		otpToken, err := tokengen.MakeResetEmailToken(c, authUser, jwt.ClaimStrings{"reset-password"}, newEmail)
 
 		if err != nil {
 			c.Error(err)

@@ -26,6 +26,7 @@ import (
 	csrfmiddleware "github.com/antonybholmes/go-web/middleware/csrf"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 const MaxAgeOneYearSecs = 31536000 // 60 * 60 * 24 * 365
@@ -665,8 +666,8 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 
 	audience := req.Audience
 
-	if audience == "" {
-		audience = req.Type
+	if len(audience) == 0 {
+		audience = jwt.ClaimStrings{req.Type}
 	}
 
 	// user must exist or middleware would have failed

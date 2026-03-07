@@ -15,6 +15,7 @@ import (
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var (
@@ -66,14 +67,14 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		refreshToken, err := tokengen.RefreshToken(c, authUser, "refresh") //auth.MakeClaim(authUser.Roles))
+		refreshToken, err := tokengen.RefreshToken(c, authUser, jwt.ClaimStrings{"refresh"}) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			auth.TokenErrorResp(c)
 			return
 		}
 
-		accessToken, err := tokengen.AccessToken(c, authUser.Id, "access", auth.GetRolesFromUser(authUser)) //auth.MakeClaim(authUser.Roles))
+		accessToken, err := tokengen.AccessToken(c, authUser.Id, jwt.ClaimStrings{"access"}, auth.GetRolesFromUser(authUser)) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			auth.TokenErrorResp(c)
@@ -98,7 +99,7 @@ func PasswordlessSignInEmailRoute(c *gin.Context, validator *middleware.Validato
 
 		passwordlessToken, err := tokengen.MakePasswordlessToken(c,
 			authUser.Id,
-			"passwordless",
+			jwt.ClaimStrings{"passwordless"},
 			validator.UserBodyReq.RedirectUrl)
 
 		if err != nil {
@@ -167,7 +168,7 @@ func PasswordlessSignInRoute(c *gin.Context) {
 			return
 		}
 
-		t, err := tokengen.RefreshToken(c, authUser, "refresh") //auth.MakeClaim(authUser.Roles))
+		t, err := tokengen.RefreshToken(c, authUser, jwt.ClaimStrings{"refresh"}) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			auth.TokenErrorResp(c)

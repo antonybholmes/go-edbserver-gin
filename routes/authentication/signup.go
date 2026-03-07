@@ -12,6 +12,7 @@ import (
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func SignupRoute(c *gin.Context) {
@@ -25,7 +26,7 @@ func SignupRoute(c *gin.Context) {
 			return
 		}
 
-		token, err := tokengen.MakeVerifyEmailToken(c, authUser, "verify-email", req.RedirectUrl)
+		token, err := tokengen.MakeVerifyEmailToken(c, authUser, jwt.ClaimStrings{"verify-email"}, req.RedirectUrl)
 
 		//log.Debug().Msgf("%s", otpJwt)
 

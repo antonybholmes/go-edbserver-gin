@@ -14,6 +14,7 @@ import (
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func PasswordUpdatedResp(c *gin.Context) {
@@ -26,7 +27,7 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 		authUser := validator.AuthUser
 		//req := validator.SignInBodyReq
 
-		otpToken, err := tokengen.MakeResetPasswordToken(c, authUser, "reset-password")
+		otpToken, err := tokengen.MakeResetPasswordToken(c, authUser, jwt.ClaimStrings{"reset-password"})
 
 		if err != nil {
 			c.Error(err)
