@@ -125,7 +125,7 @@ func RegisterRoutes(r *gin.Engine,
 		sessionMiddleware,
 		sessionRoutes.SessionInfoRoute)
 
-	sessionGroup.POST("/csrf-token/refresh",
+	sessionGroup.GET("/csrf",
 		sessionRoutes.SessionNewCSRFTokenRoute)
 
 	// support both spellings
