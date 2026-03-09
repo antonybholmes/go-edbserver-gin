@@ -26,7 +26,6 @@ import (
 	csrfmiddleware "github.com/antonybholmes/go-web/middleware/csrf"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 const MaxAgeOneYearSecs = 31536000 // 60 * 60 * 24 * 365
@@ -664,11 +663,11 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 		return
 	}
 
-	audience := req.Audience
+	//audience := req.Audience
 
-	if len(audience) == 0 {
-		audience = jwt.ClaimStrings{req.Type}
-	}
+	// if len(audience) == 0 {
+	// 	audience = jwt.ClaimStrings{req.Type}
+	// }
 
 	// user must exist or middleware would have failed
 	user, _ := c.Get(web.SessionUser)
@@ -682,14 +681,14 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 	switch req.Type {
 	case "update":
 		// Generate encoded token and send it as response.
-		tokenStr, err = tokengen.UpdateToken(c, authUser.Id, audience, roles)
+		tokenStr, err = tokengen.UpdateToken(c, authUser.Id, req.Audience, roles)
 
 		if err != nil {
 			err = token.NewTokenError(err.Error())
 		}
 	default:
 		// Generate access token and send it as response.
-		tokenStr, err = tokengen.AccessToken(c, authUser.Id, audience, roles)
+		tokenStr, err = tokengen.AccessToken(c, authUser.Id, req.Audience, roles)
 
 		if err != nil {
 			err = token.NewTokenError(err.Error())

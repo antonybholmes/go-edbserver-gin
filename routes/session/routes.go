@@ -133,6 +133,7 @@ func RegisterRoutes(r *gin.Engine,
 		//csrfMiddleware,
 		sessionMiddleware,
 		SessionSignOutRoute)
+
 	sessionGroup.POST("/sign-out",
 		//csrfMiddleware,
 		sessionMiddleware,
