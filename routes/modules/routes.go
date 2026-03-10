@@ -52,14 +52,18 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	// mutationsGroup.POST("/maf/:assembly",
 	// 	mutationroutes.PileupRoute)
 
-	wgsProtectedGroup := wgsGroup.Group("",
+	wgsAssemblyGroup := wgsGroup.Group("/assemblies",
 		rulesMiddleware,
 	)
 
-	wgsProtectedGroup.GET("/assemblies/:assembly/datasets",
-		wgsroutes.MutationDatasetsRoute)
+	wgsAssemblyGroup.GET("/:assembly/datasets",
+		wgsroutes.VariantDatasetsRoute)
 
-	wgsProtectedGroup.POST("/assemblies/:assembly/pileup",
+	wgsAssemblyGroup.POST("/:assembly/variants",
+		wgsroutes.VariantsRoute,
+	)
+
+	wgsAssemblyGroup.POST("/:assembly/pileup",
 		wgsroutes.PileupRoute,
 	)
 

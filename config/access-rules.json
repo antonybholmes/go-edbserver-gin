@@ -192,6 +192,15 @@
       ]
     },
     {
+      "path": "/modules/wgs/assemblies/:assembly/variants",
+      "methods": [
+        {
+          "type": "POST",
+          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
+        }
+      ]
+    },
+    {
       "path": "/modules/wgs/assemblies/:assembly/pileup",
       "methods": [
         {
