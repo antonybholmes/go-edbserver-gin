@@ -201,6 +201,15 @@
       ]
     },
     {
+      "path": "/modules/wgs/assemblies/:assembly/mafs",
+      "methods": [
+        {
+          "type": "POST",
+          "tokens": [{ "type": "access", "permissions": ["ngs:view"] }]
+        }
+      ]
+    },
+    {
       "path": "/modules/wgs/assemblies/:assembly/pileup",
       "methods": [
         {
