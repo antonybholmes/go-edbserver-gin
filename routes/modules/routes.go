@@ -63,6 +63,10 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 		wgsroutes.VariantsRoute,
 	)
 
+	wgsAssemblyGroup.POST("/:assembly/mafs",
+		wgsroutes.MAFRoute,
+	)
+
 	wgsAssemblyGroup.POST("/:assembly/pileup",
 		wgsroutes.PileupRoute,
 	)
