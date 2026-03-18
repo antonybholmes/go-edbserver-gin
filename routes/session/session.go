@@ -290,7 +290,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context)
 	//tokenClaims := user.(*auth.Auth0TokenClaims)
 	tokenClaims := user.(*oauth2.OIDCClaims)
 
-	log.Debug().Msgf("auth0 claims %v %v", tokenClaims.Issuer, tokenClaims.Audience)
+	log.Debug().Msgf("auth0 claim 2s %v %v %v", tokenClaims.Issuer, tokenClaims.Audience, tokenClaims.Picture)
 
 	//myClaims := user.Claims.(*auth.TokenClaims) //hmm.Claims.(*TokenClaims)
 
@@ -319,7 +319,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context)
 		authProvider = "auth0"
 	}
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(email, tokenClaims.Name, authProvider)
+	authUser, err := userdbcache.CreateUserFromOAuth2(email, tokenClaims.Name, tokenClaims.Picture, authProvider)
 
 	if err != nil {
 		c.Error(err)
@@ -357,7 +357,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingCognitoRoute(c *gin.Contex
 
 	authProvider := "cognito"
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(email, tokenClaims.Name, authProvider)
+	authUser, err := userdbcache.CreateUserFromOAuth2(email, tokenClaims.Name, tokenClaims.Picture, authProvider)
 
 	if err != nil {
 		c.Error(err)
@@ -387,7 +387,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context)
 
 	authProvider := "clerk"
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(email, tokenClaims.Name, authProvider)
+	authUser, err := userdbcache.CreateUserFromOAuth2(email, tokenClaims.Name, tokenClaims.Picture, authProvider)
 
 	if err != nil {
 		c.Error(err)
@@ -424,7 +424,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Conte
 
 	authProvider := "supabase"
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(email, name, authProvider)
+	authUser, err := userdbcache.CreateUserFromOAuth2(email, name, tokenClaims.UserMetadata.AvatarUrl, authProvider)
 	if err != nil {
 		c.Error(err)
 		return
@@ -464,7 +464,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Co
 
 	authProvider := "email_otp"
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(validator.Address, username, authProvider)
+	authUser, err := userdbcache.CreateUserFromOAuth2(validator.Address, username, validator.UserBodyReq.PictureUrl, authProvider)
 
 	if err != nil {
 		log.Debug().Msgf("error creating user from otp sign in: %v", err)
@@ -476,14 +476,6 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Co
 }
 
 func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, authUser *auth.AuthUser) {
-
-	// roles, err := userdbcache.UserRoleSet(authUser)
-
-	// if err != nil {
-	// 	web.BadReqResp(c, authentication.ErrUserRoles)
-	// }
-
-	//roleClaim := auth.MakeClaim(roles)
 
 	log.Debug().Msgf("user login %v %v", authUser, auth.UserHasWebLoginInRole(authUser))
 

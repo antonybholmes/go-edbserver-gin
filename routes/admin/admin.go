@@ -125,6 +125,17 @@ func UpdateUserRoute(c *gin.Context) {
 			return
 		}
 
+		if validator.UserBodyReq.PictureUrl != "" {
+			err = userdbcache.SetPictureUrl(authUser,
+				validator.UserBodyReq.PictureUrl,
+				true)
+		}
+
+		if err != nil {
+			c.Error(err)
+			return
+		}
+
 		if validator.UserBodyReq.Password != "" {
 			_, err = userdbcache.SetPassword(authUser,
 				validator.UserBodyReq.Password, true)
@@ -160,8 +171,10 @@ func AddUserRoute(c *gin.Context) {
 			validator.UserBodyReq.Username,
 			validator.UserBodyReq.Password,
 			validator.UserBodyReq.Name,
+			validator.UserBodyReq.PictureUrl,
 			validator.UserBodyReq.EmailIsVerified,
-			"edb")
+			"edb",
+			false)
 
 		if err != nil {
 			c.Error(err)
