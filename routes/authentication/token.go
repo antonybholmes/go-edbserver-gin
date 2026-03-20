@@ -57,11 +57,6 @@ func TokenInfoRoute(c *gin.Context) {
 		return
 	}
 
-	if err != nil {
-		c.Error(err)
-		return
-	}
-
 	web.MakeDataResp(c, "", &auth.JwtInfo{
 		UserId: user.Subject,
 		Type:   user.Type, //.TokenTypeString(claims.Type),

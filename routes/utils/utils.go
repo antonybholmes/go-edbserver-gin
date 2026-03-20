@@ -71,8 +71,6 @@ func XlsxSheetsRoute(c *gin.Context) {
 		return
 	}
 
-	//log.Debug().Msgf("m:%s", req.Xlsx)
-
 	reader, err := makeXlsxReader(req.Xlsx)
 
 	if err != nil {
