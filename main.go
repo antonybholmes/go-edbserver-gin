@@ -133,21 +133,21 @@ func init() {
 	genomedb.InitCache("data/modules/genome")
 	//microarraydb.InitDB("data/microarray")
 
-	gexdb.InitGexDB("data/modules/gex")
+	gexdb.InitGexDB(consts.GexDir)
 
 	scrnadb.InitScrnaDB("data/modules/scrna")
 
 	wgsdb.InitDB(consts.WGSDB)
 
-	geneconvdb.InitGeneConvDB("data/modules/geneconv/geneconv.db")
+	geneconvdb.InitGeneConvDB(consts.GeneConvDB)
 
-	motifsdb.InitMotifDB("data/modules/motifs/motifs-2026-02-12.db")
+	motifsdb.InitMotifDB(consts.MotifsDB)
 
-	pathwaydb.InitPathwayDB("data/modules/pathway/pathway-v3.db")
+	pathwaydb.InitPathwayDB(consts.PathwayDB)
 
 	seqdb.InitSeqDB("data/modules/seqs/")
 
-	cytobanddb.InitCytobandDB("data/modules/cytobands/")
+	cytobanddb.InitCytobandDB(consts.CytobandsDir)
 
 	beddb.InitBedDB("data/modules/beds/")
 

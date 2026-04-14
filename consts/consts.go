@@ -67,8 +67,12 @@ var (
 
 	SqsQueueUrl string
 
-	MotifsDB string
-	WGSDB    string
+	MotifsDB     string
+	WGSDB        string
+	GeneConvDB   string
+	PathwayDB    string
+	CytobandsDir string
+	GexDir       string
 )
 
 func init() {
@@ -116,8 +120,11 @@ func init() {
 	SqsQueueUrl = os.Getenv("SQS_QUEUE_URL")
 
 	MotifsDB = os.Getenv("MOTIFS_DB")
-
 	WGSDB = os.Getenv("WGS_DB")
+	GeneConvDB = os.Getenv("GENECONV_DB")
+	PathwayDB = os.Getenv("PATHWAY_DB")
+	CytobandsDir = os.Getenv("CYTOBANDS_DIR")
+	GexDir = os.Getenv("GEX_DIR")
 
 	// bytes, err := os.ReadFile("jwtRS256.key")
 	// if err != nil {
