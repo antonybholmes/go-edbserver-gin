@@ -73,6 +73,12 @@ var (
 	PathwayDB    string
 	CytobandsDir string
 	GexDir       string
+	SeqsDir      string
+	HubsDir      string
+	BedsDir      string
+	DnaDir       string
+	GenomesDir   string
+	ScrnaDir     string
 )
 
 func init() {
@@ -125,6 +131,12 @@ func init() {
 	PathwayDB = os.Getenv("PATHWAY_DB")
 	CytobandsDir = os.Getenv("CYTOBANDS_DIR")
 	GexDir = os.Getenv("GEX_DIR")
+	SeqsDir = os.Getenv("SEQS_DIR")
+	HubsDir = os.Getenv("HUBS_DIR")
+	BedsDir = os.Getenv("BEDS_DIR")
+	DnaDir = os.Getenv("DNA_DIR")
+	GenomesDir = os.Getenv("GENOMES_DIR")
+	ScrnaDir = os.Getenv("SCRNA_DIR")
 
 	// bytes, err := os.ReadFile("jwtRS256.key")
 	// if err != nil {

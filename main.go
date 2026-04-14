@@ -129,13 +129,13 @@ func init() {
 
 	//mailserver.Init()
 
-	dnadb.InitDnaDB("data/modules/dna")
-	genomedb.InitCache("data/modules/genome")
+	dnadb.InitDnaDB(consts.DnaDir)
+	genomedb.InitCache(consts.GenomesDir)
 	//microarraydb.InitDB("data/microarray")
 
 	gexdb.InitGexDB(consts.GexDir)
 
-	scrnadb.InitScrnaDB("data/modules/scrna")
+	scrnadb.InitScrnaDB(consts.ScrnaDir)
 
 	wgsdb.InitDB(consts.WGSDB)
 
@@ -145,13 +145,13 @@ func init() {
 
 	pathwaydb.InitPathwayDB(consts.PathwayDB)
 
-	seqdb.InitSeqDB("data/modules/seqs/")
+	seqdb.InitSeqDB(consts.SeqsDir)
 
 	cytobanddb.InitCytobandDB(consts.CytobandsDir)
 
-	beddb.InitBedDB("data/modules/beds/")
+	beddb.InitBedDB(consts.BedsDir)
 
-	hubdb.InitHubDB("data/modules/hubs/")
+	hubdb.InitHubDB(consts.HubsDir)
 
 	rdb = redis.NewClient(&redis.Options{
 		Addr:     consts.RedisAddr,
