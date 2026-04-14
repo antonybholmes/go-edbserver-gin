@@ -40,21 +40,21 @@ require github.com/antonybholmes/go-edbmailserver v0.0.0-20251121215824-6ff0c5cf
 
 require (
 	github.com/antonybholmes/go-basemath v0.0.0-20260313220641-74ea9151950a // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20260318223128-1e88b5211586
+	github.com/antonybholmes/go-dna v0.0.0-20260403172902-c96bf99098ff
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20251121215817-03ecd95f41c0
-	github.com/antonybholmes/go-web v0.0.0-20260320225304-eb0e29bef5ea
+	github.com/antonybholmes/go-web v0.0.0-20260403172903-f845fdd34082
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1 // indirect
-	github.com/mattn/go-sqlite3 v1.14.38
+	github.com/mattn/go-sqlite3 v1.14.42
 	github.com/rs/zerolog v1.35.0 // indirect
 )
 
 require (
-	github.com/antonybholmes/go-mailserver v0.0.0-20260318223132-3c1fa4c167bc
-	github.com/antonybholmes/go-sys v0.0.0-20260318223134-b63e69af9c78
+	github.com/antonybholmes/go-mailserver v0.0.0-20260403172910-cd7c7e03bfbc
+	github.com/antonybholmes/go-sys v0.0.0-20260403172913-edaeb305202e
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -65,7 +65,7 @@ require (
 	github.com/antonybholmes/go-motifs v0.0.0-20251121222735-b9b35b49f4ee
 	github.com/antonybholmes/go-pathway v0.0.0-20251121222731-16f8a04f47da
 	github.com/antonybholmes/go-scrna v0.0.0-20251121215820-17e42e152320
-	github.com/antonybholmes/go-seqs v0.0.0-20260320223841-126658c9da81
+	github.com/antonybholmes/go-seqs v0.0.0-20260403172900-f40c04d1d2d9
 	github.com/antonybholmes/go-wgs v0.0.0-00010101000000-000000000000
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/sessions v1.0.4
@@ -80,8 +80,8 @@ require (
 	github.com/MicahParks/keyfunc/v3 v3.7.0 // indirect
 	github.com/antonybholmes/go-math v0.0.0-20251211184815-6e7285b975dd // indirect
 	github.com/aws/aws-sdk-go-v2 v1.41.5 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.32.13 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.19.13 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.32.14 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.19.14 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.21 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.21 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.21 // indirect
@@ -92,10 +92,10 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.60.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/signin v1.0.9 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.25 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.30.14 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.18 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.30.15 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.19 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.41.10 // indirect
-	github.com/aws/smithy-go v1.24.2 // indirect
+	github.com/aws/smithy-go v1.24.3 // indirect
 	github.com/bytedance/gopkg v0.1.4 // indirect
 	github.com/bytedance/sonic v1.15.0 // indirect
 	github.com/bytedance/sonic/loader v0.5.1 // indirect
@@ -144,8 +144,8 @@ require (
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.9.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	golang.org/x/arch v0.25.0 // indirect
-	golang.org/x/exp v0.0.0-20260312153236-7ab1446f8b90 // indirect
+	golang.org/x/arch v0.26.0 // indirect
+	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20251124214823-79d6a2a48846 // indirect
@@ -161,13 +161,13 @@ require (
 	github.com/gorilla/context v1.1.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mattn/go-isatty v0.0.21 // indirect
 	github.com/xyproto/randomstring v1.2.0 // indirect
 	go.opentelemetry.io/otel v1.38.0
 	go.opentelemetry.io/otel/sdk v1.38.0
-	golang.org/x/crypto v0.49.0 // indirect
-	golang.org/x/net v0.52.0 // indirect
-	golang.org/x/sys v0.42.0 // indirect
-	golang.org/x/text v0.35.0 // indirect
+	golang.org/x/crypto v0.50.0 // indirect
+	golang.org/x/net v0.53.0 // indirect
+	golang.org/x/sys v0.43.0 // indirect
+	golang.org/x/text v0.36.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 )

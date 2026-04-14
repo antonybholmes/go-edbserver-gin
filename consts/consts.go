@@ -68,6 +68,7 @@ var (
 	SqsQueueUrl string
 
 	MotifsDB string
+	WGSDB    string
 )
 
 func init() {
@@ -115,6 +116,8 @@ func init() {
 	SqsQueueUrl = os.Getenv("SQS_QUEUE_URL")
 
 	MotifsDB = os.Getenv("MOTIFS_DB")
+
+	WGSDB = os.Getenv("WGS_DB")
 
 	// bytes, err := os.ReadFile("jwtRS256.key")
 	// if err != nil {

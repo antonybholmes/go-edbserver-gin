@@ -137,7 +137,7 @@ func init() {
 
 	scrnadb.InitScrnaDB("data/modules/scrna")
 
-	wgsdb.InitDB("data/modules/wgs/wgs-20260311.db")
+	wgsdb.InitDB(consts.WGSDB)
 
 	geneconvdb.InitGeneConvDB("data/modules/geneconv/geneconv.db")
 
