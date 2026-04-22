@@ -82,7 +82,14 @@ var (
 )
 
 func init() {
-	env.Load("consts.env")
+	//env.Load("consts.env")
+
+	val, exists := os.LookupEnv("APP_ENV")
+
+	if !exists || val != "production" {
+		env.Load("consts.env")
+	}
+
 	env.Load("version.env")
 
 	AppUrl = os.Getenv("APP_URL")

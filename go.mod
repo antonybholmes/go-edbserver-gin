@@ -1,6 +1,6 @@
 module github.com/antonybholmes/go-edbserver-gin
 
-go 1.25.0
+go 1.26
 
 replace github.com/antonybholmes/go-web => ../go-web
 
@@ -39,22 +39,22 @@ replace github.com/antonybholmes/go-scrna => ../go-scrna
 require github.com/antonybholmes/go-edbmailserver v0.0.0-20251121215824-6ff0c5cf2c21
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20260313220641-74ea9151950a // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20260403172902-c96bf99098ff
+	github.com/antonybholmes/go-basemath v0.0.0-20260414211833-d03296b3071e // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20260414211827-1ac7ff2467b6
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20251121215817-03ecd95f41c0
-	github.com/antonybholmes/go-web v0.0.0-20260403172903-f845fdd34082
+	github.com/antonybholmes/go-web v0.0.0-20260414211828-e0b24128d77c
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.42
-	github.com/rs/zerolog v1.35.0 // indirect
+	github.com/rs/zerolog v1.35.1 // indirect
 )
 
 require (
-	github.com/antonybholmes/go-mailserver v0.0.0-20260403172910-cd7c7e03bfbc
-	github.com/antonybholmes/go-sys v0.0.0-20260403172913-edaeb305202e
+	github.com/antonybholmes/go-mailserver v0.0.0-20260414211831-3bf0b2649295
+	github.com/antonybholmes/go-sys v0.0.0-20260414211834-526fb62c6da0
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -65,7 +65,7 @@ require (
 	github.com/antonybholmes/go-motifs v0.0.0-20251121222735-b9b35b49f4ee
 	github.com/antonybholmes/go-pathway v0.0.0-20251121222731-16f8a04f47da
 	github.com/antonybholmes/go-scrna v0.0.0-20251121215820-17e42e152320
-	github.com/antonybholmes/go-seqs v0.0.0-20260403172900-f40c04d1d2d9
+	github.com/antonybholmes/go-seqs v0.0.0-20260414211826-26a73a9cbf6b
 	github.com/antonybholmes/go-wgs v0.0.0-00010101000000-000000000000
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/sessions v1.0.4
@@ -79,23 +79,22 @@ require (
 	github.com/MicahParks/jwkset v0.11.0 // indirect
 	github.com/MicahParks/keyfunc/v3 v3.7.0 // indirect
 	github.com/antonybholmes/go-math v0.0.0-20251211184815-6e7285b975dd // indirect
-	github.com/aws/aws-sdk-go-v2 v1.41.5 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.32.14 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.19.14 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.21 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.21 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.21 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.6 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.22 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.7 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.21 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.60.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.0.9 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.25 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.30.15 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.19 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.41.10 // indirect
-	github.com/aws/smithy-go v1.24.3 // indirect
+	github.com/aws/aws-sdk-go-v2 v1.41.6 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.32.16 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.19.15 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.22 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.22 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.22 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.23 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.8 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.22 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.60.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.0.10 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.26 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.30.16 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.35.20 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.42.0 // indirect
+	github.com/aws/smithy-go v1.25.0 // indirect
 	github.com/bytedance/gopkg v0.1.4 // indirect
 	github.com/bytedance/sonic v1.15.0 // indirect
 	github.com/bytedance/sonic/loader v0.5.1 // indirect
@@ -137,7 +136,7 @@ require (
 	github.com/xuri/efp v0.0.1 // indirect
 	github.com/xuri/excelize/v2 v2.10.1 // indirect
 	github.com/xuri/nfp v0.0.2-0.20250530014748-2ddeb826f9a9 // indirect
-	go.mongodb.org/mongo-driver/v2 v2.5.0 // indirect
+	go.mongodb.org/mongo-driver/v2 v2.5.1 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.38.0 // indirect
 	go.opentelemetry.io/otel/metric v1.38.0 // indirect
