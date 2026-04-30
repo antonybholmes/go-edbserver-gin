@@ -24,6 +24,8 @@
 
 # vendor/
 
+bin/
+
 data
 logs
 deployments/*
