@@ -145,7 +145,7 @@ func init() {
 
 	pathwaydb.InitPathwayDB(consts.PathwayDB)
 
-	seqdb.InitSeqDB(consts.SeqsDir)
+	seqdb.InitSeqDB(consts.SeqsDB)
 
 	cytobanddb.InitCytobandDB(consts.CytobandsDir)
 
