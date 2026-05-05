@@ -75,7 +75,7 @@ var (
 	GexDir       string
 	SeqsDB       string
 	HubsDir      string
-	BedsDir      string
+	BedsDB       string
 	DnaDir       string
 	GenomesDir   string
 	ScrnaDir     string
@@ -140,7 +140,7 @@ func init() {
 	GexDir = os.Getenv("GEX_DIR")
 	SeqsDB = os.Getenv("SEQS_DB")
 	HubsDir = os.Getenv("HUBS_DIR")
-	BedsDir = os.Getenv("BEDS_DIR")
+	BedsDB = os.Getenv("BEDS_DB")
 	DnaDir = os.Getenv("DNA_DIR")
 	GenomesDir = os.Getenv("GENOMES_DIR")
 	ScrnaDir = os.Getenv("SCRNA_DIR")

@@ -149,7 +149,7 @@ func init() {
 
 	cytobanddb.InitCytobandDB(consts.CytobandsDir)
 
-	beddb.InitBedDB(consts.BedsDir)
+	beddb.InitBedDB(consts.BedsDB)
 
 	hubdb.InitHubDB(consts.HubsDir)
 
