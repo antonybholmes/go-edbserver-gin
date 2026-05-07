@@ -72,7 +72,7 @@ var (
 	GeneConvDB   string
 	PathwayDB    string
 	CytobandsDir string
-	GexDir       string
+	GexDB        string
 	SeqsDB       string
 	HubsDir      string
 	BedsDB       string
@@ -137,7 +137,7 @@ func init() {
 	GeneConvDB = os.Getenv("GENECONV_DB")
 	PathwayDB = os.Getenv("PATHWAY_DB")
 	CytobandsDir = os.Getenv("CYTOBANDS_DIR")
-	GexDir = os.Getenv("GEX_DIR")
+	GexDB = os.Getenv("GEX_DB")
 	SeqsDB = os.Getenv("SEQS_DB")
 	HubsDir = os.Getenv("HUBS_DIR")
 	BedsDB = os.Getenv("BEDS_DB")

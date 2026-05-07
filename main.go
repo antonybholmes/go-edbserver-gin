@@ -133,7 +133,7 @@ func init() {
 	genomedb.InitCache(consts.GenomesDir)
 	//microarraydb.InitDB("data/microarray")
 
-	gexdb.InitGexDB(consts.GexDir)
+	gexdb.InitGexDB(consts.GexDB)
 
 	scrnadb.InitScrnaDB(consts.ScrnaDir)
 
