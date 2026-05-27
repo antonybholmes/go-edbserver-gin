@@ -151,8 +151,9 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 
 	pathwayGroup := moduleGroup.Group("/pathway")
 	pathwayGroup.GET("/genes", pathwayroutes.GenesRoute)
+	pathwayGroup.POST("/collections", pathwayroutes.CollectionsRoute)
 	pathwayGroup.GET("/collections/:id", pathwayroutes.CollectionRoute)
-	pathwayGroup.GET("/datasets", pathwayroutes.DatasetsRoute)
+	pathwayGroup.GET("/datasets", pathwayroutes.DatasetsInfoRoute)
 	pathwayGroup.POST("/overlap", pathwayroutes.PathwayOverlapRoute)
 
 	seqsGroup := moduleGroup.Group("/seqs",
