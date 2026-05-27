@@ -40,12 +40,12 @@ require github.com/antonybholmes/go-edbmailserver v0.0.0-20251121215824-6ff0c5cf
 
 require (
 	github.com/antonybholmes/go-basemath v0.0.0-20260422134522-9e8f9f5650da // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20260422134514-5ee6d6794d44
+	github.com/antonybholmes/go-dna v0.0.0-20260504225438-ff2041d4d052
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20251121215817-03ecd95f41c0
-	github.com/antonybholmes/go-web v0.0.0-20260422134515-67bdf56b3a29
+	github.com/antonybholmes/go-web v0.0.0-20260507192747-220468103979
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.44
@@ -53,8 +53,8 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-mailserver v0.0.0-20260422134520-10e5eef0f685
-	github.com/antonybholmes/go-sys v0.0.0-20260422134523-dadad00d6c60
+	github.com/antonybholmes/go-mailserver v0.0.0-20260430224953-ba9a0b261ea5
+	github.com/antonybholmes/go-sys v0.0.0-20260430223651-c5b58e98c9c6
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -65,7 +65,7 @@ require (
 	github.com/antonybholmes/go-motifs v0.0.0-20251121222735-b9b35b49f4ee
 	github.com/antonybholmes/go-pathway v0.0.0-20251121222731-16f8a04f47da
 	github.com/antonybholmes/go-scrna v0.0.0-20251121215820-17e42e152320
-	github.com/antonybholmes/go-seqs v0.0.0-20260422134513-6a1eccffc364
+	github.com/antonybholmes/go-seqs v0.0.0-20260505195006-7230cc2de865
 	github.com/antonybholmes/go-wgs v0.0.0-00010101000000-000000000000
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/sessions v1.0.4
@@ -125,7 +125,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.3.1 // indirect
 	github.com/pierrec/lz4/v4 v4.1.26 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
-	github.com/quic-go/quic-go v0.59.0 // indirect
+	github.com/quic-go/quic-go v0.59.1 // indirect
 	github.com/richardlehane/mscfb v1.0.6 // indirect
 	github.com/richardlehane/msoleps v1.0.6 // indirect
 	github.com/segmentio/kafka-go v0.4.51 // indirect
@@ -142,8 +142,8 @@ require (
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.9.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	golang.org/x/arch v0.26.0 // indirect
-	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+	golang.org/x/arch v0.27.0 // indirect
+	golang.org/x/exp v0.0.0-20260508232706-74f9aab9d74a // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20251124214823-79d6a2a48846 // indirect
@@ -163,9 +163,9 @@ require (
 	github.com/xyproto/randomstring v1.2.0 // indirect
 	go.opentelemetry.io/otel v1.38.0
 	go.opentelemetry.io/otel/sdk v1.38.0
-	golang.org/x/crypto v0.50.0 // indirect
-	golang.org/x/net v0.53.0 // indirect
-	golang.org/x/sys v0.43.0 // indirect
-	golang.org/x/text v0.36.0 // indirect
+	golang.org/x/crypto v0.51.0 // indirect
+	golang.org/x/net v0.54.0 // indirect
+	golang.org/x/sys v0.44.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 )
