@@ -36,7 +36,7 @@ done
 echo "${type}: ${msg}"
 echo ${branch}
 
-#pnpm update-version
+python scripts/update_version.py
 
 # commit
 git add -A .

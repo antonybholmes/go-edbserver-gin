@@ -53,6 +53,7 @@ type (
 		Name      string `json:"name"`
 		Copyright string `json:"copyright"`
 		Version   string `json:"version"`
+		Build     int    `json:"build"`
 		Updated   string `json:"updated"`
 	}
 
@@ -271,6 +272,7 @@ func main() {
 			AboutResp{
 				Name:      consts.AppName,
 				Version:   consts.Version.Version,
+				Build:     consts.Version.Build,
 				Updated:   consts.Version.Updated,
 				Copyright: consts.Copyright})
 	})

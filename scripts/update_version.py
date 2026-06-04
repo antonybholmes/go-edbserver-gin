@@ -1,6 +1,7 @@
 import json
-from dotenv import dotenv_values
 from datetime import datetime
+
+from dotenv import dotenv_values
 
 INC = 2
 
@@ -12,12 +13,15 @@ config = json.load(open("version.json"))
 
 # print(config)
 
-major, minor, patch, build = [int(x) for x in config["version"].split(".")]
+build = config.get("build", 0)
+major, minor, patch = [int(x) for x in config["version"].split(".")]
 
 build += INC
-patch += INC
 
-if patch > 9:
+if build % 10 == 0:
+    patch += INC
+
+if patch % 10 == 0:
     minor += INC
     patch = 0
 
@@ -25,7 +29,8 @@ if minor > 9:
     major += INC
     minor = 0
 
-config["version"] = f"{major}.{minor}.{patch}.{build}"
+config["version"] = f"{major}.{minor}.{patch}"
+config["build"] = build
 config["updated"] = time.strftime("%b %d, %Y")
 
 with open("version.json", "w") as f:
