@@ -77,7 +77,7 @@ var (
 	HubsDir      string
 	BedsDB       string
 	DnaDir       string
-	GenomesDir   string
+	GenomesDB    string
 	ScrnaDir     string
 )
 
@@ -142,7 +142,7 @@ func init() {
 	HubsDir = os.Getenv("HUBS_DIR")
 	BedsDB = os.Getenv("BEDS_DB")
 	DnaDir = os.Getenv("DNA_DIR")
-	GenomesDir = os.Getenv("GENOMES_DIR")
+	GenomesDB = os.Getenv("GENOMES_DB")
 	ScrnaDir = os.Getenv("SCRNA_DIR")
 
 	// bytes, err := os.ReadFile("jwtRS256.key")

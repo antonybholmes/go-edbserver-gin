@@ -131,7 +131,7 @@ func init() {
 	//mailserver.Init()
 
 	dnadb.InitDnaDB(consts.DnaDir)
-	genomedb.InitCache(consts.GenomesDir)
+	genomedb.InitCache(consts.GenomesDB)
 	//microarraydb.InitDB("data/microarray")
 
 	gexdb.InitGexDB(consts.GexDB)
