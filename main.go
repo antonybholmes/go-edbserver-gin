@@ -53,8 +53,8 @@ type (
 		Name      string `json:"name"`
 		Copyright string `json:"copyright"`
 		Version   string `json:"version"`
-		Build     int    `json:"build"`
 		Updated   string `json:"updated"`
+		Build     int    `json:"build"`
 	}
 
 	InfoResp struct {
