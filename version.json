@@ -1,5 +1,6 @@
 {
     "copyright": "Copyright (c) 2025 Antony Holmes. All rights reserved.",
+<<<<<<< HEAD
     "version": "136.2.4",
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -9,6 +10,10 @@
 >>>>>>> dev
 =======
     "build": 4404,
+>>>>>>> dev
+=======
+    "version": "136.2.6",
+    "build": 4410,
 >>>>>>> dev
     "updated": "Jun 09, 2026"
 }
