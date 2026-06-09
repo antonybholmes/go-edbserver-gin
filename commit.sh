@@ -36,7 +36,6 @@ done
 echo "${type}: ${msg}"
 echo ${branch}
 
-python scripts/update_version.py
 
 # commit
 git add -A .
