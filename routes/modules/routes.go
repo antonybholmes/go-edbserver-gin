@@ -148,6 +148,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	motifsGroup := moduleGroup.Group("/motifs")
 	motifsGroup.GET("/datasets", motifroutes.DatasetsRoute)
 	motifsGroup.POST("/search", motifroutes.SearchRoute)
+	motifsGroup.POST("/genes", motifroutes.MotifsToGenesRoute)
 
 	pathwayGroup := moduleGroup.Group("/pathway")
 	pathwayGroup.GET("/genes", pathwayroutes.GenesRoute)
