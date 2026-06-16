@@ -39,13 +39,13 @@ replace github.com/antonybholmes/go-scrna => ../go-scrna
 require github.com/antonybholmes/go-edbmailserver v0.0.0-20251121215824-6ff0c5cf2c21
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20260422134522-9e8f9f5650da // indirect
-	github.com/antonybholmes/go-dna v0.0.0-20260504225438-ff2041d4d052
+	github.com/antonybholmes/go-basemath v0.0.0-20260603221554-d647819bbf21 // indirect
+	github.com/antonybholmes/go-dna v0.0.0-20260609172726-29dc92f0e3bf
 )
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20251121215817-03ecd95f41c0
-	github.com/antonybholmes/go-web v0.0.0-20260507192747-220468103979
+	github.com/antonybholmes/go-web v0.0.0-20260609172727-db410cd5d5a1
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.45
@@ -53,8 +53,8 @@ require (
 )
 
 require (
-	github.com/antonybholmes/go-mailserver v0.0.0-20260430224953-ba9a0b261ea5
-	github.com/antonybholmes/go-sys v0.0.0-20260430223651-c5b58e98c9c6
+	github.com/antonybholmes/go-mailserver v0.0.0-20260609172732-fa2f479e1901
+	github.com/antonybholmes/go-sys v0.0.0-20260609172735-8ea2a7623e43
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
@@ -65,12 +65,12 @@ require (
 	github.com/antonybholmes/go-motifs v0.0.0-20251121222735-b9b35b49f4ee
 	github.com/antonybholmes/go-pathway v0.0.0-20251121222731-16f8a04f47da
 	github.com/antonybholmes/go-scrna v0.0.0-20251121215820-17e42e152320
-	github.com/antonybholmes/go-seqs v0.0.0-20260505195006-7230cc2de865
+	github.com/antonybholmes/go-seqs v0.0.0-20260609172725-813c1234524b
 	github.com/antonybholmes/go-wgs v0.0.0-00010101000000-000000000000
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/sessions v1.0.4
 	github.com/gin-gonic/gin v1.12.0
-	github.com/redis/go-redis/v9 v9.20.0
+	github.com/redis/go-redis/v9 v9.20.1
 	go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin v0.63.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.38.0
 )
@@ -78,10 +78,9 @@ require (
 require (
 	github.com/MicahParks/jwkset v0.11.0 // indirect
 	github.com/MicahParks/keyfunc/v3 v3.7.0 // indirect
-	github.com/antonybholmes/go-math v0.0.0-20251211184815-6e7285b975dd // indirect
 	github.com/aws/aws-sdk-go-v2 v1.42.0 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.32.24 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.19.23 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.32.25 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.19.24 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.29 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.29 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.29 // indirect
@@ -89,7 +88,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.29 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.62.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.1.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.2.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.44.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.31.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.36.6 // indirect
@@ -135,7 +134,7 @@ require (
 	github.com/xuri/efp v0.0.1 // indirect
 	github.com/xuri/excelize/v2 v2.10.1 // indirect
 	github.com/xuri/nfp v0.0.2-0.20250530014748-2ddeb826f9a9 // indirect
-	go.mongodb.org/mongo-driver/v2 v2.6.0 // indirect
+	go.mongodb.org/mongo-driver/v2 v2.6.1 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.38.0 // indirect
 	go.opentelemetry.io/otel/metric v1.38.0 // indirect
@@ -143,7 +142,7 @@ require (
 	go.opentelemetry.io/proto/otlp v1.9.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/arch v0.28.0 // indirect
-	golang.org/x/exp v0.0.0-20260603202125-055de637280b // indirect
+	golang.org/x/exp v0.0.0-20260611194520-c48552f49976 // indirect
 	golang.org/x/sync v0.21.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20251124214823-79d6a2a48846 // indirect
@@ -164,7 +163,7 @@ require (
 	go.opentelemetry.io/otel v1.38.0
 	go.opentelemetry.io/otel/sdk v1.38.0
 	golang.org/x/crypto v0.53.0 // indirect
-	golang.org/x/net v0.55.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
 	golang.org/x/text v0.38.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
