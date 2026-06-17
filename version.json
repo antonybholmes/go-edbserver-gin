@@ -1,6 +1,11 @@
 {
     "copyright": "Copyright (c) 2025 Antony Holmes. All rights reserved.",
+<<<<<<< HEAD
     "version": "136.8.0",
     "build": 4434,
+=======
+    "version": "138.2.2",
+    "build": 4440,
+>>>>>>> dev
     "updated": "Jun 17, 2026"
 }
