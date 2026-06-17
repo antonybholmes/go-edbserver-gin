@@ -35,12 +35,12 @@ echo ${branch}
 python scripts/update_version.py
 
 
-./commit.sh -t "${type}" -m "${msg}" -b dev
+./commit.sh -t "${type}" -m "${msg}"  
 
 git switch main
 git merge dev -m "${type}: ${msg}"
 
 #git push -u origin main
-./commit.sh -t "${type}" -m "${msg}" -b main
+./commit.sh -t "${type}" -m "${msg}"
 
 git switch dev
