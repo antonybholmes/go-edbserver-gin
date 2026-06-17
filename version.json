@@ -1,10 +1,6 @@
 {
-    "copyright": "Copyright (c) 2025 Antony Holmes. All rights reserved.",
-    "version": "136.2.8",
-<<<<<<< HEAD
-    "build": 4420,
-=======
-    "build": 4428,
->>>>>>> dev
-    "updated": "Jun 17, 2026"
+  "copyright": "Copyright (c) 2025 Antony Holmes. All rights reserved.",
+  "version": "136.2.8",
+  "build": 4428,
+  "updated": "Jun 17, 2026"
 }
