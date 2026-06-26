@@ -2,47 +2,45 @@ module github.com/antonybholmes/go-edbserver-gin
 
 go 1.26
 
-// replace github.com/antonybholmes/go-web => ../go-web
+replace github.com/antonybholmes/go-web => ../go-web
 
-// replace github.com/antonybholmes/go-dna => ../go-dna
+replace github.com/antonybholmes/go-dna => ../go-dna
 
-// replace github.com/antonybholmes/go-genome => ../go-genome
+replace github.com/antonybholmes/go-genome => ../go-genome
 
-// replace github.com/antonybholmes/go-wgs => ../go-wgs
+replace github.com/antonybholmes/go-wgs => ../go-wgs
 
-// replace github.com/antonybholmes/go-sys => ../go-sys
+replace github.com/antonybholmes/go-sys => ../go-sys
 
-// replace github.com/antonybholmes/go-mailserver => ../go-mailserver
+replace github.com/antonybholmes/go-mailserver => ../go-mailserver
 
-// replace github.com/antonybholmes/go-edbmailserver => ../go-edbmailserver
+replace github.com/antonybholmes/go-edbmailserver => ../go-edbmailserver
 
-// replace github.com/antonybholmes/go-geneconv => ../go-geneconv
+replace github.com/antonybholmes/go-geneconv => ../go-geneconv
 
-// replace github.com/antonybholmes/go-motifs => ../go-motifs
+replace github.com/antonybholmes/go-motifs => ../go-motifs
 
-// replace github.com/antonybholmes/go-pathway => ../go-pathway
+replace github.com/antonybholmes/go-pathway => ../go-pathway
 
-// replace github.com/antonybholmes/go-gex => ../go-gex
+replace github.com/antonybholmes/go-gex => ../go-gex
 
-// replace github.com/antonybholmes/go-seqs => ../go-seqs
+replace github.com/antonybholmes/go-seqs => ../go-seqs
 
-// replace github.com/antonybholmes/go-cytobands => ../go-cytobands
+replace github.com/antonybholmes/go-cytobands => ../go-cytobands
 
-// replace github.com/antonybholmes/go-beds => ../go-beds
+replace github.com/antonybholmes/go-beds => ../go-beds
 
-// replace github.com/antonybholmes/go-hubs => ../go-hubs
+replace github.com/antonybholmes/go-hubs => ../go-hubs
 
-// replace github.com/antonybholmes/go-scrna => ../go-scrna
+replace github.com/antonybholmes/go-scrna => ../go-scrna
 
 require github.com/antonybholmes/go-edbmailserver v0.0.0-20251121215824-6ff0c5cf2c21
 
-require (
-	github.com/antonybholmes/go-dna v0.0.0-20260616153957-a933275aa84a
-)
+require github.com/antonybholmes/go-dna v0.0.0-20260616153957-a933275aa84a
 
 require (
 	github.com/antonybholmes/go-genome v0.0.0-20251121215817-03ecd95f41c0
-	github.com/antonybholmes/go-web v0.0.0-20260616152938-8bbbbc57a69d
+	github.com/antonybholmes/go-web v0.0.0-20260626214813-11a0dc95e0ae
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.47
@@ -51,7 +49,7 @@ require (
 
 require (
 	github.com/antonybholmes/go-mailserver v0.0.0-20260616152943-ddae4adec492
-	github.com/antonybholmes/go-sys v0.0.0-20260616152946-01b9b0d3a79b
+	github.com/antonybholmes/go-sys v0.0.0-20260626223512-c00680dc89c9
 	github.com/gorilla/sessions v1.4.0 // indirect
 )
 
