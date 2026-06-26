@@ -37,7 +37,6 @@ go 1.26
 require github.com/antonybholmes/go-edbmailserver v0.0.0-20251121215824-6ff0c5cf2c21
 
 require (
-	github.com/antonybholmes/go-basemath v0.0.0-20260616152945-9dcd1ed04536 // indirect
 	github.com/antonybholmes/go-dna v0.0.0-20260616153957-a933275aa84a
 )
 
