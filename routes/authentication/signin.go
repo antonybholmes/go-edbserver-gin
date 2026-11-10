@@ -34,7 +34,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		authUser, err := userdbcache.FindUserByUsername(validator.UserBodyReq.Username)
+		authUser, err := userdbcache.Instance().FindUserByUsername(validator.UserBodyReq.Username)
 
 		if err != nil {
 			web.UserDoesNotExistResp(c)
@@ -67,14 +67,14 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		refreshToken, err := tokengen.RefreshToken(c, authUser, jwt.ClaimStrings{"refresh"}) //auth.MakeClaim(authUser.Roles))
+		refreshToken, err := tokengen.Instance().RefreshToken(c, authUser, jwt.ClaimStrings{"refresh"}) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			auth.TokenErrorResp(c)
 			return
 		}
 
-		accessToken, err := tokengen.AccessToken(c, authUser.Id, jwt.ClaimStrings{"access"}, auth.GetRolesFromUser(authUser)) //auth.MakeClaim(authUser.Roles))
+		accessToken, err := tokengen.Instance().AccessToken(c, authUser.Id, jwt.ClaimStrings{"access"}, auth.GetRolesFromUser(authUser)) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			auth.TokenErrorResp(c)
@@ -97,7 +97,7 @@ func PasswordlessSignInEmailRoute(c *gin.Context, validator *middleware.Validato
 
 		authUser := validator.AuthUser
 
-		passwordlessToken, err := tokengen.MakePasswordlessToken(c,
+		passwordlessToken, err := tokengen.Instance().MakePasswordlessToken(c,
 			authUser.Id,
 			jwt.ClaimStrings{"passwordless"},
 			validator.UserBodyReq.RedirectUrl)
@@ -168,7 +168,7 @@ func PasswordlessSignInRoute(c *gin.Context) {
 			return
 		}
 
-		t, err := tokengen.RefreshToken(c, authUser, jwt.ClaimStrings{"refresh"}) //auth.MakeClaim(authUser.Roles))
+		t, err := tokengen.Instance().RefreshToken(c, authUser, jwt.ClaimStrings{"refresh"}) //auth.MakeClaim(authUser.Roles))
 
 		if err != nil {
 			auth.TokenErrorResp(c)

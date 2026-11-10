@@ -32,7 +32,6 @@ done
 echo "${type}: ${msg}"
 echo ${branch}
 
-python scripts/update_version.py
 
 
 ./commit.sh -t "${type}" -m "${msg}"  

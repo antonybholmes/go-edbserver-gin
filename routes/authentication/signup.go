@@ -19,14 +19,14 @@ func SignupRoute(c *gin.Context) {
 	middleware.NewValidator(c).CheckEmailIsWellFormed().Success(func(validator *middleware.Validator) {
 		req := validator.UserBodyReq
 
-		authUser, err := userdbcache.CreateUserFromSignup(req)
+		authUser, err := userdbcache.Instance().CreateUserFromSignup(req)
 
 		if err != nil {
 			c.Error(err)
 			return
 		}
 
-		token, err := tokengen.MakeVerifyEmailToken(c, authUser, jwt.ClaimStrings{"verify-email"}, req.RedirectUrl)
+		token, err := tokengen.Instance().MakeVerifyEmailToken(c, authUser, jwt.ClaimStrings{"verify-email"}, req.RedirectUrl)
 
 		//log.Debug().Msgf("%s", otpJwt)
 
@@ -80,7 +80,7 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 			web.MakeOkResp(c, "")
 		}
 
-		_, err := userdbcache.SetEmailIsVerified(authUser)
+		_, err := userdbcache.Instance().SetEmailIsVerified(authUser)
 
 		if err != nil {
 			web.MakeSuccessResp(c, "unable to verify user", false)

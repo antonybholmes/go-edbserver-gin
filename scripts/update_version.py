@@ -9,27 +9,31 @@ INC = 2
 # datetime object
 time = datetime.now()
 
+major = time.strftime("%y")  # str(time.year)[:-2]
+minor = time.month
+patch = time.day
+
 config = json.load(open("version.json"))
 
 # print(config)
 
 build = config.get("build", 0)
-major, minor, patch = [int(x) for x in config["version"].split(".")]
+# major, minor, patch = [int(x) for x in config["version"].split(".")]
 
 build += INC
 
-if build % 10 == 0:
-    patch += INC
+# if build % 10 == 0:
+#     patch += INC
 
-if patch % 10 == 0:
-    minor += INC
-    patch = 0
+# if patch % 10 == 0:
+#     minor += INC
+#     patch = 0
 
-if minor > 9:
-    major += INC
-    minor = 0
+# if minor > 9:
+#     major += INC
+#     minor = 0
 
-config["version"] = f"{major}.{minor}.{patch}"
+config["version"] = f"{major}.{minor}.{patch}.{build}"
 config["build"] = build
 config["updated"] = time.strftime("%b %d, %Y")
 

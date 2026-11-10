@@ -27,7 +27,7 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 		authUser := validator.AuthUser
 		//req := validator.SignInBodyReq
 
-		otpToken, err := tokengen.MakeResetPasswordToken(c, authUser, jwt.ClaimStrings{"reset-password"})
+		otpToken, err := tokengen.Instance().MakeResetPasswordToken(c, authUser, jwt.ClaimStrings{"reset-password"})
 
 		if err != nil {
 			c.Error(err)
@@ -83,7 +83,7 @@ func UpdatePasswordRoute(c *gin.Context) {
 			return
 		}
 
-		_, err = userdbcache.SetPassword(authUser, validator.UserBodyReq.Password, false)
+		_, err = userdbcache.Instance().SetPassword(authUser, validator.UserBodyReq.Password, false)
 
 		if err != nil {
 			web.BadReqResp(c, err)

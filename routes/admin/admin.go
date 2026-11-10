@@ -26,7 +26,7 @@ func UserStatsRoute(c *gin.Context) {
 
 	c.Bind(&req)
 
-	users, err := userdbcache.NumUsers()
+	users, err := userdbcache.Instance().NumUsers()
 
 	if err != nil {
 		c.Error(err)
@@ -47,7 +47,7 @@ func UsersRoute(c *gin.Context) {
 
 	//log.Debug().Msgf("list users %v", req)
 
-	users, err := userdbcache.Users(req.Records, req.Offset)
+	users, err := userdbcache.Instance().Users(req.Records, req.Offset)
 
 	if err != nil {
 		c.Error(err)
@@ -60,7 +60,7 @@ func UsersRoute(c *gin.Context) {
 
 func RolesRoute(c *gin.Context) {
 
-	roles, err := userdbcache.Roles()
+	roles, err := userdbcache.Instance().Roles()
 
 	if err != nil {
 		c.Error(err)
@@ -73,7 +73,7 @@ func RolesRoute(c *gin.Context) {
 
 func GroupsRoute(c *gin.Context) {
 
-	groups, err := userdbcache.Groups()
+	groups, err := userdbcache.Instance().Groups()
 
 	if err != nil {
 		c.Error(err)
@@ -106,7 +106,7 @@ func UpdateUserRoute(c *gin.Context) {
 
 		authUser := validator.AuthUser
 
-		err := userdbcache.SetUserInfo(authUser,
+		err := userdbcache.Instance().SetUserInfo(authUser,
 			validator.UserBodyReq.Username,
 			validator.UserBodyReq.Name,
 			true)
@@ -116,7 +116,7 @@ func UpdateUserRoute(c *gin.Context) {
 			return
 		}
 
-		err = userdbcache.SetEmailAddress(authUser,
+		err = userdbcache.Instance().SetEmailAddress(authUser,
 			validator.Address,
 			true)
 
@@ -126,7 +126,7 @@ func UpdateUserRoute(c *gin.Context) {
 		}
 
 		if validator.UserBodyReq.PictureUrl != "" {
-			err = userdbcache.SetPictureUrl(authUser,
+			err = userdbcache.Instance().SetPictureUrl(authUser,
 				validator.UserBodyReq.PictureUrl,
 				true)
 		}
@@ -137,7 +137,7 @@ func UpdateUserRoute(c *gin.Context) {
 		}
 
 		if validator.UserBodyReq.Password != "" {
-			_, err = userdbcache.SetPassword(authUser,
+			_, err = userdbcache.Instance().SetPassword(authUser,
 				validator.UserBodyReq.Password, true)
 
 			if err != nil {
@@ -148,7 +148,7 @@ func UpdateUserRoute(c *gin.Context) {
 		}
 
 		// set roles
-		err = userdbcache.SetUserGroups(authUser,
+		err = userdbcache.Instance().SetUserGroups(authUser,
 			validator.UserBodyReq.Groups,
 			true)
 
@@ -166,7 +166,7 @@ func AddUserRoute(c *gin.Context) {
 	middleware.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().Success(func(validator *middleware.Validator) {
 
 		// assume email is not verified
-		authUser, err := userdbcache.CreateUser(
+		authUser, err := userdbcache.Instance().CreateUser(
 			validator.Address,
 			validator.UserBodyReq.Username,
 			validator.UserBodyReq.Password,
@@ -198,7 +198,7 @@ func AddUserRoute(c *gin.Context) {
 func DeleteUserRoute(c *gin.Context) {
 	publicId := c.Param("id")
 
-	err := userdbcache.DeleteUser(publicId)
+	err := userdbcache.Instance().DeleteUser(publicId)
 
 	if err != nil {
 		c.Error(err)
