@@ -27,64 +27,69 @@ func PasswordlessEmailSentResp(c *gin.Context) {
 }
 
 func UsernamePasswordSignInRoute(c *gin.Context) {
-	middleware.NewValidator(c).ParseSignInRequestBody().Success(func(validator *middleware.Validator) {
+	validator, err := middleware.NewValidator(c).ParseSignInRequestBody().Ok()
 
-		if validator.UserBodyReq.Password == "" {
-			PasswordlessSignInEmailRoute(c, validator)
-			return
-		}
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
-		authUser, err := userdbcache.Instance().FindUserByUsername(validator.UserBodyReq.Username)
+	if validator.UserBodyReq.Password == "" {
+		PasswordlessSignInEmailRoute(c, validator)
+		return
+	}
 
-		if err != nil {
-			web.UserDoesNotExistResp(c)
-			return
-		}
+	authUser, err := userdbcache.Instance().FindUserByUsername(validator.UserBodyReq.Username)
 
-		if authUser.EmailVerifiedAt == nil {
-			web.EmailNotVerifiedReq(c)
-			return
-		}
+	if err != nil {
+		web.UserDoesNotExistResp(c)
+		return
+	}
 
-		// roles, err := userdbcache.UserRoleSet(authUser)
+	if authUser.EmailVerifiedAt == nil {
+		web.EmailNotVerifiedReq(c)
+		return
+	}
 
-		// if err != nil {
-		// 	web.ForbiddenResp(c, ErrUserRoles)
-		// 	return
-		// }
+	// roles, err := userdbcache.UserRoleSet(authUser)
 
-		//roleClaim := auth.MakeClaim(roles)
+	// if err != nil {
+	// 	web.ForbiddenResp(c, ErrUserRoles)
+	// 	return
+	// }
 
-		if !auth.UserHasWebLoginInRole(authUser) {
-			web.UserNotAllowedToSignInErrorResp(c)
-			return
-		}
+	//roleClaim := auth.MakeClaim(roles)
 
-		err = authUser.CheckPasswordsMatch(validator.UserBodyReq.Password)
+	if !auth.UserHasWebLoginInRole(authUser) {
+		web.UserNotAllowedToSignInErrorResp(c)
+		return
+	}
 
-		if err != nil {
-			c.Error(err)
-			return
-		}
+	err = authUser.CheckPasswordsMatch(validator.UserBodyReq.Password)
 
-		refreshToken, err := tokengen.Instance().RefreshToken(c, authUser, jwt.ClaimStrings{"refresh"}) //auth.MakeClaim(authUser.Roles))
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
-		if err != nil {
-			auth.TokenErrorResp(c)
-			return
-		}
+	refreshToken, err := tokengen.Instance().RefreshToken(c, authUser, jwt.ClaimStrings{"refresh"}) //auth.MakeClaim(authUser.Roles))
 
-		accessToken, err := tokengen.Instance().AccessToken(c, authUser.Id, jwt.ClaimStrings{"access"}, auth.GetRolesFromUser(authUser)) //auth.MakeClaim(authUser.Roles))
+	if err != nil {
+		auth.TokenErrorResp(c)
+		return
+	}
 
-		if err != nil {
-			auth.TokenErrorResp(c)
-			return
-		}
+	accessToken, err := tokengen.Instance().AccessToken(c, authUser.Id, jwt.ClaimStrings{"access"}, auth.GetRolesFromUser(authUser)) //auth.MakeClaim(authUser.Roles))
 
-		web.MakeDataResp(c, "", &web.SignInResp{
-			RefreshToken: refreshToken,
-			AccessToken:  accessToken})
-	})
+	if err != nil {
+		auth.TokenErrorResp(c)
+		return
+	}
+
+	web.MakeDataResp(c, "", &web.SignInResp{
+		RefreshToken: refreshToken,
+		AccessToken:  accessToken})
+
 }
 
 // Start passwordless login by sending an email

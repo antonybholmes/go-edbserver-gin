@@ -63,76 +63,13 @@ type (
 	}
 )
 
-const (
-	PreflightMaxAge = 12 * 3600 // 12 hours
-
-)
-
-// var store *sqlitestorr.SqliteStore
 var (
 	store cookie.Store
-
-	rdb *redis.Client
-
-	re *access.RuleEngine
+	rdb   *redis.Client
+	re    *access.RuleEngine
 )
 
-// func initLogger() {
-
-// 	//multiWriter := io.MultiWriter(os.Stderr, fileLogger)
-
-// 	//logger := zerolog.New(multiWriter).With().Timestamp().Logger()
-// 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger()
-
-// 	// we use != development because it means we need to set the env variable in order
-// 	// to see debugging work. The default is to assume production, in which case we use
-// 	// lumberjack
-// 	if os.Getenv("APP_ENV") != "development" {
-// 		// reduce log events in production
-// 		zerolog.SetGlobalLevel(zerolog.InfoLevel)
-
-// 		// log events to log files with rotation
-// 		fileLogger := &lumberjack.Logger{
-// 			Filename:   fmt.Sprintf("logs/%s.log", consts.AppName),
-// 			MaxSize:    10,   // Max size in MB before rotating
-// 			MaxBackups: 3,    // Keep 3 backup files
-// 			MaxAge:     7,    // Retain files for 7 days
-// 			Compress:   true, // Compress old log files
-// 		}
-
-// 		logger = zerolog.New(io.MultiWriter(zerolog.ConsoleWriter{Out: os.Stderr}, fileLogger)).With().Timestamp().Logger()
-// 	}
-
-// 	log.Logger = logger
-// }
-
-func init() {
-	//initLogger()
-
-	log.SetAppName(consts.AppName)
-
-	env.Ls()
-
-	// store = sys.Must(sqlitestorr.NewSqliteStore("data/users.db",
-	// 	"sessions",
-	// 	"/",
-	// 	auth.MAX_AGE_7_DAYS_SECS,
-	// 	[]byte(consts.SESSION_SECRET)))
-
-	// follow https://github.com/gorilla/sessions/blob/main/storr.go#L55
-	// SESSION_KEY should be 64 bytes/chars and SESSION_ENCRYPTION_KEY should be 32 bytes/chars
-
-	// storr.Options = &sessions.Options{
-	// 	Path:     "/",
-	// 	MaxAge:   auth.MAX_AGE_7_DAYS_SECS,
-	// 	HttpOnly: false,
-	// 	Secure:   true,
-	// 	SameSite: http.SameSiteNoneMode}
-
-	//userdbcache.InitCache() //"data/users.db")
-
-	//mailserver.Init()
-
+func initDatabases() {
 	dnadb.InitDnaDB(consts.DnaDir)
 	genomedb.InitCache(consts.GenomesDB)
 	//microarraydb.InitDB("data/microarray")
@@ -156,97 +93,51 @@ func init() {
 	beddb.InitBedDB(consts.BedsDB)
 
 	hubdb.InitHubDB(consts.HubsDir)
+}
+
+func init() {
+	//initLogger()
+
+	log.SetAppName(consts.AppName)
+	env.Ls()
+
+	initDatabases()
 
 	rdb = redis.NewClient(&redis.Options{
 		Addr:     consts.RedisAddr,
 		Username: "edb",
 		Password: consts.RedisPassword,
-		DB:       0, // use default DB
+		DB:       0,
 	})
-
-	//queue.Init(mailserver.NewRedisEmailQueue(rdb))
 
 	mailqueue.InitMailQueue(mailserver.NewSqsEmailQueue(consts.SqsQueueUrl))
 
 	re = access.NewRuleEngine()
-
 	re.LoadRules("config/access-rules.json")
-
-	// writer := kafka.NewWriter(kafka.WriterConfig{
-	// 	Brokers:  []string{"localhost:9094"}, // Kafka broker
-	// 	Topic:    mailserver.QUEUE_EMAIL_CHANNEL, // Topic name
-	// 	Balancer: &kafka.LeastBytes{},        // Balancer (optional)
-	// })
-
-	// queue.Init(mailserver.NewKafkaEmailPublisher(writer))
-
 }
 
-func main() {
-	//env.Reload()
-	//env.Load("consts.env")
-	//env.Load("version.env")
+func aboutHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, AboutResp{
+		Name:      consts.AppName,
+		Version:   consts.Version.Version,
+		Build:     consts.Version.Build,
+		Updated:   consts.Version.Updated,
+		Copyright: consts.Copyright,
+	})
+}
 
-	//consts.Init()
+func infoHandler(c *gin.Context) {
+	web.MakeDataResp(c, "", InfoResp{
+		Arch:   runtime.GOARCH,
+		IpAddr: c.ClientIP(),
+	})
+}
 
-	//tokengen.Init(token.NewRSATokenSigner(consts.JwtRsaPrivateKey))
-	tokengen.Init(token.NewES256TokenSigner(consts.JwtES256PrivateKey))
-
-	//env.Load()
-
-	// list env to see what is loaded
-	//env.Ls()
-
-	//initCache()
-
-	// test redis
-	//email := gomailserver.QueueEmail{To: "antony@antonybholmes.dev"}
-	//rdb.PublishEmail(&email)
-
-	//
-	// Set logging to file
-	//
-
-	// all subsequent middleware is reliant on this to function
-	//claimsParser := middleware.NewUserJWTParser(middleware.NewJwtClaimsRSAParser(consts.JwtRsaPublicKey))
-	claimsParser := middleware.NewUserJWTParser(middleware.NewJwtClaimsES256Parser(consts.JwtES256PublicKey))
-
-	jwtUserMiddleWare := middleware.UserJWTMiddleware(claimsParser)
-
-	//accessTokenMiddleware := middleware.JwtIsAccessTokenMiddleware()
-
-	rulesMiddleware := middleware.RulesMiddleware(claimsParser, re)
-
-	updateTokenMiddleware := middleware.JwtIsUpdateTokenMiddleware()
-
-	//rdfRoleMiddleware := middleware.JwtHasRDFRoleMiddleware()
-
-	otp := auth.NewDefaultOTP(rdb)
-
-	// Setup tracer provider
-	tp, err := initTracerProvider()
-	if err != nil {
-		log.Fatal().Msgf("failed to initialize tracer provider: %v", err)
-	}
-	defer func() {
-		// Shutdown flushes any remaining spans
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-		defer cancel()
-		if err := tp.Shutdown(ctx); err != nil {
-			log.Fatal().Msgf("failed to shutdown tracer provider: %v", err)
-		}
-	}()
-
-	//r := gin.Default()
-	r := gin.New()
-
-	// Add OpenTelemetry middleware to Gin router
+func setupMiddlewares(r *gin.Engine) {
 	r.Use(otelgin.Middleware("edb-server"))
-
 	r.Use(gin.Recovery())
 	r.Use(middleware.LoggingMiddleware())
 	r.Use(middleware.ErrorHandlerMiddleware())
-	//r.Use(middleware.CSRFCookieMiddleware())
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     consts.AllowOrigins,
@@ -259,49 +150,22 @@ func main() {
 	store = cookie.NewStore([]byte(consts.SessionKey),
 		[]byte(consts.SessionEncryptionKey))
 	r.Use(sessions.Sessions(consts.SessionName, store))
+}
 
-	r.GET("/about", func(c *gin.Context) {
-
-		c.JSON(http.StatusOK,
-			AboutResp{
-				Name:      consts.AppName,
-				Version:   consts.Version.Version,
-				Build:     consts.Version.Build,
-				Updated:   consts.Version.Updated,
-				Copyright: consts.Copyright})
-	})
-
-	r.GET("/info", func(c *gin.Context) {
-		web.MakeDataResp(c, "", InfoResp{
-			Arch:   runtime.GOARCH,
-			IpAddr: c.ClientIP()})
-	})
-
-	//
-	// Routes
-	//
+func registerAppRoutes(r *gin.Engine,
+	jwtUserMiddleWare gin.HandlerFunc,
+	rulesMiddleware gin.HandlerFunc,
+	updateTokenMiddleware gin.HandlerFunc,
+	otp *auth.OTP) {
+	r.GET("/about", aboutHandler)
+	r.GET("/info", infoHandler)
 
 	adminroutes.RegisterRoutes(r, rulesMiddleware)
-
 	authenticationroutes.RegisterRoutes(r, jwtUserMiddleWare, updateTokenMiddleware)
-
-	sessionroutes.RegisterRoutes(r,
-		otp,
-		jwtUserMiddleWare)
-
-	//
-	// Deal with logins where we want a session
-	//
-
+	sessionroutes.RegisterRoutes(r, otp, jwtUserMiddleWare)
 	modules.RegisterRoutes(r, rulesMiddleware)
 
-	//
-	// Util routes
-	//
-
 	utilsGroup := r.Group("/utils")
-	//moduleGroup.Use(jwtMiddleWare,JwtIsAccessTokenMiddleware)
-
 	xlsxGroup := utilsGroup.Group("/xlsx")
 	xlsxGroup.POST("/sheets", utilsroutes.XlsxSheetsRoute)
 	xlsxGroup.POST("/to/:format", utilsroutes.XlsxToRoute)
@@ -309,14 +173,38 @@ func main() {
 	utilsGroup.GET("/passwords/hash", utilsroutes.HashedPasswordRoute)
 	utilsGroup.GET("/randkey", utilsroutes.RandomKeyRoute)
 	utilsGroup.GET("/uuidv7", utilsroutes.UUIDv7Route)
+}
 
-	// r.GET("/ping", func(c *gin.Context) {
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 		"message": "pong",
-	// 	})
-	// })
+func main() {
+	tokengen.Init(token.NewES256TokenSigner(consts.JwtES256PrivateKey))
 
-	// required so it can listen externally within docker container
-	r.Run(consts.AppPort) //"localhost:8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	claimsParser := middleware.NewUserJWTParser(middleware.NewJwtClaimsES256Parser(consts.JwtES256PublicKey))
+	jwtUserMiddleWare := middleware.UserJWTMiddleware(claimsParser)
+	rulesMiddleware := middleware.RulesMiddleware(claimsParser, re)
+	updateTokenMiddleware := middleware.JwtIsUpdateTokenMiddleware()
 
+	otp := auth.NewDefaultOTP(rdb)
+
+	defer rdb.Close()
+
+	tp, err := initTracerProvider()
+	if err != nil {
+		log.Fatal().Msgf("failed to initialize tracer provider: %v", err)
+	}
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancel()
+		if err := tp.Shutdown(ctx); err != nil {
+			log.Fatal().Msgf("failed to shutdown tracer provider: %v", err)
+		}
+	}()
+
+	r := gin.New()
+
+	setupMiddlewares(r)
+
+	registerAppRoutes(r, jwtUserMiddleWare, rulesMiddleware, updateTokenMiddleware, otp)
+
+	log.Info().Msgf("starting server on %s", consts.AppPort)
+	r.Run(consts.AppPort)
 }

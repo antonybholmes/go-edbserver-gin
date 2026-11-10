@@ -67,39 +67,44 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 }
 
 func UpdatePasswordRoute(c *gin.Context) {
-	middleware.NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Success(func(validator *middleware.Validator) {
+	validator, err := middleware.NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Ok()
 
-		if validator.Claims.Type != token.TokenTypeResetPassword {
-			web.BadReqResp(c, token.ErrInvalidTokenType)
-			return
-		}
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
-		authUser := validator.AuthUser
+	if validator.Claims.Type != token.TokenTypeResetPassword {
+		web.BadReqResp(c, token.ErrInvalidTokenType)
+		return
+	}
 
-		err := auth.CheckOTPValid(authUser, validator.Claims.OneTimePasscode)
+	authUser := validator.AuthUser
 
-		if err != nil {
-			c.Error(err)
-			return
-		}
+	err = auth.CheckOTPValid(authUser, validator.Claims.OneTimePasscode)
 
-		_, err = userdbcache.Instance().SetPassword(authUser, validator.UserBodyReq.Password, false)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
-		if err != nil {
-			web.BadReqResp(c, err)
-			return
-		}
+	_, err = userdbcache.Instance().SetPassword(authUser, validator.UserBodyReq.Password, false)
 
-		//return SendPasswordEmail(c, validator.AuthUser, validator.Req.Password)
+	if err != nil {
+		web.BadReqResp(c, err)
+		return
+	}
 
-		email := mailserver.MailItem{
-			Name:      authUser.Name,
-			To:        authUser.Email,
-			EmailType: edbmail.EmailQueueTypePasswordUpdated}
-		mailqueue.SendMail(&email)
+	//return SendPasswordEmail(c, validator.AuthUser, validator.Req.Password)
 
-		web.MakeOkResp(c, "password updated confirmation email sent")
-	})
+	email := mailserver.MailItem{
+		Name:      authUser.Name,
+		To:        authUser.Email,
+		EmailType: edbmail.EmailQueueTypePasswordUpdated}
+	mailqueue.SendMail(&email)
+
+	web.MakeOkResp(c, "password updated confirmation email sent")
+
 }
 
 // func SendPasswordEmail(c *gin.Context, authUser *auth.AuthUser, password string) error {
