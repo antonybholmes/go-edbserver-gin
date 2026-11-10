@@ -33,7 +33,7 @@ build += INC
 #     major += INC
 #     minor = 0
 
-config["version"] = f"{major}.{minor}.{patch}"
+config["version"] = f"{major}.{minor}.{patch}.{build}"
 config["build"] = build
 config["updated"] = time.strftime("%b %d, %Y")
 
