@@ -9,21 +9,34 @@ import (
 	"github.com/antonybholmes/go-sys"
 	"github.com/antonybholmes/go-sys/env"
 	"github.com/antonybholmes/go-sys/log"
-	"github.com/antonybholmes/go-web/auth"
 
 	"github.com/golang-jwt/jwt/v5"
+	"go.yaml.in/yaml/v4"
 )
 
 const (
-	Name      = "Experiments Server"
-	AppName   = "edbserver"
-	Copyright = "Copyright (C) 2024-2025 Antony Holmes"
+	Name       = "Experiments Server"
+	AppName    = "edbserver"
+	Copyright  = "Copyright (C) 2024-2025 Antony Holmes"
+	ConfigFile = "config/app.yaml"
 )
 
 var (
 	AppUrl    string
 	AppDomain string
+	AppPort   string
 	Version   sys.VersionInfo
+
+	AllowOrigins     []string
+	AllowMethods     []string
+	AllowHeaders     []string
+	AllowCredentials bool
+	CorsMaxAge       time.Duration
+
+	PasswordlessTokenTtlMins time.Duration
+	AccessTokenTtlMins       time.Duration
+	OtpTokenTtlMins          time.Duration
+	ShortTtlMins             time.Duration
 
 	//JwtRsaPrivateKey *rsa.PrivateKey //[]byte
 	//JwtRsaPublicKey  *rsa.PublicKey  //[]byte
@@ -56,11 +69,6 @@ var (
 	SupabaseDomain   string
 	SupabaseAudience string
 
-	PasswordlessTokenTtlMins time.Duration
-	AccessTokenTtlMins       time.Duration
-	OtpTokenTtlMins          time.Duration
-	ShortTtlMins             time.Duration
-
 	UrlResetEmail    string
 	UrlResetPassword string
 	UrlVerifyEmail   string
@@ -81,21 +89,87 @@ var (
 	ScrnaDir     string
 )
 
-func init() {
-	//env.Load("consts.env")
+type appConfig struct {
+	App struct {
+		URL     string `yaml:"url"`
+		Domain  string `yaml:"domain"`
+		LogFile string `yaml:"logFile"`
+		Port    string `yaml:"port"`
+	} `yaml:"app"`
+	Cors struct {
+		AllowOrigins     []string `yaml:"allowOrigins"`
+		AllowMethods     []string `yaml:"allowMethods"`
+		AllowHeaders     []string `yaml:"allowHeaders"`
+		AllowCredentials bool     `yaml:"allowCredentials"`
+		MaxAge           int      `yaml:"maxAge"`
+	} `yaml:"cors"`
+	Session struct {
+		Name     string `yaml:"name"`
+		TTLHours int    `yaml:"ttlHours"`
+	} `yaml:"session"`
+	Auth struct {
+		PasswordlessTokenTtlMins int `yaml:"passwordlessTokenTtlMins"`
+		AccessTokenTtlMins       int `yaml:"accessTokenTtlMins"`
+		OtpTokenTtlMins          int `yaml:"otpTokenTtlMins"`
+		ShortTtlMins             int `yaml:"shortTtlMins"`
+	} `yaml:"auth"`
+	Databases struct {
+		Motifs       string `yaml:"motifs"`
+		WGS          string `yaml:"wgs"`
+		GeneConv     string `yaml:"geneconv"`
+		Pathway      string `yaml:"pathway"`
+		Gex          string `yaml:"gex"`
+		Seqs         string `yaml:"seqs"`
+		Beds         string `yaml:"beds"`
+		Genomes      string `yaml:"genomes"`
+		ScrnaDir     string `yaml:"scrnaDir"`
+		CytobandsDir string `yaml:"cytobandsDir"`
+		DnaDir       string `yaml:"dnaDir"`
+		HubsDir      string `yaml:"hubsDir"`
+	} `yaml:"databases"`
+}
 
-	val, exists := os.LookupEnv("APP_ENV")
-
-	if !exists || val != "production" {
-		env.Load("consts.env")
+func loadConfig() *appConfig {
+	data, err := os.ReadFile(ConfigFile)
+	if err != nil {
+		log.Fatal().Msgf("failed to read config file: %v", err)
 	}
+
+	cfg := &appConfig{}
+	err = yaml.Unmarshal(data, cfg)
+	if err != nil {
+		log.Fatal().Msgf("failed to parse config file: %v", err)
+	}
+
+	return cfg
+}
+
+func init() {
+	// val, exists := os.LookupEnv("APP_ENV")
+
+	// if !exists || val != "production" {
+	// 	env.Load("consts.env")
+	// }
 
 	env.Load("version.env")
 
-	AppUrl = os.Getenv("APP_URL")
-	AppDomain = os.Getenv("APP_DOMAIN")
-	//Version = os.Getenv("VERSION")
-	//Updated = os.Getenv("UPDATED")
+	cfg := loadConfig()
+
+	AppUrl = cfg.App.URL
+	AppDomain = cfg.App.Domain
+	AppPort = cfg.App.Port
+	AllowOrigins = cfg.Cors.AllowOrigins
+	AllowMethods = cfg.Cors.AllowMethods
+	AllowHeaders = cfg.Cors.AllowHeaders
+	AllowCredentials = cfg.Cors.AllowCredentials
+	CorsMaxAge = time.Duration(cfg.Cors.MaxAge) * time.Second
+
+	SessionName = cfg.Session.Name
+
+	PasswordlessTokenTtlMins = time.Duration(cfg.Auth.PasswordlessTokenTtlMins) * time.Minute
+	AccessTokenTtlMins = time.Duration(cfg.Auth.AccessTokenTtlMins) * time.Minute
+	OtpTokenTtlMins = time.Duration(cfg.Auth.OtpTokenTtlMins) * time.Minute
+	ShortTtlMins = time.Duration(cfg.Auth.ShortTtlMins) * time.Minute
 
 	RedisAddr = os.Getenv("REDIS_ADDR")
 	RedisPassword = os.Getenv("REDIS_PASSWORD")
@@ -104,16 +178,8 @@ func init() {
 	UrlResetPassword = os.Getenv("URL_RESET_PASSWORD")
 	UrlVerifyEmail = os.Getenv("URL_VERIFY_EMAIL")
 
-	//JWT_PRIVATE_KEY = []byte(os.Getenv("JWT_SECRET"))
-	//JWT_PUBLIC_KEY = []byte(os.Getenv("JWT_SECRET"))
-	SessionName = os.Getenv("SESSION_NAME")
 	SessionKey = os.Getenv("SESSION_KEY")
 	SessionEncryptionKey = os.Getenv("SESSION_ENCRYPTION_KEY")
-
-	PasswordlessTokenTtlMins = env.GetMin("PASSWORDLESS_TOKEN_TTL_MINS", auth.Ttl10Mins)
-	AccessTokenTtlMins = env.GetMin("ACCESS_TOKEN_TTL_MINS", auth.Ttl15Mins)
-	OtpTokenTtlMins = env.GetMin("OTP_TOKEN_TTL_MINS", auth.Ttl20Mins)
-	ShortTtlMins = env.GetMin("SHORT_TTL_MINS", auth.Ttl10Mins)
 
 	Auth0Audience = os.Getenv("AUTH0_AUDIENCE")
 	Auth0Domain = os.Getenv("AUTH0_DOMAIN")
@@ -132,38 +198,18 @@ func init() {
 
 	SqsQueueUrl = os.Getenv("SQS_QUEUE_URL")
 
-	MotifsDB = os.Getenv("MOTIFS_DB")
-	WGSDB = os.Getenv("WGS_DB")
-	GeneConvDB = os.Getenv("GENECONV_DB")
-	PathwayDB = os.Getenv("PATHWAY_DB")
-	CytobandsDir = os.Getenv("CYTOBANDS_DIR")
-	GexDB = os.Getenv("GEX_DB")
-	SeqsDB = os.Getenv("SEQS_DB")
-	HubsDir = os.Getenv("HUBS_DIR")
-	BedsDB = os.Getenv("BEDS_DB")
-	DnaDir = os.Getenv("DNA_DIR")
-	GenomesDB = os.Getenv("GENOMES_DB")
-	ScrnaDir = os.Getenv("SCRNA_DIR")
-
-	// bytes, err := os.ReadFile("jwtRS256.key")
-	// if err != nil {
-	// 	log.Fatal().Msgf("%s", err)
-	// }
-
-	// JwtRsaPrivateKey, err = jwt.ParseRSAPrivateKeyFromPEM(bytes)
-	// if err != nil {
-	// 	log.Fatal().Msgf("%s", err)
-	// }
-
-	// bytes, err = os.ReadFile("jwtRS256.key.pub")
-	// if err != nil {
-	// 	log.Fatal().Msgf("%s", err)
-	// }
-
-	// JwtRsaPublicKey, err = jwt.ParseRSAPublicKeyFromPEM(bytes)
-	// if err != nil {
-	// 	log.Fatal().Msgf("%s", err)
-	// }
+	MotifsDB = cfg.Databases.Motifs
+	WGSDB = cfg.Databases.WGS
+	GeneConvDB = cfg.Databases.GeneConv
+	PathwayDB = cfg.Databases.Pathway
+	CytobandsDir = cfg.Databases.CytobandsDir
+	GexDB = cfg.Databases.Gex
+	SeqsDB = cfg.Databases.Seqs
+	HubsDir = cfg.Databases.HubsDir
+	BedsDB = cfg.Databases.Beds
+	DnaDir = cfg.Databases.DnaDir
+	GenomesDB = cfg.Databases.Genomes
+	ScrnaDir = cfg.Databases.ScrnaDir
 
 	//
 	// Load EC keys

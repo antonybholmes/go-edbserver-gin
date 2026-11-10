@@ -63,7 +63,10 @@ type (
 	}
 )
 
-const PreflightMaxAge = 12 * 3600 // 12 hours
+const (
+	PreflightMaxAge = 12 * 3600 // 12 hours
+
+)
 
 // var store *sqlitestorr.SqliteStore
 var (
@@ -246,20 +249,11 @@ func main() {
 	//r.Use(middleware.CSRFCookieMiddleware())
 
 	r.Use(cors.New(cors.Config{
-		//AllowAllOrigins: true,
-		AllowOrigins: []string{
-			"http://localhost:3000",
-			"http://localhost:8000",
-			"https://edb.rdf-lab.org",
-			"https://edb-client-astro.pages.dev",
-			"https://edb-client-next.pages.dev",
-			"https://edb-client-next.vercel.app"},
-		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders: []string{"Origin", "Content-Type", "Authorization", "X-CSRF-Token"},
-		//AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, "Set-Cookie"},
-		// for sharing session cookie for validating logins etc
-		AllowCredentials: true,            // Allow credentials (cookies, HTTP authentication)
-		MaxAge:           PreflightMaxAge, // Cache preflight response for 12 hours
+		AllowOrigins:     consts.AllowOrigins,
+		AllowMethods:     consts.AllowMethods,
+		AllowHeaders:     consts.AllowHeaders,
+		AllowCredentials: consts.AllowCredentials,
+		MaxAge:           consts.CorsMaxAge,
 	}))
 
 	store = cookie.NewStore([]byte(consts.SessionKey),
@@ -323,6 +317,6 @@ func main() {
 	// })
 
 	// required so it can listen externally within docker container
-	r.Run("0.0.0.0:8080") //"localhost:8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r.Run(consts.AppPort) //"localhost:8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 
 }

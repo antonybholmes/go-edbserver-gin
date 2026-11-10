@@ -1,0 +1,50 @@
+app:
+  url: https://edb.rdf-lab.org
+  domain: edb.rdf-lab.org
+  logFile: logs/app.log
+  port: "0.0.0.0:8080"
+
+cors:
+  allowOrigins:
+    - http://localhost:3000
+    - http://localhost:8000
+    - https://edb.rdf-lab.org
+    - https://edb-client-astro.pages.dev
+    - https://edb-client-next.pages.dev
+    - https://edb-client-next.vercel.app
+  allowMethods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+  allowHeaders:
+    - Origin
+    - Content-Type
+    - Authorization
+    - X-CSRF-Token
+  allowCredentials: true
+  maxAge: 43200
+
+session:
+  name: edb-session-v2
+  ttlHours: 720
+
+auth:
+  passwordlessTokenTtlMins: 10
+  accessTokenTtlMins: 15
+  otpTokenTtlMins: 15
+  shortTtlMins: 10
+
+databases:
+  motifs: data/modules/motifs/motifs-20260612.db
+  wgs: data/modules/wgs/wgs-20260415.db
+  geneconv: data/modules/geneconv/geneconv.db
+  pathway: data/modules/pathway/pathway-20260527.db
+  gex: data/modules/gex/gex.db
+  seqs: data/modules/seqs/seqs.db
+  beds: data/modules/beds/beds.db
+  genomes: data/modules/genomes/genomes.db
+  scrnaDir: data/modules/scrna
+  cytobandsDir: data/modules/cytobands
+  dnaDir: data/modules/dna
+  hubsDir: data/modules/hubs
