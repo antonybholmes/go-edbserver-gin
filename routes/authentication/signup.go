@@ -19,7 +19,7 @@ func SignupRoute(c *gin.Context) {
 	middleware.NewValidator(c).CheckEmailIsWellFormed().Success(func(validator *middleware.Validator) {
 		req := validator.UserBodyReq
 
-		authUser, err := userdbcache.CreateUserFromSignup(req)
+		authUser, err := userdbcache.Instance().CreateUserFromSignup(req)
 
 		if err != nil {
 			c.Error(err)
@@ -80,7 +80,7 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 			web.MakeOkResp(c, "")
 		}
 
-		_, err := userdbcache.SetEmailIsVerified(authUser)
+		_, err := userdbcache.Instance().SetEmailIsVerified(authUser)
 
 		if err != nil {
 			web.MakeSuccessResp(c, "unable to verify user", false)

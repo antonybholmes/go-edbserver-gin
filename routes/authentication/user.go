@@ -30,14 +30,14 @@ func UpdateUserRoute(c *gin.Context) {
 
 		log.Debug().Msgf("UpdateUserRoute: publicId: %s ", userId)
 
-		authUser, err := userdbcache.FindUserById(userId)
+		authUser, err := userdbcache.Instance().FindUserById(userId)
 
 		if err != nil {
 			c.Error(err)
 			return
 		}
 
-		err = userdbcache.SetUserInfo(authUser,
+		err = userdbcache.Instance().SetUserInfo(authUser,
 			validator.UserBodyReq.Username,
 			validator.UserBodyReq.Name,
 			false)
@@ -50,7 +50,7 @@ func UpdateUserRoute(c *gin.Context) {
 		//return SendUserInfoUpdatedEmail(c, authUser)
 
 		// reload user details
-		authUser, err = userdbcache.FindUserById(userId)
+		authUser, err = userdbcache.Instance().FindUserById(userId)
 
 		if err != nil {
 			c.Error(err)

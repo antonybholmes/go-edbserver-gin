@@ -155,7 +155,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 
 	user := validator.UserBodyReq.Username
 
-	authUser, err := userdbcache.FindUserByUsername(user)
+	authUser, err := userdbcache.Instance().FindUserByUsername(user)
 
 	if err != nil {
 		web.UserDoesNotExistResp(c)
@@ -232,7 +232,7 @@ func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 		return
 	}
 
-	authUser, err := userdbcache.FindUserByApiKey(validator.UserBodyReq.ApiKey)
+	authUser, err := userdbcache.Instance().FindUserByApiKey(validator.UserBodyReq.ApiKey)
 
 	if err != nil {
 		web.UserDoesNotExistResp(c)
@@ -319,7 +319,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context)
 		authProvider = "auth0"
 	}
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(email, tokenClaims.Name, tokenClaims.Picture, authProvider)
+	authUser, err := userdbcache.Instance().CreateUserFromOAuth2(email, tokenClaims.Name, tokenClaims.Picture, authProvider)
 
 	if err != nil {
 		c.Error(err)
@@ -357,7 +357,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingCognitoRoute(c *gin.Contex
 
 	authProvider := "cognito"
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(email, tokenClaims.Name, tokenClaims.Picture, authProvider)
+	authUser, err := userdbcache.Instance().CreateUserFromOAuth2(email, tokenClaims.Name, tokenClaims.Picture, authProvider)
 
 	if err != nil {
 		c.Error(err)
@@ -387,7 +387,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context)
 
 	authProvider := "clerk"
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(email, tokenClaims.Name, tokenClaims.Picture, authProvider)
+	authUser, err := userdbcache.Instance().CreateUserFromOAuth2(email, tokenClaims.Name, tokenClaims.Picture, authProvider)
 
 	if err != nil {
 		c.Error(err)
@@ -424,7 +424,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Conte
 
 	authProvider := "supabase"
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(email, name, tokenClaims.UserMetadata.AvatarUrl, authProvider)
+	authUser, err := userdbcache.Instance().CreateUserFromOAuth2(email, name, tokenClaims.UserMetadata.AvatarUrl, authProvider)
 	if err != nil {
 		c.Error(err)
 		return
@@ -464,7 +464,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Co
 
 	authProvider := "email_otp"
 
-	authUser, err := userdbcache.CreateUserFromOAuth2(validator.Address, username, validator.UserBodyReq.PictureUrl, authProvider)
+	authUser, err := userdbcache.Instance().CreateUserFromOAuth2(validator.Address, username, validator.UserBodyReq.PictureUrl, authProvider)
 
 	if err != nil {
 		log.Debug().Msgf("error creating user from otp sign in: %v", err)
@@ -593,7 +593,7 @@ func (sessionRoutes *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
 	}
 
 	// refresh user
-	authUser, err := userdbcache.FindUserById(user.(*auth.AuthUser).Id)
+	authUser, err := userdbcache.Instance().FindUserById(user.(*auth.AuthUser).Id)
 
 	if err != nil {
 		web.UnauthorizedResp(c, auth.ErrUserDoesNotExist)
@@ -727,7 +727,7 @@ func SessionUpdateUserRoute(c *gin.Context) {
 
 	middleware.NewValidator(c).CheckUsernameIsWellFormed().Success(func(validator *middleware.Validator) {
 
-		err = userdbcache.SetUserInfo(authUser,
+		err = userdbcache.Instance().SetUserInfo(authUser,
 			validator.UserBodyReq.Username,
 			validator.UserBodyReq.Name,
 			false)
@@ -759,7 +759,7 @@ func SessionUpdatePasswordRoute(c *gin.Context) {
 	authUser := user.(*auth.AuthUser)
 
 	// use current session user
-	authUser, err := userdbcache.FindUserById(authUser.Id)
+	authUser, err := userdbcache.Instance().FindUserById(authUser.Id)
 
 	if err != nil {
 		web.BadReqResp(c, auth.ErrUserDoesNotExist)
@@ -789,7 +789,7 @@ func SessionUpdatePasswordRoute(c *gin.Context) {
 		return
 	}
 
-	_, err = userdbcache.SetPassword(authUser, req.NewPassword, false)
+	_, err = userdbcache.Instance().SetPassword(authUser, req.NewPassword, false)
 
 	if err != nil {
 		web.BadReqResp(c, auth.ErrCouldNotUpdatePassword)

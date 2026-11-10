@@ -14,6 +14,46 @@ import (
 	"go.yaml.in/yaml/v4"
 )
 
+type AppConfig struct {
+	App struct {
+		URL     string `yaml:"url"`
+		Domain  string `yaml:"domain"`
+		LogFile string `yaml:"logFile"`
+		Port    string `yaml:"port"`
+	} `yaml:"app"`
+	Cors struct {
+		AllowOrigins     []string `yaml:"allowOrigins"`
+		AllowMethods     []string `yaml:"allowMethods"`
+		AllowHeaders     []string `yaml:"allowHeaders"`
+		AllowCredentials bool     `yaml:"allowCredentials"`
+		MaxAge           int      `yaml:"maxAge"`
+	} `yaml:"cors"`
+	Session struct {
+		Name     string `yaml:"name"`
+		TTLHours int    `yaml:"ttlHours"`
+	} `yaml:"session"`
+	Auth struct {
+		PasswordlessTokenTtlMins int `yaml:"passwordlessTokenTtlMins"`
+		AccessTokenTtlMins       int `yaml:"accessTokenTtlMins"`
+		OtpTokenTtlMins          int `yaml:"otpTokenTtlMins"`
+		ShortTtlMins             int `yaml:"shortTtlMins"`
+	} `yaml:"auth"`
+	Databases struct {
+		Motifs       string `yaml:"motifs"`
+		WGS          string `yaml:"wgs"`
+		GeneConv     string `yaml:"geneconv"`
+		Pathway      string `yaml:"pathway"`
+		Gex          string `yaml:"gex"`
+		Seqs         string `yaml:"seqs"`
+		Beds         string `yaml:"beds"`
+		Genomes      string `yaml:"genomes"`
+		ScrnaDir     string `yaml:"scrnaDir"`
+		CytobandsDir string `yaml:"cytobandsDir"`
+		DnaDir       string `yaml:"dnaDir"`
+		HubsDir      string `yaml:"hubsDir"`
+	} `yaml:"databases"`
+}
+
 const (
 	Name       = "Experiments Server"
 	AppName    = "edbserver"
@@ -89,55 +129,16 @@ var (
 	ScrnaDir     string
 )
 
-type appConfig struct {
-	App struct {
-		URL     string `yaml:"url"`
-		Domain  string `yaml:"domain"`
-		LogFile string `yaml:"logFile"`
-		Port    string `yaml:"port"`
-	} `yaml:"app"`
-	Cors struct {
-		AllowOrigins     []string `yaml:"allowOrigins"`
-		AllowMethods     []string `yaml:"allowMethods"`
-		AllowHeaders     []string `yaml:"allowHeaders"`
-		AllowCredentials bool     `yaml:"allowCredentials"`
-		MaxAge           int      `yaml:"maxAge"`
-	} `yaml:"cors"`
-	Session struct {
-		Name     string `yaml:"name"`
-		TTLHours int    `yaml:"ttlHours"`
-	} `yaml:"session"`
-	Auth struct {
-		PasswordlessTokenTtlMins int `yaml:"passwordlessTokenTtlMins"`
-		AccessTokenTtlMins       int `yaml:"accessTokenTtlMins"`
-		OtpTokenTtlMins          int `yaml:"otpTokenTtlMins"`
-		ShortTtlMins             int `yaml:"shortTtlMins"`
-	} `yaml:"auth"`
-	Databases struct {
-		Motifs       string `yaml:"motifs"`
-		WGS          string `yaml:"wgs"`
-		GeneConv     string `yaml:"geneconv"`
-		Pathway      string `yaml:"pathway"`
-		Gex          string `yaml:"gex"`
-		Seqs         string `yaml:"seqs"`
-		Beds         string `yaml:"beds"`
-		Genomes      string `yaml:"genomes"`
-		ScrnaDir     string `yaml:"scrnaDir"`
-		CytobandsDir string `yaml:"cytobandsDir"`
-		DnaDir       string `yaml:"dnaDir"`
-		HubsDir      string `yaml:"hubsDir"`
-	} `yaml:"databases"`
-}
-
-func loadConfig() *appConfig {
+func loadConfig() AppConfig {
 	data, err := os.ReadFile(ConfigFile)
+
 	if err != nil {
 		log.Fatal().Msgf("failed to read config file: %v", err)
 	}
 
-	cfg := &appConfig{}
-	err = yaml.Unmarshal(data, cfg)
-	if err != nil {
+	var cfg AppConfig
+
+	if err := yaml.Load(data, &cfg); err != nil {
 		log.Fatal().Msgf("failed to parse config file: %v", err)
 	}
 

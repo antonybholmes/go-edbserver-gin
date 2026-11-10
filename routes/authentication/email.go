@@ -92,7 +92,7 @@ func UpdateEmailRoute(c *gin.Context) {
 		authUser := validator.AuthUser
 		id := authUser.Id
 
-		err = userdbcache.SetEmailAddress(authUser,
+		err = userdbcache.Instance().SetEmailAddress(authUser,
 			validator.Address,
 			false)
 
@@ -101,7 +101,7 @@ func UpdateEmailRoute(c *gin.Context) {
 			return
 		}
 
-		authUser, err = userdbcache.FindUserById(id)
+		authUser, err = userdbcache.Instance().FindUserById(id)
 
 		if err != nil {
 			c.Error(err)

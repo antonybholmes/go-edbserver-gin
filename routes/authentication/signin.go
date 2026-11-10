@@ -34,7 +34,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 			return
 		}
 
-		authUser, err := userdbcache.FindUserByUsername(validator.UserBodyReq.Username)
+		authUser, err := userdbcache.Instance().FindUserByUsername(validator.UserBodyReq.Username)
 
 		if err != nil {
 			web.UserDoesNotExistResp(c)
