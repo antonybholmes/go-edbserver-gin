@@ -22,50 +22,48 @@ func UserUpdatedResp(c *gin.Context) {
 
 func UpdateUserRoute(c *gin.Context) {
 
-	middleware.NewValidator(c).ParseSignInRequestBody().LoadTokenClaims().Success(func(validator *middleware.Validator) {
+	validator, err := middleware.NewValidator(c).ParseSignInRequestBody().LoadTokenClaims().Ok()
 
-		//db, err := userdbcache.AutoConn(nil) //not clear on what is needed for the user and password
+	userId := validator.Claims.Subject
 
-		userId := validator.Claims.Subject
+	log.Debug().Msgf("UpdateUserRoute: publicId: %s ", userId)
 
-		log.Debug().Msgf("UpdateUserRoute: publicId: %s ", userId)
+	authUser, err := userdbcache.Instance().FindUserById(userId)
 
-		authUser, err := userdbcache.Instance().FindUserById(userId)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
-		if err != nil {
-			c.Error(err)
-			return
-		}
+	err = userdbcache.Instance().SetUserInfo(authUser,
+		validator.UserBodyReq.Username,
+		validator.UserBodyReq.Name,
+		false)
 
-		err = userdbcache.Instance().SetUserInfo(authUser,
-			validator.UserBodyReq.Username,
-			validator.UserBodyReq.Name,
-			false)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
-		if err != nil {
-			c.Error(err)
-			return
-		}
+	//return SendUserInfoUpdatedEmail(c, authUser)
 
-		//return SendUserInfoUpdatedEmail(c, authUser)
+	// reload user details
+	authUser, err = userdbcache.Instance().FindUserById(userId)
 
-		// reload user details
-		authUser, err = userdbcache.Instance().FindUserById(userId)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
-		if err != nil {
-			c.Error(err)
-			return
-		}
+	// send email notification of change
+	email := mailserver.MailItem{Name: authUser.Name,
+		To:        authUser.Email,
+		EmailType: edbmail.EmailQueueTypeAccountUpdated}
+	mailqueue.SendMail(&email)
 
-		// send email notification of change
-		email := mailserver.MailItem{Name: authUser.Name,
-			To:        authUser.Email,
-			EmailType: edbmail.EmailQueueTypeAccountUpdated}
-		mailqueue.SendMail(&email)
+	// send back updated user to having to do a separate call to get the new data
+	web.MakeDataResp(c, "account updated confirmation email sent", authUser)
 
-		// send back updated user to having to do a separate call to get the new data
-		web.MakeDataResp(c, "account updated confirmation email sent", authUser)
-	})
 }
 
 func UserRoute(c *gin.Context) {

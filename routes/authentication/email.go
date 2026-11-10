@@ -22,56 +22,62 @@ import (
 
 // Start passwordless login by sending an email
 func SendResetEmailEmailRoute(c *gin.Context) {
-	middleware.NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Success(func(validator *middleware.Validator) {
-		authUser := validator.AuthUser
-		req := validator.UserBodyReq
+	validator, err := middleware.NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Ok()
 
-		newEmail, err := mail.ParseAddress(req.Email)
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
-		if err != nil {
-			c.Error(err)
-			return
-		}
+	authUser := validator.AuthUser
+	req := validator.UserBodyReq
 
-		otpToken, err := tokengen.Instance().MakeResetEmailToken(c, authUser, jwt.ClaimStrings{"reset-password"}, newEmail)
+	newEmail, err := mail.ParseAddress(req.Email)
 
-		if err != nil {
-			c.Error(err)
-			return
-		}
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
-		// var file string
+	otpToken, err := tokengen.Instance().MakeResetEmailToken(c, authUser, jwt.ClaimStrings{"reset-password"}, newEmail)
 
-		// if req.CallbackUrl != "" {
-		// 	file = "templates/email/email/reset/web.html"
-		// } else {
-		// 	file = "templates/email/email/reset/api.html"
-		// }
+	if err != nil {
+		c.Error(err)
+		return
+	}
 
-		// go BaseSendEmailWithToken("Update Email",
-		// 	authUser,
-		// 	newEmail,
-		// 	file,
-		// 	otpToken,
-		// 	req.CallbackUrl,
-		// 	req.VisitUrl)
+	// var file string
 
-		email := mailserver.MailItem{
-			Name:      authUser.Name,
-			To:        authUser.Email,
-			Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
-			EmailType: edbmail.EmailQueueTypeEmailReset,
-			TTL:       fmt.Sprintf("%d minutes", int(consts.ShortTtlMins.Minutes())),
-			LinkUrl:   consts.UrlResetEmail,
-		}
-		mailqueue.SendMail(&email)
+	// if req.CallbackUrl != "" {
+	// 	file = "templates/email/email/reset/web.html"
+	// } else {
+	// 	file = "templates/email/email/reset/api.html"
+	// }
 
-		//if err != nil {
-		//	return web.ErrorReq(err)
-		//}
+	// go BaseSendEmailWithToken("Update Email",
+	// 	authUser,
+	// 	newEmail,
+	// 	file,
+	// 	otpToken,
+	// 	req.CallbackUrl,
+	// 	req.VisitUrl)
 
-		web.MakeOkResp(c, "check your email for a change email link")
-	})
+	email := mailserver.MailItem{
+		Name:      authUser.Name,
+		To:        authUser.Email,
+		Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
+		EmailType: edbmail.EmailQueueTypeEmailReset,
+		TTL:       fmt.Sprintf("%d minutes", int(consts.ShortTtlMins.Minutes())),
+		LinkUrl:   consts.UrlResetEmail,
+	}
+	mailqueue.SendMail(&email)
+
+	//if err != nil {
+	//	return web.ErrorReq(err)
+	//}
+
+	web.MakeOkResp(c, "check your email for a change email link")
+
 }
 
 func UpdateEmailRoute(c *gin.Context) {
