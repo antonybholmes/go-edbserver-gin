@@ -33,7 +33,7 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 			return
 		}
 
-		otpToken, err := tokengen.MakeResetEmailToken(c, authUser, jwt.ClaimStrings{"reset-password"}, newEmail)
+		otpToken, err := tokengen.Instance().MakeResetEmailToken(c, authUser, jwt.ClaimStrings{"reset-password"}, newEmail)
 
 		if err != nil {
 			c.Error(err)

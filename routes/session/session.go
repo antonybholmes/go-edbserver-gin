@@ -673,14 +673,14 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 	switch req.Type {
 	case "update":
 		// Generate encoded token and send it as response.
-		tokenStr, err = tokengen.UpdateToken(c, authUser.Id, req.Audience, roles)
+		tokenStr, err = tokengen.Instance().UpdateToken(c, authUser.Id, req.Audience, roles)
 
 		if err != nil {
 			err = token.NewTokenError(err.Error())
 		}
 	default:
 		// Generate access token and send it as response.
-		tokenStr, err = tokengen.AccessToken(c, authUser.Id, req.Audience, roles)
+		tokenStr, err = tokengen.Instance().AccessToken(c, authUser.Id, req.Audience, roles)
 
 		if err != nil {
 			err = token.NewTokenError(err.Error())

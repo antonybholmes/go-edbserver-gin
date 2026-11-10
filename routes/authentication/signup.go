@@ -26,7 +26,7 @@ func SignupRoute(c *gin.Context) {
 			return
 		}
 
-		token, err := tokengen.MakeVerifyEmailToken(c, authUser, jwt.ClaimStrings{"verify-email"}, req.RedirectUrl)
+		token, err := tokengen.Instance().MakeVerifyEmailToken(c, authUser, jwt.ClaimStrings{"verify-email"}, req.RedirectUrl)
 
 		//log.Debug().Msgf("%s", otpJwt)
 
