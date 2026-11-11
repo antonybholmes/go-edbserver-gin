@@ -38,12 +38,12 @@ auth:
 databases:
   motifs: data/modules/motifs/motifs-20260612.db
   wgs: data/modules/wgs/wgs-20260415.db
-  geneconv: data/modules/geneconv/geneconv.db
+  geneconv: data/modules/geneconv/geneconv-20260603.db
   pathway: data/modules/pathway/pathway-20260527.db
-  gex: data/modules/gex/gex.db
-  seqs: data/modules/seqs/seqs.db
-  beds: data/modules/beds/beds.db
-  genomes: data/modules/genomes/genomes.db
+  gex: data/modules/gex/gex-20260507.db
+  seqs: data/modules/seqs/seqs-20260504.db
+  beds: data/modules/beds/beds-20260504.db
+  genomes: data/modules/genome/genomes.v20260608.db
   scrnaDir: data/modules/scrna
   cytobandsDir: data/modules/cytobands
   dnaDir: data/modules/dna

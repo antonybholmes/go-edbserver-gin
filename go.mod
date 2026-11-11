@@ -37,19 +37,19 @@ replace github.com/antonybholmes/go-scrna => ../go-scrna
 require (
 	github.com/antonybholmes/go-beds v0.0.0-20251121231947-7748047af425
 	github.com/antonybholmes/go-cytobands v0.0.0-20251121223901-de9a5b3a590a
-	github.com/antonybholmes/go-dna v0.0.0-20260908135750-c85cdd7272cf
+	github.com/antonybholmes/go-dna v0.0.0-20261110183824-46da328d71d4
 	github.com/antonybholmes/go-edbmailserver v0.0.0-20251121215824-6ff0c5cf2c21
 	github.com/antonybholmes/go-geneconv v0.0.0-20251121222738-b6e5c9016658
 	github.com/antonybholmes/go-genome v0.0.0-20260626225350-21ef82c36d98
 	github.com/antonybholmes/go-gex v0.0.0-20251121215822-a364f8d47b61
 	github.com/antonybholmes/go-hubs v0.0.0-00010101000000-000000000000
-	github.com/antonybholmes/go-mailserver v0.0.0-20260908140225-6848dd6e6739
+	github.com/antonybholmes/go-mailserver v0.0.0-20261110151329-217742257560
 	github.com/antonybholmes/go-motifs v0.0.0-20251121222735-b9b35b49f4ee
 	github.com/antonybholmes/go-pathway v0.0.0-20251121222731-16f8a04f47da
 	github.com/antonybholmes/go-scrna v0.0.0-20251121215820-17e42e152320
-	github.com/antonybholmes/go-seqs v0.0.0-20260908135749-8c05fe4a57d9
-	github.com/antonybholmes/go-sys v0.0.0-20260908140228-8e2f77b20bfe
-	github.com/antonybholmes/go-web v0.0.0-20260908135751-3b983ccb8f07
+	github.com/antonybholmes/go-seqs v0.0.0-20261110183823-199ca246f0e6
+	github.com/antonybholmes/go-sys v0.0.0-20261110151334-69bf4fef33df
+	github.com/antonybholmes/go-web v0.0.0-20261110234949-65d799daa5ac
 	github.com/antonybholmes/go-wgs v0.0.0-00010101000000-000000000000
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/sessions v1.0.4
@@ -61,27 +61,27 @@ require (
 	go.opentelemetry.io/otel v1.38.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.38.0
 	go.opentelemetry.io/otel/sdk v1.38.0
-	gopkg.in/yaml.v3 v3.0.1
+	go.yaml.in/yaml/v4 v4.0.0
 )
 
 require (
 	github.com/MicahParks/jwkset v0.11.0 // indirect
 	github.com/MicahParks/keyfunc/v3 v3.7.0 // indirect
-	github.com/aws/aws-sdk-go-v2 v1.47.8 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.33.17 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.20.17 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.8 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.11 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.11 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.24 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.79.8 // indirect
-	github.com/aws/aws-sdk-go-v2/service/signin v1.13.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sqs v1.52.11 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.39.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.51.9 // indirect
+	github.com/aws/aws-sdk-go-v2 v1.48.0 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.33.18 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.21.0 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.25 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.12 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sesv2 v1.79.9 // indirect
+	github.com/aws/aws-sdk-go-v2/service/signin v1.13.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sqs v1.53.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.39.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.52.0 // indirect
 	github.com/aws/smithy-go v1.28.9 // indirect
 	github.com/bytedance/gopkg v0.1.4 // indirect
 	github.com/bytedance/sonic v1.15.5 // indirect
@@ -139,9 +139,8 @@ require (
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.9.0 // indirect
 	go.uber.org/atomic v1.12.0 // indirect
-	go.yaml.in/yaml/v4 v4.0.0 // indirect
 	golang.org/x/arch v0.33.0 // indirect
-	golang.org/x/crypto v0.58.0 // indirect
+	golang.org/x/crypto v0.59.0 // indirect
 	golang.org/x/exp v0.0.0-20261109185158-a52e3aef5920 // indirect
 	golang.org/x/net v0.62.0 // indirect
 	golang.org/x/sync v0.25.0 // indirect
