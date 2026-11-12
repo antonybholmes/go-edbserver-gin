@@ -43,7 +43,7 @@ databases:
   gex: data/modules/gex/gex-20260507.db
   seqs: data/modules/seqs/seqs-20260504.db
   beds: data/modules/beds/beds-20260504.db
-  genomes: data/modules/genome/genomes.v20260608.db
+  genomes: data/modules/genome/genomes.v20261112.db
   scrnaDir: data/modules/scrna
   cytobandsDir: data/modules/cytobands
   dnaDir: data/modules/dna
