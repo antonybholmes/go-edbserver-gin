@@ -16,10 +16,11 @@ import (
 
 type AppConfig struct {
 	App struct {
-		URL     string `yaml:"url"`
-		Domain  string `yaml:"domain"`
-		LogFile string `yaml:"logFile"`
-		Port    string `yaml:"port"`
+		URL            string   `yaml:"url"`
+		Domain         string   `yaml:"domain"`
+		LogFile        string   `yaml:"logFile"`
+		Port           string   `yaml:"port"`
+		TrustedProxies []string `yaml:"trustedProxies"`
 	} `yaml:"app"`
 	Cors struct {
 		AllowOrigins     []string `yaml:"allowOrigins"`
@@ -62,10 +63,11 @@ const (
 )
 
 var (
-	AppUrl    string
-	AppDomain string
-	AppPort   string
-	Version   sys.VersionInfo
+	AppUrl         string
+	AppDomain      string
+	AppPort        string
+	Version        sys.VersionInfo
+	TrustedProxies []string
 
 	AllowOrigins     []string
 	AllowMethods     []string
@@ -159,6 +161,7 @@ func init() {
 	AppUrl = cfg.App.URL
 	AppDomain = cfg.App.Domain
 	AppPort = cfg.App.Port
+	TrustedProxies = cfg.App.TrustedProxies
 	AllowOrigins = cfg.Cors.AllowOrigins
 	AllowMethods = cfg.Cors.AllowMethods
 	AllowHeaders = cfg.Cors.AllowHeaders

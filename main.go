@@ -199,12 +199,13 @@ func main() {
 		}
 	}()
 
-	r := gin.New()
+	router := gin.New()
+	router.SetTrustedProxies(consts.TrustedProxies)
 
-	setupMiddlewares(r)
+	setupMiddlewares(router)
 
-	registerAppRoutes(r, jwtUserMiddleWare, rulesMiddleware, updateTokenMiddleware, otp)
+	registerAppRoutes(router, jwtUserMiddleWare, rulesMiddleware, updateTokenMiddleware, otp)
 
 	log.Info().Msgf("starting server on %s", consts.AppPort)
-	r.Run(consts.AppPort)
+	router.Run(consts.AppPort)
 }

@@ -3,6 +3,9 @@ app:
   domain: edb.rdf-lab.org
   logFile: logs/app.log
   port: "0.0.0.0:8080"
+  trustedProxies:
+    - 127.0.0.1
+    - ::1
 
 cors:
   allowOrigins:
@@ -12,6 +15,7 @@ cors:
     - https://edb-client-astro.pages.dev
     - https://edb-client-next.pages.dev
     - https://edb-client-next.vercel.app
+
   allowMethods:
     - GET
     - POST
