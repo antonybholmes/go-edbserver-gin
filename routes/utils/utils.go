@@ -6,7 +6,6 @@ import (
 	b64 "encoding/base64"
 	"errors"
 	"fmt"
-	"math/big"
 	"strconv"
 
 	"github.com/antonybholmes/go-sys"
@@ -133,17 +132,31 @@ func XlsxToRoute(c *gin.Context) {
 }
 
 // generateRandomString generates a random string of specified length from the letters set.
+// func generateRandomString(length int) (string, error) {
+// 	b := make([]byte, length)
+// 	for i := range b {
+// 		// Generate a random index
+// 		index, err := rand.Int(rand.Reader, big.NewInt(int64(len(Alphabet))))
+
+// 		if err != nil {
+// 			return "", err
+// 		}
+
+// 		b[i] = Alphabet[index.Int64()]
+// 	}
+// 	return string(b), nil
+// }
+
 func generateRandomString(length int) (string, error) {
+	//const charSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
 	b := make([]byte, length)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+
 	for i := range b {
-		// Generate a random index
-		index, err := rand.Int(rand.Reader, big.NewInt(int64(len(Alphabet))))
-
-		if err != nil {
-			return "", err
-		}
-
-		b[i] = Alphabet[index.Int64()]
+		b[i] = Alphabet[b[i]%byte(len(Alphabet))]
 	}
 	return string(b), nil
 }

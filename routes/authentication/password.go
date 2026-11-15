@@ -56,11 +56,8 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 			EmailType: edbmail.EmailQueueTypePasswordReset,
 			TTL:       fmt.Sprintf("%d minutes", int(consts.ShortTtlMins.Minutes())),
 			LinkUrl:   consts.UrlResetPassword}
-		mailqueue.SendMail(&email)
 
-		//if err != nil {
-		//	return web.ErrorReq(err)
-		//}
+		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "check your email for a password reset link")
 	})
