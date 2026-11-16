@@ -38,7 +38,7 @@ func RegisterRoutes(r *gin.Engine, rulesMiddleware gin.HandlerFunc) {
 	gtfGroup.POST("/:id/closest", genomeroutes.ClosestGeneRoute)
 	gtfGroup.POST("/:id/annotate", genomeroutes.AnnotateRoute)
 	gtfGroup.POST("/:id/overlap", genomeroutes.OverlappingGenesRoute)
-	gtfGroup.GET("/:id/search", genomeroutes.SearchForGenesRoute)
+	gtfGroup.GET("/:id/search", genomeroutes.GeneSearchRoute)
 
 	// mutationsGroup := moduleGroup.Group("/mutations",
 	// 	jwtMiddleWare,
