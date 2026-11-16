@@ -70,6 +70,7 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 		TTL:       fmt.Sprintf("%d minutes", int(consts.ShortTtlMins.Minutes())),
 		LinkUrl:   consts.UrlResetEmail,
 	}
+
 	mailqueue.SendMail(&email)
 
 	//if err != nil {
@@ -120,6 +121,7 @@ func UpdateEmailRoute(c *gin.Context) {
 			Name:      authUser.Name,
 			To:        authUser.Email,
 			EmailType: edbmail.EmailQueueTypeEmailUpdated}
+
 		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "email updated confirmation email sent")

@@ -67,6 +67,14 @@ var (
 	store cookie.Store
 	rdb   *redis.Client
 	re    *access.RuleEngine
+
+	corsConfig = cors.Config{
+		AllowOrigins:     consts.AllowOrigins,
+		AllowMethods:     consts.AllowMethods,
+		AllowHeaders:     consts.AllowHeaders,
+		AllowCredentials: consts.AllowCredentials,
+		MaxAge:           consts.CorsMaxAge,
+	}
 )
 
 func initDatabases() {
@@ -96,10 +104,11 @@ func initDatabases() {
 }
 
 func init() {
-	//initLogger()
-
 	log.SetAppName(consts.AppName)
 	env.Ls()
+
+	store = cookie.NewStore([]byte(consts.SessionKey),
+		[]byte(consts.SessionEncryptionKey))
 
 	initDatabases()
 
@@ -134,22 +143,27 @@ func infoHandler(c *gin.Context) {
 }
 
 func setupMiddlewares(r *gin.Engine) {
-	r.Use(otelgin.Middleware("edb-server"))
-	r.Use(gin.Recovery())
-	r.Use(middleware.LoggingMiddleware())
-	r.Use(middleware.ErrorHandlerMiddleware())
+	// r.Use(otelgin.Middleware("edb-server"))
+	// r.Use(gin.Recovery())
+	// r.Use(middleware.LoggingMiddleware())
+	// r.Use(middleware.ErrorHandlerMiddleware())
 
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     consts.AllowOrigins,
-		AllowMethods:     consts.AllowMethods,
-		AllowHeaders:     consts.AllowHeaders,
-		AllowCredentials: consts.AllowCredentials,
-		MaxAge:           consts.CorsMaxAge,
-	}))
+	// r.Use(cors.New(cors.Config{
+	// 	AllowOrigins:     consts.AllowOrigins,
+	// 	AllowMethods:     consts.AllowMethods,
+	// 	AllowHeaders:     consts.AllowHeaders,
+	// 	AllowCredentials: consts.AllowCredentials,
+	// 	MaxAge:           consts.CorsMaxAge,
+	// }))
 
-	store = cookie.NewStore([]byte(consts.SessionKey),
-		[]byte(consts.SessionEncryptionKey))
-	r.Use(sessions.Sessions(consts.SessionName, store))
+	// r.Use(sessions.Sessions(consts.SessionName, store))
+
+	r.Use(cors.New(corsConfig))                         // Check CORS first
+	r.Use(middleware.ErrorHandlerMiddleware())          // Handle errors early
+	r.Use(middleware.LoggingMiddleware())               // Log relevant requests only
+	r.Use(otelgin.Middleware("edb-server"))             // Trace valid requests
+	r.Use(sessions.Sessions(consts.SessionName, store)) // Load sessions for routes that need them
+	r.Use(gin.Recovery())                               // Recover from panics
 }
 
 func registerAppRoutes(r *gin.Engine,
@@ -199,12 +213,13 @@ func main() {
 		}
 	}()
 
-	r := gin.New()
+	router := gin.New()
+	router.SetTrustedProxies(consts.TrustedProxies)
 
-	setupMiddlewares(r)
+	setupMiddlewares(router)
 
-	registerAppRoutes(r, jwtUserMiddleWare, rulesMiddleware, updateTokenMiddleware, otp)
+	registerAppRoutes(router, jwtUserMiddleWare, rulesMiddleware, updateTokenMiddleware, otp)
 
 	log.Info().Msgf("starting server on %s", consts.AppPort)
-	r.Run(consts.AppPort)
+	router.Run(consts.AppPort)
 }
