@@ -67,6 +67,14 @@ var (
 	store cookie.Store
 	rdb   *redis.Client
 	re    *access.RuleEngine
+
+	corsConfig = cors.Config{
+		AllowOrigins:     consts.AllowOrigins,
+		AllowMethods:     consts.AllowMethods,
+		AllowHeaders:     consts.AllowHeaders,
+		AllowCredentials: consts.AllowCredentials,
+		MaxAge:           consts.CorsMaxAge,
+	}
 )
 
 func initDatabases() {
@@ -96,8 +104,6 @@ func initDatabases() {
 }
 
 func init() {
-	//initLogger()
-
 	log.SetAppName(consts.AppName)
 	env.Ls()
 
@@ -151,14 +157,6 @@ func setupMiddlewares(r *gin.Engine) {
 	// }))
 
 	// r.Use(sessions.Sessions(consts.SessionName, store))
-
-	corsConfig := cors.Config{
-		AllowOrigins:     consts.AllowOrigins,
-		AllowMethods:     consts.AllowMethods,
-		AllowHeaders:     consts.AllowHeaders,
-		AllowCredentials: consts.AllowCredentials,
-		MaxAge:           consts.CorsMaxAge,
-	}
 
 	r.Use(cors.New(corsConfig))                         // Check CORS first
 	r.Use(middleware.ErrorHandlerMiddleware())          // Handle errors early

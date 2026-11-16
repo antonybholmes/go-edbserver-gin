@@ -14,38 +14,40 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type (
+	XlsxReq struct {
+		Sheet          string `json:"sheet"`
+		Headers        int    `json:"headers"`
+		Indexes        int    `json:"indexes"`
+		SkipRows       int    `json:"skipRows"`
+		TrimWhitespace bool   `json:"trimWhitespace"`
+		Xlsx           string `json:"b64xlsx"`
+	}
+
+	XlsxResp struct {
+		Table *sys.Table `json:"table"`
+	}
+
+	XlsxSheetsResp struct {
+		Sheets []string `json:"sheets"`
+	}
+
+	HashResp struct {
+		Password string `json:"password"`
+		Hash     string `json:"hash"`
+	}
+
+	KeyResp struct {
+		Key    string `json:"key"`
+		Length int    `json:"length"`
+	}
+)
+
 const Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 var (
 	ErrLengthCannotBeZero = errors.New("length cannot be zero")
 )
-
-type XlsxReq struct {
-	Sheet          string `json:"sheet"`
-	Headers        int    `json:"headers"`
-	Indexes        int    `json:"indexes"`
-	SkipRows       int    `json:"skipRows"`
-	TrimWhitespace bool   `json:"trimWhitespace"`
-	Xlsx           string `json:"b64xlsx"`
-}
-
-type XlsxResp struct {
-	Table *sys.Table `json:"table"`
-}
-
-type XlsxSheetsResp struct {
-	Sheets []string `json:"sheets"`
-}
-
-type HashResp struct {
-	Password string `json:"password"`
-	Hash     string `json:"hash"`
-}
-
-type KeyResp struct {
-	Key    string `json:"key"`
-	Length int    `json:"length"`
-}
 
 func makeXlsxReader(b64data string) (*bytes.Reader, error) {
 	xlsxb, err := b64.StdEncoding.DecodeString(b64data)
@@ -147,8 +149,9 @@ func XlsxToRoute(c *gin.Context) {
 // 	return string(b), nil
 // }
 
+// Generates a random string of the specified length using
+// the Alphabet constant.
 func generateRandomString(length int) (string, error) {
-	//const charSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 	b := make([]byte, length)
 	if _, err := rand.Read(b); err != nil {

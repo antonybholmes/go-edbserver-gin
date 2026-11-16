@@ -28,6 +28,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type SessionRoutes struct {
+	sessionOptions sessions.Options
+	OTPRoutes      *authentication.OTPRoutes
+}
+
 const MaxAgeOneYearSecs = 31536000 // 60 * 60 * 24 * 365
 
 var (
@@ -35,11 +40,6 @@ var (
 	ErrSavingSession  = errors.New("error saving session")
 	ErrSessionExpired = errors.New("session not found or expired")
 )
-
-type SessionRoutes struct {
-	sessionOptions sessions.Options
-	OTPRoutes      *authentication.OTPRoutes
-}
 
 func NewSessionRoutes(otpRoutes *authentication.OTPRoutes) *SessionRoutes {
 	maxAge := auth.MaxAge7DaysSecs
