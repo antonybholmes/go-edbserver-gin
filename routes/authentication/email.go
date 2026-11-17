@@ -6,7 +6,8 @@ import (
 	"net/mail"
 
 	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
-	"github.com/antonybholmes/go-edbserver-gin/consts"
+	"github.com/antonybholmes/go-edbserver-gin/config"
+
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
@@ -20,8 +21,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type EmailHandler struct {
+	Config *config.AppConfig
+}
+
 // Start passwordless login by sending an email
-func SendResetEmailEmailRoute(c *gin.Context) {
+func (h *EmailHandler) SendResetEmailEmailRoute(c *gin.Context) {
 	validator, err := middleware.NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Ok()
 
 	if err != nil {
@@ -67,8 +72,8 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 		To:        authUser.Email,
 		Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
 		EmailType: edbmail.EmailQueueTypeEmailReset,
-		TTL:       fmt.Sprintf("%d minutes", int(consts.ShortTtlMins.Minutes())),
-		LinkUrl:   consts.UrlResetEmail,
+		TTL:       fmt.Sprintf("%d minutes", int(h.Config.Auth.ShortTtlMins)),
+		LinkUrl:   h.Config.Account.ResetEmailUrl,
 	}
 
 	mailqueue.SendMail(&email)
@@ -81,7 +86,7 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 
 }
 
-func UpdateEmailRoute(c *gin.Context) {
+func (h *EmailHandler) UpdateEmailRoute(c *gin.Context) {
 	middleware.NewValidator(c).CheckEmailIsWellFormed().LoadAuthUserFromToken().Success(func(validator *middleware.Validator) {
 
 		if validator.Claims.Type != token.TokenTypeChangeEmail {

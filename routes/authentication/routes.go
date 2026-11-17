@@ -1,13 +1,22 @@
 package authentication
 
 import (
+	"github.com/antonybholmes/go-edbserver-gin/config"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes(r *gin.Engine, jwtUserMiddleWare gin.HandlerFunc, updateTokenMiddleware gin.HandlerFunc) {
+func RegisterRoutes(r *gin.Engine,
+	jwtUserMiddleWare gin.HandlerFunc,
+	updateTokenMiddleware gin.HandlerFunc,
+	cfg *config.AppConfig) {
+
+	signupHandler := &SignupHandler{
+		Config: cfg,
+	}
+
 	// Allow users to sign up for an account
-	r.POST("/signup", SignupRoute)
+	r.POST("/signup", signupHandler.SignupRoute)
 
 	authGroup := r.Group("/auth")
 
@@ -16,7 +25,10 @@ func RegisterRoutes(r *gin.Engine, jwtUserMiddleWare gin.HandlerFunc, updateToke
 	// 	jwtAuth0UserMiddleware,
 	// 	auth0routes.ValidateAuth0TokenRoute)
 
-	authGroup.POST("/signin", UsernamePasswordSignInRoute)
+	signinHandler := &SignInHandler{
+		Config: cfg,
+	}
+	authGroup.POST("/signin", signinHandler.UsernamePasswordSignInRoute)
 
 	emailGroup := authGroup.Group("/email")
 
@@ -26,21 +38,29 @@ func RegisterRoutes(r *gin.Engine, jwtUserMiddleWare gin.HandlerFunc, updateToke
 		EmailAddressVerifiedRoute,
 	)
 
+	emailHandler := &EmailHandler{
+		Config: cfg,
+	}
+
 	// with the correct token, performs the update
 	emailGroup.POST("/reset",
 		jwtUserMiddleWare,
-		SendResetEmailEmailRoute)
+		emailHandler.SendResetEmailEmailRoute)
 
 	// with the correct token, performs the update
 	emailGroup.POST("/update",
 		jwtUserMiddleWare,
-		UpdateEmailRoute)
+		emailHandler.UpdateEmailRoute)
 
 	passwordGroup := authGroup.Group("/passwords")
 
+	passwordHandler := &PasswordHandler{
+		Config: cfg,
+	}
+
 	// sends a reset link
 	passwordGroup.POST("/reset",
-		SendResetPasswordFromUsernameEmailRoute)
+		passwordHandler.SendResetPasswordFromUsernameEmailRoute)
 
 	// with the correct token, updates a password
 	passwordGroup.POST("/update",
@@ -50,7 +70,7 @@ func RegisterRoutes(r *gin.Engine, jwtUserMiddleWare gin.HandlerFunc, updateToke
 	passwordlessGroup := authGroup.Group("/passwordless")
 
 	passwordlessGroup.POST("/email", func(c *gin.Context) {
-		PasswordlessSignInEmailRoute(c, nil)
+		PasswordlessSignInEmailRoute(c, nil, cfg.Auth.ShortTtlMins)
 	})
 
 	passwordlessGroup.POST("/signin",

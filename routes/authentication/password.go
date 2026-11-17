@@ -4,7 +4,8 @@ import (
 	"fmt"
 
 	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
-	"github.com/antonybholmes/go-edbserver-gin/consts"
+	"github.com/antonybholmes/go-edbserver-gin/config"
+
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
@@ -17,12 +18,16 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func PasswordUpdatedResp(c *gin.Context) {
+type PasswordHandler struct {
+	Config *config.AppConfig
+}
+
+func (h *PasswordHandler) PasswordUpdatedResp(c *gin.Context) {
 	web.MakeOkResp(c, "password updated")
 }
 
 // Start passwordless login by sending an email
-func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
+func (h *PasswordHandler) SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 	middleware.NewValidator(c).LoadAuthUserFromUsername().CheckUserHasVerifiedEmailAddress().Success(func(validator *middleware.Validator) {
 		authUser := validator.AuthUser
 		//req := validator.SignInBodyReq
@@ -54,8 +59,8 @@ func SendResetPasswordFromUsernameEmailRoute(c *gin.Context) {
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
 			EmailType: edbmail.EmailQueueTypePasswordReset,
-			TTL:       fmt.Sprintf("%d minutes", int(consts.ShortTtlMins.Minutes())),
-			LinkUrl:   consts.UrlResetPassword}
+			TTL:       fmt.Sprintf("%d minutes", int(h.Config.Auth.ShortTtlMins)),
+			LinkUrl:   h.Config.Account.ResetPasswordUrl}
 
 		mailqueue.SendMail(&email)
 

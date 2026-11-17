@@ -3,8 +3,10 @@ package authentication
 import (
 	"fmt"
 
+	"github.com/antonybholmes/go-edbmailserver/consts"
 	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
-	"github.com/antonybholmes/go-edbserver-gin/consts"
+	"github.com/antonybholmes/go-edbserver-gin/config"
+
 	mailserver "github.com/antonybholmes/go-mailserver"
 	"github.com/antonybholmes/go-mailserver/mailqueue"
 	"github.com/antonybholmes/go-web"
@@ -15,7 +17,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func SignupRoute(c *gin.Context) {
+type SignupHandler struct {
+	Config *config.AppConfig
+}
+
+func (h *SignupHandler) SignupRoute(c *gin.Context) {
 	middleware.NewValidator(c).CheckEmailIsWellFormed().Success(func(validator *middleware.Validator) {
 		req := validator.UserBodyReq
 
@@ -59,7 +65,7 @@ func SignupRoute(c *gin.Context) {
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "jwt", Data: token},
 			EmailType: edbmail.EmailQueueTypeVerify,
-			TTL:       fmt.Sprintf("%d minutes", int(consts.ShortTtlMins.Minutes())),
+			TTL:       fmt.Sprintf("%d minutes", h.Config.Auth.ShortTtlMins),
 			LinkUrl:   consts.UrlVerifyEmail,
 			//VisitUrl:    req.VisitUrl
 		}

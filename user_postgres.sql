@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS users;
+\c users;
+
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 
 CREATE OR REPLACE FUNCTION update_at_updated()
@@ -42,6 +45,8 @@ INSERT INTO groups (name, description) VALUES('admins', 'Administrators');
 INSERT INTO groups (name, description) VALUES('login', 'Users who can login');
 INSERT INTO groups (name, description) VALUES('rdf', 'For viewers of RDF data');
 INSERT INTO groups (name, description) VALUES('ngs', 'For viewers of NGS data');
+INSERT INTO groups (name, description) VALUES('crispr', 'For submitting crispr jobs');
+
 -- DROP TABLE IF EXISTS role_permissions;
 -- DROP TABLE IF EXISTS permissions;
 -- DROP TABLE IF EXISTS resources;
@@ -132,6 +137,8 @@ INSERT INTO permissions (name, description) VALUES('ngs:view', 'Admin all access
 -- INSERT INTO permissions (name, description) VALUES('delete', 'Delete access');
 INSERT INTO permissions (name, description) VALUES('web:login', 'Login access');
 INSERT INTO permissions (name, description) VALUES('rdf:view', 'View resources');
+INSERT INTO permissions (name, description) VALUES('crispr:view', 'View crispr jobs');
+INSERT INTO permissions (name, description) VALUES('crispr:submit', 'Submit crispr jobs');
 
 
 
@@ -180,6 +187,7 @@ INSERT INTO roles (name) VALUES('admin');
 INSERT INTO roles (name) VALUES('login');
 INSERT INTO roles (name) VALUES('rdf-viewer');
 INSERT INTO roles (name) VALUES('ngs-viewer');
+INSERT INTO roles (name) VALUES('crispr');
 
 
 DROP TABLE IF EXISTS role_permissions;
@@ -230,6 +238,16 @@ SELECT r.id, p.id, 'ngs-viewer'
 FROM roles r, permissions p
 WHERE r.name = 'ngs-viewer' AND p.name = 'ngs:view';
 
+INSERT INTO role_permissions (role_id, permission_id, name) 
+SELECT r.id, p.id, 'crispr'
+FROM roles r, permissions p
+WHERE r.name = 'crispr' AND p.name = 'crispr:view';
+
+INSERT INTO role_permissions (role_id, permission_id, name) 
+SELECT r.id, p.id, 'crispr'
+FROM roles r, permissions p
+WHERE r.name = 'crispr' AND p.name = 'crispr:submit';
+
  
 
 DROP TABLE IF EXISTS group_roles;
@@ -275,6 +293,12 @@ INSERT INTO group_roles (group_id, role_id, name)
 SELECT g.id, r.id, 'ngs-viewer'
 FROM groups g, roles r
 WHERE g.name = 'ngs' AND r.name = 'ngs-viewer' ON CONFLICT DO NOTHING;
+
+
+INSERT INTO group_roles (group_id, role_id, name)
+SELECT g.id, r.id, 'crispr'
+FROM groups g, roles r
+WHERE g.name = 'crispr' AND r.name = 'crispr' ON CONFLICT DO NOTHING;
 
 
  
@@ -400,6 +424,11 @@ INSERT INTO user_groups (user_id, group_id, name)
 SELECT u.id, g.id, 'Add to ngs group'
 FROM users u, groups g
 WHERE u.email LIKE '%columbia%' AND g.name = 'ngs' ON CONFLICT DO NOTHING;
+
+INSERT INTO user_groups (user_id, group_id, name)
+SELECT u.id, g.id, 'Add to crispr group'
+FROM users u, groups g
+WHERE (u.username LIKE '%antony%' OR u.email LIKE '%columbia%') AND g.name = 'crispr' ON CONFLICT DO NOTHING;
 
 DROP TABLE IF EXISTS public_keys;
 CREATE TABLE IF NOT EXISTS public_keys (

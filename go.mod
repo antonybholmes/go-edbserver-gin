@@ -1,16 +1,16 @@
 module github.com/antonybholmes/go-edbserver-gin
 
-go 1.27
+go 1.27.1
 
 replace github.com/antonybholmes/go-web => ../go-web
+
+replace github.com/antonybholmes/go-sys => ../go-sys
 
 replace github.com/antonybholmes/go-dna => ../go-dna
 
 replace github.com/antonybholmes/go-genome => ../go-genome
 
 replace github.com/antonybholmes/go-wgs => ../go-wgs
-
-replace github.com/antonybholmes/go-sys => ../go-sys
 
 replace github.com/antonybholmes/go-mailserver => ../go-mailserver
 

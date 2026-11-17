@@ -10,9 +10,10 @@ import (
 	"github.com/antonybholmes/go-beds/beddb"
 	"github.com/antonybholmes/go-cytobands/cytobanddb"
 	"github.com/antonybholmes/go-dna/dnadb"
+	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 
-	"github.com/antonybholmes/go-edbserver-gin/consts"
+	"github.com/antonybholmes/go-edbserver-gin/config"
 	adminroutes "github.com/antonybholmes/go-edbserver-gin/routes/admin"
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	sessionroutes "github.com/antonybholmes/go-edbserver-gin/routes/session"
@@ -43,7 +44,6 @@ import (
 	"github.com/antonybholmes/go-pathway/pathwaydb"
 	"github.com/antonybholmes/go-scrna/scrnadb"
 	"github.com/antonybholmes/go-seqs/seqdb"
-	"github.com/antonybholmes/go-sys/env"
 	"github.com/antonybholmes/go-wgs/wgsdb"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -61,88 +61,61 @@ type (
 		IpAddr string `json:"ipAddr"`
 		Arch   string `json:"arch"`
 	}
+
+	AboutHandler struct {
+		Config *config.AppConfig
+	}
 )
 
 var (
 	store cookie.Store
 	rdb   *redis.Client
-	re    *access.RuleEngine
-
-	corsConfig = cors.Config{
-		AllowOrigins:     consts.AllowOrigins,
-		AllowMethods:     consts.AllowMethods,
-		AllowHeaders:     consts.AllowHeaders,
-		AllowCredentials: consts.AllowCredentials,
-		MaxAge:           consts.CorsMaxAge,
-	}
 )
 
-func initDatabases() {
-	dnadb.InitDnaDB(consts.DnaDir)
-	genomedb.InitCache(consts.GenomesDB)
+func initDatabases(cfg *config.AppConfig) {
+	dnadb.InitDnaDB(cfg.Databases.DnaDir)
+	genomedb.InitCache(cfg.Databases.Genomes)
 	//microarraydb.InitDB("data/microarray")
 
-	gexdb.InitGexDB(consts.GexDB)
+	gexdb.InitGexDB(cfg.Databases.Gex)
 
-	scrnadb.InitScrnaDB(consts.ScrnaDir)
+	scrnadb.InitScrnaDB(cfg.Databases.ScrnaDir)
 
-	wgsdb.InitDB(consts.WGSDB)
+	wgsdb.InitDB(cfg.Databases.WGS)
 
-	geneconvdb.InitGeneConvDB(consts.GeneConvDB)
+	geneconvdb.InitGeneConvDB(cfg.Databases.GeneConv)
 
-	motifsdb.InitMotifDB(consts.MotifsDB)
+	motifsdb.InitMotifDB(cfg.Databases.Motifs)
 
-	pathwaydb.InitPathwayDB(consts.PathwayDB)
+	pathwaydb.InitPathwayDB(cfg.Databases.Pathway)
 
-	seqdb.InitSeqDB(consts.SeqsDB)
+	seqdb.InitSeqDB(cfg.Databases.Seqs)
 
-	cytobanddb.InitCytobandDB(consts.CytobandsDir)
+	cytobanddb.InitCytobandDB(cfg.Databases.CytobandsDir)
 
-	beddb.InitBedDB(consts.BedsDB)
+	beddb.InitBedDB(cfg.Databases.Beds)
 
-	hubdb.InitHubDB(consts.HubsDir)
+	hubdb.InitHubDB(cfg.Databases.HubsDir)
 }
 
-func init() {
-	log.SetAppName(consts.AppName)
-	env.Ls()
-
-	store = cookie.NewStore([]byte(consts.SessionKey),
-		[]byte(consts.SessionEncryptionKey))
-
-	initDatabases()
-
-	rdb = redis.NewClient(&redis.Options{
-		Addr:     consts.RedisAddr,
-		Username: "edb",
-		Password: consts.RedisPassword,
-		DB:       0,
-	})
-
-	mailqueue.InitMailQueue(mailserver.NewSqsEmailQueue(consts.SqsQueueUrl))
-
-	re = access.NewRuleEngine()
-	re.LoadRules("config/access-rules.json")
-}
-
-func aboutHandler(c *gin.Context) {
+func (h *AboutHandler) aboutHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, AboutResp{
-		Name:      consts.AppName,
-		Version:   consts.Version.Version,
-		Build:     consts.Version.Build,
-		Updated:   consts.Version.Updated,
-		Copyright: consts.Copyright,
+		Name:      config.AppName,
+		Version:   h.Config.App.Version.Version,
+		Build:     h.Config.App.Version.Build,
+		Updated:   h.Config.App.Version.Updated,
+		Copyright: config.Copyright,
 	})
 }
 
-func infoHandler(c *gin.Context) {
+func (h *AboutHandler) infoHandler(c *gin.Context) {
 	web.MakeDataResp(c, "", InfoResp{
 		Arch:   runtime.GOARCH,
 		IpAddr: c.ClientIP(),
 	})
 }
 
-func setupMiddlewares(r *gin.Engine) {
+func setupMiddlewares(r *gin.Engine, cfg *config.AppConfig) {
 	// r.Use(otelgin.Middleware("edb-server"))
 	// r.Use(gin.Recovery())
 	// r.Use(middleware.LoggingMiddleware())
@@ -158,25 +131,39 @@ func setupMiddlewares(r *gin.Engine) {
 
 	// r.Use(sessions.Sessions(consts.SessionName, store))
 
-	r.Use(cors.New(corsConfig))                         // Check CORS first
-	r.Use(middleware.ErrorHandlerMiddleware())          // Handle errors early
-	r.Use(middleware.LoggingMiddleware())               // Log relevant requests only
-	r.Use(otelgin.Middleware("edb-server"))             // Trace valid requests
-	r.Use(sessions.Sessions(consts.SessionName, store)) // Load sessions for routes that need them
-	r.Use(gin.Recovery())                               // Recover from panics
+	corsConfig := cors.Config{
+		AllowOrigins:     cfg.Cors.AllowOrigins,
+		AllowMethods:     cfg.Cors.AllowMethods,
+		AllowHeaders:     cfg.Cors.AllowHeaders,
+		AllowCredentials: cfg.Cors.AllowCredentials,
+		MaxAge:           time.Duration(cfg.Cors.MaxAge) * time.Second,
+	}
+
+	r.Use(cors.New(corsConfig))                       // Check CORS first
+	r.Use(middleware.ErrorHandlerMiddleware())        // Handle errors early
+	r.Use(middleware.LoggingMiddleware())             // Log relevant requests only
+	r.Use(otelgin.Middleware("edb-server"))           // Trace valid requests
+	r.Use(sessions.Sessions(cfg.Session.Name, store)) // Load sessions for routes that need them
+	r.Use(gin.Recovery())                             // Recover from panics
 }
 
 func registerAppRoutes(r *gin.Engine,
 	jwtUserMiddleWare gin.HandlerFunc,
 	rulesMiddleware gin.HandlerFunc,
 	updateTokenMiddleware gin.HandlerFunc,
-	otp *auth.OTP) {
-	r.GET("/about", aboutHandler)
-	r.GET("/info", infoHandler)
+	otp *auth.OTP,
+	cfg *config.AppConfig) {
 
-	adminroutes.RegisterRoutes(r, rulesMiddleware)
-	authenticationroutes.RegisterRoutes(r, jwtUserMiddleWare, updateTokenMiddleware)
-	sessionroutes.RegisterRoutes(r, otp, jwtUserMiddleWare)
+	aboutHandler := &AboutHandler{
+		Config: cfg,
+	}
+
+	r.GET("/about", aboutHandler.aboutHandler)
+	r.GET("/info", aboutHandler.infoHandler)
+
+	adminroutes.RegisterRoutes(r, rulesMiddleware, userdbcache.Instance(), cfg)
+	authenticationroutes.RegisterRoutes(r, jwtUserMiddleWare, updateTokenMiddleware, cfg)
+	sessionroutes.RegisterRoutes(r, otp, jwtUserMiddleWare, cfg)
 	modules.RegisterRoutes(r, rulesMiddleware)
 
 	utilsGroup := r.Group("/utils")
@@ -190,11 +177,34 @@ func registerAppRoutes(r *gin.Engine,
 }
 
 func main() {
-	tokengen.Init(token.NewES256TokenSigner(consts.JwtES256PrivateKey))
+	cfg := config.Instance()
 
-	claimsParser := middleware.NewUserJWTParser(middleware.NewJwtClaimsES256Parser(consts.JwtES256PublicKey))
+	log.SetAppName(config.AppName)
+	//env.Ls()
+
+	store = cookie.NewStore([]byte(cfg.Session.Key),
+		[]byte(cfg.Session.EncryptionKey))
+
+	initDatabases(cfg)
+
+	rdb = redis.NewClient(&redis.Options{
+		Addr:     cfg.Redis.Addr,
+		Username: "edb",
+		Password: cfg.Redis.Password,
+		DB:       0,
+	})
+
+	mailqueue.InitMailQueue(mailserver.NewSqsEmailQueue(cfg.Aws.Sqs.QueueUrl))
+
+	re := access.NewRuleEngine()
+	re.LoadRules("config/access-rules.json")
+
+	tokengen.Init(token.NewES256TokenSigner(cfg.Auth.Keys.JwtES256PrivateKey))
+
+	claimsParser := middleware.NewUserJWTParser(middleware.NewJwtClaimsES256Parser(cfg.Auth.Keys.JwtES256PublicKey))
 	jwtUserMiddleWare := middleware.UserJWTMiddleware(claimsParser)
-	rulesMiddleware := middleware.RulesMiddleware(claimsParser, re)
+	rulesMiddleware := middleware.AccessTokenRulesMiddleware(claimsParser, re)
+
 	updateTokenMiddleware := middleware.JwtIsUpdateTokenMiddleware()
 
 	otp := auth.NewDefaultOTP(rdb)
@@ -214,12 +224,17 @@ func main() {
 	}()
 
 	router := gin.New()
-	router.SetTrustedProxies(consts.TrustedProxies)
+	router.SetTrustedProxies(cfg.App.TrustedProxies)
 
-	setupMiddlewares(router)
+	setupMiddlewares(router, cfg)
 
-	registerAppRoutes(router, jwtUserMiddleWare, rulesMiddleware, updateTokenMiddleware, otp)
+	registerAppRoutes(router,
+		jwtUserMiddleWare,
+		rulesMiddleware,
+		updateTokenMiddleware,
+		otp,
+		cfg)
 
-	log.Info().Msgf("starting server on %s", consts.AppPort)
-	router.Run(consts.AppPort)
+	log.Info().Msgf("starting server on %s", cfg.App.Port)
+	router.Run(cfg.App.Port)
 }
