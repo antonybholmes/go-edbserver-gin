@@ -3,11 +3,11 @@ package authentication
 import (
 	"fmt"
 
-	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
+	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
 	"github.com/antonybholmes/go-edbserver-gin/config"
 
-	mailserver "github.com/antonybholmes/go-mailserver"
-	"github.com/antonybholmes/go-mailserver/mailqueue"
+	mailserver "github.com/antonybholmes/go-mail"
+	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/auth/token"
@@ -58,7 +58,7 @@ func (h *PasswordHandler) SendResetPasswordFromUsernameEmailRoute(c *gin.Context
 			Name:      authUser.Name,
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
-			EmailType: edbmail.EmailQueueTypePasswordReset,
+			EmailType: edbmail.EmailTypePasswordReset,
 			TTL:       fmt.Sprintf("%d minutes", int(h.Config.Auth.ShortTtlMins)),
 			LinkUrl:   h.Config.Account.ResetPasswordUrl}
 
@@ -102,7 +102,7 @@ func UpdatePasswordRoute(c *gin.Context) {
 	email := mailserver.MailItem{
 		Name:      authUser.Name,
 		To:        authUser.Email,
-		EmailType: edbmail.EmailQueueTypePasswordUpdated}
+		EmailType: edbmail.EmailTypePasswordUpdated}
 	mailqueue.SendMail(&email)
 
 	web.MakeOkResp(c, "password updated confirmation email sent")

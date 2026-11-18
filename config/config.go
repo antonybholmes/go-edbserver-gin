@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/antonybholmes/go-sys"
-	"github.com/antonybholmes/go-sys/env"
 	"github.com/antonybholmes/go-sys/log"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -15,33 +14,12 @@ import (
 )
 
 type AppConfig struct {
-	App struct {
-		URL            string          `yaml:"url"`
-		Domain         string          `yaml:"domain"`
-		LogFile        string          `yaml:"logFile"`
-		Port           string          `yaml:"port"`
-		TrustedProxies []string        `yaml:"trustedProxies"`
-		Version        sys.VersionInfo `yaml:"-"`
-	} `yaml:"app"`
-	Cors struct {
-		AllowOrigins     []string `yaml:"allowOrigins"`
-		AllowMethods     []string `yaml:"allowMethods"`
-		AllowHeaders     []string `yaml:"allowHeaders"`
-		AllowCredentials bool     `yaml:"allowCredentials"`
-		MaxAge           int      `yaml:"maxAge"`
-	} `yaml:"cors"`
-	Session struct {
-		Name          string `yaml:"name"`
-		TTLHours      int    `yaml:"ttlHours"`
-		Key           string `yaml:"-"`
-		EncryptionKey string `yaml:"-"`
-	} `yaml:"session"`
 	Auth struct {
-		PasswordlessTokenTtlMins int `yaml:"passwordlessTokenTtlMins"`
-		AccessTokenTtlMins       int `yaml:"accessTokenTtlMins"`
-		OtpTokenTtlMins          int `yaml:"otpTokenTtlMins"`
-		ShortTtlMins             int `yaml:"shortTtlMins"`
-		Oauth2                   struct {
+		Keys struct {
+			JwtES256PrivateKey *ecdsa.PrivateKey `yaml:"-"`
+			JwtES256PublicKey  *ecdsa.PublicKey  `yaml:"-"`
+		} `yaml:"-"`
+		Oauth2 struct {
 			Auth0 struct {
 				Audience        string         `yaml:"-"`
 				Domain          string         `yaml:"-"`
@@ -64,15 +42,11 @@ type AppConfig struct {
 				Domain   string `yaml:"-"`
 			} `yaml:"-"`
 		} `yaml:"-"`
-		Keys struct {
-			JwtES256PrivateKey *ecdsa.PrivateKey `yaml:"-"`
-			JwtES256PublicKey  *ecdsa.PublicKey  `yaml:"-"`
-		} `yaml:"-"`
+		PasswordlessTokenTtlMins int `yaml:"passwordlessTokenTtlMins"`
+		AccessTokenTtlMins       int `yaml:"accessTokenTtlMins"`
+		OtpTokenTtlMins          int `yaml:"otpTokenTtlMins"`
+		ShortTtlMins             int `yaml:"shortTtlMins"`
 	} `yaml:"auth"`
-	Redis struct {
-		Addr     string `yaml:"-"`
-		Password string `yaml:"-"`
-	} `yaml:"-"`
 	Databases struct {
 		Motifs       string `yaml:"motifs"`
 		WGS          string `yaml:"wgs"`
@@ -87,16 +61,41 @@ type AppConfig struct {
 		DnaDir       string `yaml:"dnaDir"`
 		HubsDir      string `yaml:"hubsDir"`
 	} `yaml:"databases"`
-	Aws struct {
-		Sqs struct {
-			QueueUrl string `yaml:"-"`
-		} `yaml:"-"`
-	} `yaml:"-"`
+	Session struct {
+		Name          string `yaml:"name"`
+		Key           string `yaml:"-"`
+		EncryptionKey string `yaml:"-"`
+		TTLHours      int    `yaml:"ttlHours"`
+	} `yaml:"session"`
 	Account struct {
 		ResetEmailUrl    string `yaml:"-"`
 		ResetPasswordUrl string `yaml:"-"`
 		VerifyEmailUrl   string `yaml:"-"`
 	} `yaml:"-"`
+	Redis struct {
+		Addr     string `yaml:"-"`
+		Password string `yaml:"-"`
+	} `yaml:"-"`
+	AWS struct {
+		SQS struct {
+			QueueUrl string `yaml:"-"`
+		} `yaml:"-"`
+	} `yaml:"-"`
+	App struct {
+		URL            string          `yaml:"url"`
+		Domain         string          `yaml:"domain"`
+		LogFile        string          `yaml:"logFile"`
+		Port           string          `yaml:"port"`
+		TrustedProxies []string        `yaml:"trustedProxies"`
+		Version        sys.VersionInfo `yaml:"-"`
+	} `yaml:"app"`
+	Cors struct {
+		AllowOrigins     []string `yaml:"allowOrigins"`
+		AllowMethods     []string `yaml:"allowMethods"`
+		AllowHeaders     []string `yaml:"allowHeaders"`
+		AllowCredentials bool     `yaml:"allowCredentials"`
+		MaxAge           int      `yaml:"maxAge"`
+	} `yaml:"cors"`
 }
 
 const (
@@ -182,8 +181,6 @@ func load() *AppConfig {
 	// 	env.Load("consts.env")
 	// }
 
-	env.Load("version.env")
-
 	cfg := loadYaml()
 
 	// AppUrl = cfg.App.URL
@@ -229,7 +226,7 @@ func load() *AppConfig {
 
 	cfg.Auth.Oauth2.Supabase.JwtSecretKey = os.Getenv("SUPABASE_JWT_SECRET_KEY")
 
-	cfg.Aws.Sqs.QueueUrl = os.Getenv("SQS_QUEUE_URL")
+	cfg.AWS.SQS.QueueUrl = os.Getenv("SQS_QUEUE_URL")
 
 	// MotifsDB = cfg.Databases.Motifs
 	// WGSDB = cfg.Databases.WGS

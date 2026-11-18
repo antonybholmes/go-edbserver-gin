@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	"github.com/antonybholmes/go-edbmailserver/consts"
+	"github.com/antonybholmes/go-edb-mailserver/config"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/sdk/resource"
@@ -23,7 +23,7 @@ func initTracerProvider() (*sdktrace.TracerProvider, error) {
 	// Identify your service
 	res, err := resource.New(ctx,
 		resource.WithAttributes(
-			semconv.ServiceName(consts.AppName),
+			semconv.ServiceName(config.AppName),
 		),
 	)
 	if err != nil {

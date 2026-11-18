@@ -4,11 +4,11 @@ import (
 	"errors"
 	"fmt"
 
-	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
+	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
 	"github.com/antonybholmes/go-edbserver-gin/config"
 
-	mailserver "github.com/antonybholmes/go-mailserver"
-	"github.com/antonybholmes/go-mailserver/mailqueue"
+	mailserver "github.com/antonybholmes/go-mail"
+	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/auth/token"
@@ -138,7 +138,7 @@ func PasswordlessSignInEmailRoute(c *gin.Context, validator *middleware.Validato
 			Name:      authUser.Name,
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "code", Data: passwordlessToken},
-			EmailType: edbmail.EmailQueueTypePasswordless,
+			EmailType: edbmail.EmailTypePasswordless,
 			TTL:       fmt.Sprintf("%d minutes", ttl),
 			//LinkUrl:   consts.URL_SIGN_IN,
 			//VisitUrl:    validator.Req.VisitUrl

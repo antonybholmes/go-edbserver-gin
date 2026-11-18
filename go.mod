@@ -1,6 +1,6 @@
 module github.com/antonybholmes/go-edbserver-gin
 
-go 1.27.1
+go 1.27.4
 
 replace github.com/antonybholmes/go-web => ../go-web
 
@@ -12,9 +12,9 @@ replace github.com/antonybholmes/go-genome => ../go-genome
 
 replace github.com/antonybholmes/go-wgs => ../go-wgs
 
-replace github.com/antonybholmes/go-mailserver => ../go-mailserver
+replace github.com/antonybholmes/go-mail => ../go-mail
 
-replace github.com/antonybholmes/go-edbmailserver => ../go-edbmailserver
+replace github.com/antonybholmes/go-edb-mailserver => ../go-edb-mailserver
 
 replace github.com/antonybholmes/go-geneconv => ../go-geneconv
 
@@ -38,12 +38,12 @@ require (
 	github.com/antonybholmes/go-beds v0.0.0-20251121231947-7748047af425
 	github.com/antonybholmes/go-cytobands v0.0.0-20251121223901-de9a5b3a590a
 	github.com/antonybholmes/go-dna v0.0.0-20261114233701-0faac7069bc9
-	github.com/antonybholmes/go-edbmailserver v0.0.0-20251121215824-6ff0c5cf2c21
+	github.com/antonybholmes/go-edb-mailserver v0.0.0-20251121215824-6ff0c5cf2c21
 	github.com/antonybholmes/go-geneconv v0.0.0-20251121222738-b6e5c9016658
 	github.com/antonybholmes/go-genome v0.0.0-20260626225350-21ef82c36d98
 	github.com/antonybholmes/go-gex v0.0.0-20251121215822-a364f8d47b61
 	github.com/antonybholmes/go-hubs v0.0.0-00010101000000-000000000000
-	github.com/antonybholmes/go-mailserver v0.0.0-20261111175659-f8a87cede7a2
+	github.com/antonybholmes/go-mail v0.0.0-20261111175659-f8a87cede7a2
 	github.com/antonybholmes/go-motifs v0.0.0-20251121222735-b9b35b49f4ee
 	github.com/antonybholmes/go-pathway v0.0.0-20251121222731-16f8a04f47da
 	github.com/antonybholmes/go-scrna v0.0.0-20251121215820-17e42e152320

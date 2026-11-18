@@ -1,9 +1,9 @@
 package authentication
 
 import (
-	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
-	mailserver "github.com/antonybholmes/go-mailserver"
-	"github.com/antonybholmes/go-mailserver/mailqueue"
+	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
+	mailserver "github.com/antonybholmes/go-mail"
+	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
@@ -58,7 +58,7 @@ func UpdateUserRoute(c *gin.Context) {
 	// send email notification of change
 	email := mailserver.MailItem{Name: authUser.Name,
 		To:        authUser.Email,
-		EmailType: edbmail.EmailQueueTypeAccountUpdated}
+		EmailType: edbmail.EmailTypeAccountUpdated}
 	mailqueue.SendMail(&email)
 
 	// send back updated user to having to do a separate call to get the new data

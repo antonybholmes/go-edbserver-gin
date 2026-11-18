@@ -20,7 +20,7 @@ import (
 
 	"github.com/antonybholmes/go-edbserver-gin/routes/modules"
 	"github.com/antonybholmes/go-hubs/hubdb"
-	mailserver "github.com/antonybholmes/go-mailserver"
+	mailserver "github.com/antonybholmes/go-mail"
 	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/access"
@@ -39,7 +39,7 @@ import (
 	"github.com/antonybholmes/go-geneconv/geneconvdb"
 	"github.com/antonybholmes/go-genome/genomedb"
 	"github.com/antonybholmes/go-gex/gexdb"
-	"github.com/antonybholmes/go-mailserver/mailqueue"
+	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-motifs/motifsdb"
 	"github.com/antonybholmes/go-pathway/pathwaydb"
 	"github.com/antonybholmes/go-scrna/scrnadb"
@@ -194,7 +194,7 @@ func main() {
 		DB:       0,
 	})
 
-	mailqueue.InitMailQueue(mailserver.NewSqsEmailQueue(cfg.Aws.Sqs.QueueUrl))
+	mailqueue.InitMailQueue(mailserver.NewSqsEmailQueue(cfg.AWS.SQS.QueueUrl))
 
 	re := access.NewRuleEngine()
 	re.LoadRules("config/access-rules.json")
