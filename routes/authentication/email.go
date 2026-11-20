@@ -5,9 +5,10 @@ import (
 
 	"net/mail"
 
-	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
-	"github.com/antonybholmes/go-edbserver-gin/consts"
-	mailserver "github.com/antonybholmes/go-mailserver"
+	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
+	"github.com/antonybholmes/go-edbserver-gin/config"
+
+	mailserver "github.com/antonybholmes/go-mail"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/auth/token"
@@ -16,12 +17,16 @@ import (
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/antonybholmes/go-mailserver/mailqueue"
+	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/gin-gonic/gin"
 )
 
+type EmailHandler struct {
+	Config *config.AppConfig
+}
+
 // Start passwordless login by sending an email
-func SendResetEmailEmailRoute(c *gin.Context) {
+func (h *EmailHandler) SendResetEmailEmailRoute(c *gin.Context) {
 	validator, err := middleware.NewValidator(c).ParseSignInRequestBody().LoadAuthUserFromToken().Ok()
 
 	if err != nil {
@@ -66,9 +71,9 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 		Name:      authUser.Name,
 		To:        authUser.Email,
 		Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
-		EmailType: edbmail.EmailQueueTypeEmailReset,
-		TTL:       fmt.Sprintf("%d minutes", int(consts.ShortTtlMins.Minutes())),
-		LinkUrl:   consts.UrlResetEmail,
+		EmailType: edbmail.EmailTypeEmailReset,
+		TTL:       fmt.Sprintf("%d minutes", int(h.Config.Auth.ShortTtlMins)),
+		LinkUrl:   h.Config.Account.ResetEmailUrl,
 	}
 
 	mailqueue.SendMail(&email)
@@ -81,7 +86,7 @@ func SendResetEmailEmailRoute(c *gin.Context) {
 
 }
 
-func UpdateEmailRoute(c *gin.Context) {
+func (h *EmailHandler) UpdateEmailRoute(c *gin.Context) {
 	middleware.NewValidator(c).CheckEmailIsWellFormed().LoadAuthUserFromToken().Success(func(validator *middleware.Validator) {
 
 		if validator.Claims.Type != token.TokenTypeChangeEmail {
@@ -120,7 +125,7 @@ func UpdateEmailRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.Name,
 			To:        authUser.Email,
-			EmailType: edbmail.EmailQueueTypeEmailUpdated}
+			EmailType: edbmail.EmailTypeEmailUpdated}
 
 		mailqueue.SendMail(&email)
 

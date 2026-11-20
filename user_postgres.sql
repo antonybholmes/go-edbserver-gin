@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS users;
+\c users;
+
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 
 CREATE OR REPLACE FUNCTION update_at_updated()
@@ -26,8 +29,8 @@ CREATE TABLE groups (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     name TEXT NOT NULL UNIQUE,
     description TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL);
 CREATE INDEX groups_name_idx ON groups (name);
 CREATE TRIGGER groups_updated_trigger
     BEFORE UPDATE
@@ -42,6 +45,8 @@ INSERT INTO groups (name, description) VALUES('admins', 'Administrators');
 INSERT INTO groups (name, description) VALUES('login', 'Users who can login');
 INSERT INTO groups (name, description) VALUES('rdf', 'For viewers of RDF data');
 INSERT INTO groups (name, description) VALUES('ngs', 'For viewers of NGS data');
+INSERT INTO groups (name, description) VALUES('crispr', 'For submitting crispr jobs');
+
 -- DROP TABLE IF EXISTS role_permissions;
 -- DROP TABLE IF EXISTS permissions;
 -- DROP TABLE IF EXISTS resources;
@@ -49,8 +54,8 @@ INSERT INTO groups (name, description) VALUES('ngs', 'For viewers of NGS data');
 --     id UUID PRIMARY KEY DEFAULT uuidv7(),
 --     name TEXT NOT NULL UNIQUE,
 --     description TEXT NOT NULL DEFAULT '',
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
---     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
+--     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+--     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL);
 -- CREATE INDEX resources_name_idx ON resources (name);
 -- CREATE TRIGGER resources_updated_trigger
 --     BEFORE UPDATE
@@ -71,8 +76,8 @@ INSERT INTO groups (name, description) VALUES('ngs', 'For viewers of NGS data');
 --     id UUID PRIMARY KEY DEFAULT uuidv7(),
 --     name TEXT NOT NULL UNIQUE,
 --     description TEXT NOT NULL DEFAULT '',
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
---     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
+--     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+--     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL);
 -- CREATE INDEX actions_name_idx ON actions (name);
 -- CREATE TRIGGER actions_updated_trigger
 --     BEFORE UPDATE
@@ -97,8 +102,8 @@ INSERT INTO groups (name, description) VALUES('ngs', 'For viewers of NGS data');
 --     description TEXT NOT NULL DEFAULT '',
 --     resource_id UUID NOT NULL,
 --     action_id UUID NOT NULL,
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
---     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+--     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+--     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
 --     UNIQUE(resource_id, action_id),
 --     FOREIGN KEY(resource_id) REFERENCES resources(id) ON DELETE CASCADE,
 --     FOREIGN KEY(action_id) REFERENCES actions(id) ON DELETE CASCADE);
@@ -116,8 +121,8 @@ CREATE TABLE permissions (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     name TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL);
 CREATE TRIGGER permissions_updated_trigger
     BEFORE UPDATE
     ON
@@ -132,6 +137,8 @@ INSERT INTO permissions (name, description) VALUES('ngs:view', 'Admin all access
 -- INSERT INTO permissions (name, description) VALUES('delete', 'Delete access');
 INSERT INTO permissions (name, description) VALUES('web:login', 'Login access');
 INSERT INTO permissions (name, description) VALUES('rdf:view', 'View resources');
+INSERT INTO permissions (name, description) VALUES('crispr:view', 'View crispr jobs');
+INSERT INTO permissions (name, description) VALUES('crispr:submit', 'Submit crispr jobs');
 
 
 
@@ -163,8 +170,8 @@ CREATE TABLE roles (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     name TEXT NOT NULL UNIQUE,
     description TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL);
 CREATE INDEX roles_name_idx ON roles (name);
 
 CREATE TRIGGER roles_updated_trigger
@@ -180,6 +187,7 @@ INSERT INTO roles (name) VALUES('admin');
 INSERT INTO roles (name) VALUES('login');
 INSERT INTO roles (name) VALUES('rdf-viewer');
 INSERT INTO roles (name) VALUES('ngs-viewer');
+INSERT INTO roles (name) VALUES('crispr');
 
 
 DROP TABLE IF EXISTS role_permissions;
@@ -188,8 +196,8 @@ CREATE TABLE role_permissions (
     permission_id UUID NOT NULL,
     name TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     PRIMARY KEY(role_id, permission_id),
     FOREIGN KEY(role_id) REFERENCES roles(id) ON DELETE CASCADE,
     FOREIGN KEY(permission_id) REFERENCES permissions(id) ON DELETE CASCADE);
@@ -230,6 +238,16 @@ SELECT r.id, p.id, 'ngs-viewer'
 FROM roles r, permissions p
 WHERE r.name = 'ngs-viewer' AND p.name = 'ngs:view';
 
+INSERT INTO role_permissions (role_id, permission_id, name) 
+SELECT r.id, p.id, 'crispr'
+FROM roles r, permissions p
+WHERE r.name = 'crispr' AND p.name = 'crispr:view';
+
+INSERT INTO role_permissions (role_id, permission_id, name) 
+SELECT r.id, p.id, 'crispr'
+FROM roles r, permissions p
+WHERE r.name = 'crispr' AND p.name = 'crispr:submit';
+
  
 
 DROP TABLE IF EXISTS group_roles;
@@ -238,8 +256,8 @@ CREATE TABLE group_roles (
     role_id UUID NOT NULL,
     name TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     PRIMARY KEY(group_id, role_id),
     FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE,
     FOREIGN KEY(role_id) REFERENCES roles(id) ON DELETE CASCADE);
@@ -277,6 +295,12 @@ FROM groups g, roles r
 WHERE g.name = 'ngs' AND r.name = 'ngs-viewer' ON CONFLICT DO NOTHING;
 
 
+INSERT INTO group_roles (group_id, role_id, name)
+SELECT g.id, r.id, 'crispr'
+FROM groups g, roles r
+WHERE g.name = 'crispr' AND r.name = 'crispr' ON CONFLICT DO NOTHING;
+
+
  
 
 -- fix original users table
@@ -298,8 +322,8 @@ CREATE TABLE users (
     last_name TEXT NOT NULL DEFAULT '',
     is_locked BOOLEAN NOT NULL DEFAULT false,
     email_verified_at TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL);
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL);
 -- CREATE INDEX name ON users (first_name, last_name);
 CREATE INDEX users_username_idx ON users (username);
 CREATE INDEX users_email_idx ON users (email);
@@ -321,8 +345,8 @@ DROP TABLE IF EXISTS auth_providers;
 CREATE TABLE auth_providers (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     name TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     UNIQUE(name));
 -- CREATE INDEX name ON users (first_name, last_name);
 CREATE INDEX auth_providers_name_idx ON auth_providers (name);
@@ -342,8 +366,8 @@ DROP TABLE IF EXISTS user_auth_providers;
 CREATE TABLE user_auth_providers (
     user_id UUID NOT NULL,
     auth_provider_id UUID NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     PRIMARY KEY(user_id, auth_provider_id),
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY(auth_provider_id) REFERENCES auth_providers(id) ON DELETE CASCADE);
@@ -360,8 +384,8 @@ CREATE TABLE user_groups (
     group_id UUID NOT NULL,
     name TEXT NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     PRIMARY KEY(user_id, group_id),
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE);
@@ -401,14 +425,19 @@ SELECT u.id, g.id, 'Add to ngs group'
 FROM users u, groups g
 WHERE u.email LIKE '%columbia%' AND g.name = 'ngs' ON CONFLICT DO NOTHING;
 
+INSERT INTO user_groups (user_id, group_id, name)
+SELECT u.id, g.id, 'Add to crispr group'
+FROM users u, groups g
+WHERE (u.username LIKE '%antony%' OR u.email LIKE '%columbia%') AND g.name = 'crispr' ON CONFLICT DO NOTHING;
+
 DROP TABLE IF EXISTS public_keys;
 CREATE TABLE IF NOT EXISTS public_keys (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     user_id UUID NOT NULL,
     name TEXT NOT NULL,
     key TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE);
 CREATE TRIGGER public_keys_updated_trigger
     BEFORE UPDATE
@@ -433,8 +462,8 @@ EXECUTE PROCEDURE update_at_updated();
 --     id SERIAL PRIMARY KEY, 
 --     user_id INTEGER NOT NULL,
 --     role_id INTEGER NOT NULL, 
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
---     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+--     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+--     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
 --     UNIQUE(user_id, role_id),
 --     FOREIGN KEY(user_id) REFERENCES users(id),
 --     FOREIGN KEY(role_id) REFERENCES roles(id));
@@ -453,8 +482,8 @@ CREATE TABLE api_keys (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     user_id UUID NOT NULL,
     api_key TEXT NOT NULL, 
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     UNIQUE(user_id, api_key),
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE);
 CREATE INDEX api_keys_api_key_idx ON api_keys (api_key);

@@ -3,7 +3,7 @@ package session
 import (
 	"context"
 
-	"github.com/antonybholmes/go-edbserver-gin/consts"
+	"github.com/antonybholmes/go-edbserver-gin/config"
 	"github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web/auth"
@@ -16,8 +16,8 @@ import (
 
 func RegisterRoutes(r *gin.Engine,
 	otp *auth.OTP,
-
-	jwtUserMiddleWare gin.HandlerFunc) {
+	jwtUserMiddleWare gin.HandlerFunc,
+	cfg *config.AppConfig) {
 
 	ctx := context.Background()
 
@@ -28,8 +28,8 @@ func RegisterRoutes(r *gin.Engine,
 	// 	consts.Auth0NameClaim)
 
 	auth0OIDCVerifer, err := oauth2.NewStandardOIDCVerifier(ctx,
-		consts.Auth0Domain,
-		consts.Auth0Audience)
+		cfg.Auth.Oauth2.Auth0.Domain,
+		cfg.Auth.Oauth2.Auth0.Audience)
 
 	if err != nil {
 		log.Fatal().Msgf("failed to create auth0 oidc verifier: %v", err)
@@ -37,8 +37,8 @@ func RegisterRoutes(r *gin.Engine,
 
 	// so we can verify cognito tokens
 	congnitoOIDCVerifer, err := oauth2.NewStandardOIDCVerifier(ctx,
-		consts.CognitoDomain,
-		consts.CognitoAudience,
+		cfg.Auth.Oauth2.Cognito.Domain,
+		cfg.Auth.Oauth2.Cognito.Audience,
 	)
 
 	if err != nil {
@@ -46,8 +46,8 @@ func RegisterRoutes(r *gin.Engine,
 	}
 
 	clerkOIDCVerifer, err := oauth2.NewStandardOIDCVerifier(ctx,
-		consts.ClerkDomain,
-		consts.ClerkAudience,
+		cfg.Auth.Oauth2.Clerk.Domain,
+		cfg.Auth.Oauth2.Clerk.Audience,
 	)
 
 	if err != nil {
@@ -78,7 +78,7 @@ func RegisterRoutes(r *gin.Engine,
 	jwtClerkMiddleware := omw.JwtOIDCMiddleware(clerkOIDCVerifer)
 
 	//jwtSupabaseMiddleware := omw.JwtOIDCMiddleware(supabaseOIDCVerifer)
-	jwtSupabaseMiddleware := omw.JwtSupabaseMiddleware(consts.SupabaseJwtSecretKey)
+	jwtSupabaseMiddleware := omw.JwtSupabaseMiddleware(cfg.Auth.Oauth2.Supabase.JwtSecretKey)
 
 	csrfMiddleware := csrfmiddleware.CSRFValidateMiddleware()
 

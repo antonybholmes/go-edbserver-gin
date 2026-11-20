@@ -4,10 +4,11 @@ import (
 	"errors"
 	"fmt"
 
-	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
-	"github.com/antonybholmes/go-edbserver-gin/consts"
-	mailserver "github.com/antonybholmes/go-mailserver"
-	"github.com/antonybholmes/go-mailserver/mailqueue"
+	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
+	"github.com/antonybholmes/go-edbserver-gin/config"
+
+	mailserver "github.com/antonybholmes/go-mail"
+	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/auth/token"
@@ -18,15 +19,19 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+type SignInHandler struct {
+	Config *config.AppConfig
+}
+
 var (
 	ErrUserRoles = errors.New("could not get user roles")
 )
 
-func PasswordlessEmailSentResp(c *gin.Context) {
+func (h *SignInHandler) PasswordlessEmailSentResp(c *gin.Context) {
 	web.MakeOkResp(c, "passwordless email sent")
 }
 
-func UsernamePasswordSignInRoute(c *gin.Context) {
+func (h *SignInHandler) UsernamePasswordSignInRoute(c *gin.Context) {
 	validator, err := middleware.NewValidator(c).ParseSignInRequestBody().Ok()
 
 	if err != nil {
@@ -35,7 +40,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 	}
 
 	if validator.UserBodyReq.Password == "" {
-		PasswordlessSignInEmailRoute(c, validator)
+		PasswordlessSignInEmailRoute(c, validator, h.Config.Auth.ShortTtlMins)
 		return
 	}
 
@@ -79,7 +84,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 		return
 	}
 
-	accessToken, err := tokengen.Instance().AccessToken(c, authUser.Id, jwt.ClaimStrings{"access"}, auth.GetRolesFromUser(authUser)) //auth.MakeClaim(authUser.Roles))
+	accessToken, err := tokengen.Instance().AccessToken(c, authUser, jwt.ClaimStrings{"access"}) //auth.MakeClaim(authUser.Roles))
 
 	if err != nil {
 		auth.TokenErrorResp(c)
@@ -93,7 +98,7 @@ func UsernamePasswordSignInRoute(c *gin.Context) {
 }
 
 // Start passwordless login by sending an email
-func PasswordlessSignInEmailRoute(c *gin.Context, validator *middleware.Validator) {
+func PasswordlessSignInEmailRoute(c *gin.Context, validator *middleware.Validator, ttl int) {
 	if validator == nil {
 		validator = middleware.NewValidator(c)
 	}
@@ -133,8 +138,8 @@ func PasswordlessSignInEmailRoute(c *gin.Context, validator *middleware.Validato
 			Name:      authUser.Name,
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "code", Data: passwordlessToken},
-			EmailType: edbmail.EmailQueueTypePasswordless,
-			TTL:       fmt.Sprintf("%d minutes", int(consts.PasswordlessTokenTtlMins.Minutes())),
+			EmailType: edbmail.EmailTypePasswordless,
+			TTL:       fmt.Sprintf("%d minutes", ttl),
 			//LinkUrl:   consts.URL_SIGN_IN,
 			//VisitUrl:    validator.Req.VisitUrl
 		}

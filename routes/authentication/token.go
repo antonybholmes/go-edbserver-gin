@@ -74,6 +74,7 @@ func NewAccessTokenRoute(c *gin.Context) {
 		// Generate encoded token and send it as response.
 		accessToken, err := tokengen.Instance().AccessTokenUsingPermissions(c,
 			validator.Claims.Subject,
+			validator.Claims.Email,
 			req.Audience,
 			validator.Claims.Permissions)
 

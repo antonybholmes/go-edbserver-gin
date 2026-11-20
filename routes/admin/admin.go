@@ -1,32 +1,40 @@
 package admin
 
 import (
-	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
-	"github.com/antonybholmes/go-edbserver-gin/consts"
-	mailserver "github.com/antonybholmes/go-mailserver"
-	"github.com/antonybholmes/go-mailserver/mailqueue"
+	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
+	"github.com/antonybholmes/go-edbserver-gin/config"
+
+	mailserver "github.com/antonybholmes/go-mail"
+	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-web"
-	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
+	"github.com/antonybholmes/go-web/auth/userdb"
 	"github.com/antonybholmes/go-web/middleware"
 	"github.com/gin-gonic/gin"
 )
 
-type UserListReq struct {
-	Offset  int
-	Records int
-}
+type (
+	UserListReq struct {
+		Offset  int
+		Records int
+	}
 
-type UserStatResp struct {
-	Users int `json:"users"`
-}
+	UserStatResp struct {
+		Users int `json:"users"`
+	}
 
-func UserStatsRoute(c *gin.Context) {
+	AdminHandlers struct {
+		UserDB userdb.UserDB
+		Config *config.AppConfig
+	}
+)
+
+func (h *AdminHandlers) UserStatsRoute(c *gin.Context) {
 
 	var req UserListReq
 
 	c.Bind(&req)
 
-	users, err := userdbcache.Instance().NumUsers()
+	users, err := h.UserDB.NumUsers()
 
 	if err != nil {
 		c.Error(err)
@@ -39,7 +47,7 @@ func UserStatsRoute(c *gin.Context) {
 
 }
 
-func UsersRoute(c *gin.Context) {
+func (h *AdminHandlers) UsersRoute(c *gin.Context) {
 
 	var req UserListReq
 
@@ -47,7 +55,7 @@ func UsersRoute(c *gin.Context) {
 
 	//log.Debug().Msgf("list users %v", req)
 
-	users, err := userdbcache.Instance().Users(req.Records, req.Offset)
+	users, err := h.UserDB.Users(req.Records, req.Offset)
 
 	if err != nil {
 		c.Error(err)
@@ -58,9 +66,9 @@ func UsersRoute(c *gin.Context) {
 
 }
 
-func RolesRoute(c *gin.Context) {
+func (h *AdminHandlers) RolesRoute(c *gin.Context) {
 
-	roles, err := userdbcache.Instance().Roles()
+	roles, err := h.UserDB.Roles()
 
 	if err != nil {
 		c.Error(err)
@@ -71,9 +79,9 @@ func RolesRoute(c *gin.Context) {
 
 }
 
-func GroupsRoute(c *gin.Context) {
+func (h *AdminHandlers) GroupsRoute(c *gin.Context) {
 
-	groups, err := userdbcache.Instance().Groups()
+	groups, err := h.UserDB.Groups()
 
 	if err != nil {
 		c.Error(err)
@@ -84,7 +92,7 @@ func GroupsRoute(c *gin.Context) {
 
 }
 
-func UpdateUserRoute(c *gin.Context) {
+func (h *AdminHandlers) UpdateUserRoute(c *gin.Context) {
 
 	middleware.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().LoadAuthUserFromId().Success(func(validator *middleware.Validator) {
 
@@ -106,7 +114,7 @@ func UpdateUserRoute(c *gin.Context) {
 
 		authUser := validator.AuthUser
 
-		err := userdbcache.Instance().SetUserInfo(authUser,
+		err := h.UserDB.SetUserInfo(authUser,
 			validator.UserBodyReq.Username,
 			validator.UserBodyReq.Name,
 			true)
@@ -116,7 +124,7 @@ func UpdateUserRoute(c *gin.Context) {
 			return
 		}
 
-		err = userdbcache.Instance().SetEmailAddress(authUser,
+		err = h.UserDB.SetEmailAddress(authUser,
 			validator.Address,
 			true)
 
@@ -126,7 +134,7 @@ func UpdateUserRoute(c *gin.Context) {
 		}
 
 		if validator.UserBodyReq.PictureUrl != "" {
-			err = userdbcache.Instance().SetPictureUrl(authUser,
+			err = h.UserDB.SetPictureUrl(authUser,
 				validator.UserBodyReq.PictureUrl,
 				true)
 		}
@@ -137,7 +145,7 @@ func UpdateUserRoute(c *gin.Context) {
 		}
 
 		if validator.UserBodyReq.Password != "" {
-			_, err = userdbcache.Instance().SetPassword(authUser,
+			_, err = h.UserDB.SetPassword(authUser,
 				validator.UserBodyReq.Password, true)
 
 			if err != nil {
@@ -148,7 +156,7 @@ func UpdateUserRoute(c *gin.Context) {
 		}
 
 		// set roles
-		err = userdbcache.Instance().SetUserGroups(authUser,
+		err = h.UserDB.SetUserGroups(authUser,
 			validator.UserBodyReq.Groups,
 			true)
 
@@ -161,12 +169,12 @@ func UpdateUserRoute(c *gin.Context) {
 	})
 }
 
-func AddUserRoute(c *gin.Context) {
+func (h *AdminHandlers) AddUserRoute(c *gin.Context) {
 
 	middleware.NewValidator(c).CheckUsernameIsWellFormed().CheckEmailIsWellFormed().Success(func(validator *middleware.Validator) {
 
 		// assume email is not verified
-		authUser, err := userdbcache.Instance().CreateUser(
+		authUser, err := h.UserDB.CreateUser(
 			validator.Address,
 			validator.UserBodyReq.Username,
 			validator.UserBodyReq.Password,
@@ -187,8 +195,8 @@ func AddUserRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.Name,
 			To:        authUser.Email,
-			EmailType: edbmail.EmailQueueTypeAccountCreated,
-			LinkUrl:   consts.AppUrl}
+			EmailType: edbmail.EmailTypeAccountCreated,
+			LinkUrl:   h.Config.App.URL}
 
 		mailqueue.SendMail(&email)
 
@@ -196,10 +204,10 @@ func AddUserRoute(c *gin.Context) {
 	})
 }
 
-func DeleteUserRoute(c *gin.Context) {
+func (h *AdminHandlers) DeleteUserRoute(c *gin.Context) {
 	publicId := c.Param("id")
 
-	err := userdbcache.Instance().DeleteUser(publicId)
+	err := h.UserDB.DeleteUser(publicId)
 
 	if err != nil {
 		c.Error(err)

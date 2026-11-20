@@ -10,10 +10,11 @@ import (
 	"strings"
 	"time"
 
-	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
+	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
+	"github.com/antonybholmes/go-edbserver-gin/config"
 	"github.com/antonybholmes/go-edbserver-gin/routes/authentication"
-	mailserver "github.com/antonybholmes/go-mailserver"
-	"github.com/antonybholmes/go-mailserver/mailqueue"
+	mailserver "github.com/antonybholmes/go-mail"
+	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
@@ -28,7 +29,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type SessionRoutes struct {
+type SessionHandler struct {
+	Config         *config.AppConfig
 	sessionOptions sessions.Options
 	OTPRoutes      *authentication.OTPRoutes
 }
@@ -41,7 +43,7 @@ var (
 	ErrSessionExpired = errors.New("session not found or expired")
 )
 
-func NewSessionRoutes(otpRoutes *authentication.OTPRoutes) *SessionRoutes {
+func NewSessionRoutes(otpRoutes *authentication.OTPRoutes) *SessionHandler {
 	maxAge := auth.MaxAge7DaysSecs
 
 	t := os.Getenv("SESSION_TTL_HOURS")
@@ -63,11 +65,11 @@ func NewSessionRoutes(otpRoutes *authentication.OTPRoutes) *SessionRoutes {
 		SameSite: http.SameSiteNoneMode,
 	}
 
-	return &SessionRoutes{sessionOptions: options, OTPRoutes: otpRoutes}
+	return &SessionHandler{sessionOptions: options, OTPRoutes: otpRoutes}
 }
 
 // initialize a session with default age and ids
-func (sessionRoutes *SessionRoutes) initSession(c *gin.Context, authUser *auth.AuthUser) error {
+func (h *SessionHandler) initSession(c *gin.Context, authUser *auth.AuthUser) error {
 
 	userData, err := json.Marshal(authUser)
 
@@ -86,7 +88,7 @@ func (sessionRoutes *SessionRoutes) initSession(c *gin.Context, authUser *auth.A
 	sess := sessions.Default(c) // .Get(consts.SESSION_NAME, c)
 
 	// set session options
-	sess.Options(sessionRoutes.sessionOptions)
+	sess.Options(h.sessionOptions)
 
 	//sess.Values[SESSION_PUBLICID] = authUser.PublicId
 	//sess.Values[SESSION_ROLES] = roles //auth.MakeClaim(authUser.Roles)
@@ -95,7 +97,7 @@ func (sessionRoutes *SessionRoutes) initSession(c *gin.Context, authUser *auth.A
 
 	now := time.Now().UTC()
 	sess.Set(web.SessionCreatedAt, now.Format(time.RFC3339))
-	sess.Set(web.SessionExpiresAt, now.Add(time.Duration(sessionRoutes.sessionOptions.MaxAge)*time.Second).Format(time.RFC3339))
+	sess.Set(web.SessionExpiresAt, now.Add(time.Duration(h.sessionOptions.MaxAge)*time.Second).Format(time.RFC3339))
 
 	err = sess.Save() //c.Request(), c.Response())
 
@@ -140,7 +142,7 @@ func (sessionRoutes *SessionRoutes) initSession(c *gin.Context, authUser *auth.A
 
 // }
 
-func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Context) {
+func (h *SessionHandler) SessionUsernamePasswordSignInRoute(c *gin.Context) {
 	validator, err := middleware.NewValidator(c).LoadAuthUserFromUsername().Ok()
 
 	if err != nil {
@@ -149,7 +151,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 	}
 
 	if validator.UserBodyReq.Password == "" {
-		authentication.PasswordlessSignInEmailRoute(c, validator)
+		authentication.PasswordlessSignInEmailRoute(c, validator, h.Config.Auth.ShortTtlMins)
 		return
 	}
 
@@ -199,7 +201,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 
 	// set session options
 	if validator.UserBodyReq.StaySignedIn {
-		sess.Options(sessionRoutes.sessionOptions)
+		sess.Options(h.sessionOptions)
 	} else {
 		sess.Options(middleware.SessionOptsZero)
 	}
@@ -208,7 +210,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 
 	now := time.Now().UTC()
 	sess.Set(web.SessionCreatedAt, now.Format(time.RFC3339))
-	sess.Set(web.SessionExpiresAt, now.Add(time.Duration(sessionRoutes.sessionOptions.MaxAge)*time.Second).Format(time.RFC3339))
+	sess.Set(web.SessionExpiresAt, now.Add(time.Duration(h.sessionOptions.MaxAge)*time.Second).Format(time.RFC3339))
 
 	//sess.Values[SESSION_PUBLICID] = authUser.PublicId
 	//sess.Values[SESSION_ROLES] = roleClaim //auth.MakeClaim(authUser.Roles)
@@ -224,7 +226,7 @@ func (sessionRoutes *SessionRoutes) SessionUsernamePasswordSignInRoute(c *gin.Co
 	//return c.NoContent(http.StatusOK)
 }
 
-func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
+func (h *SessionHandler) SessionApiKeySignInRoute(c *gin.Context) {
 	validator, err := middleware.NewValidator(c).ParseSignInRequestBody().Ok()
 
 	if err != nil {
@@ -258,7 +260,7 @@ func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 		return
 	}
 
-	err = sessionRoutes.initSession(c, authUser) //, roleClaim)
+	err = h.initSession(c, authUser) //, roleClaim)
 
 	if err != nil {
 		web.BadReqResp(c, auth.ErrCreatingSession)
@@ -278,7 +280,7 @@ func (sessionRoutes *SessionRoutes) SessionApiKeySignInRoute(c *gin.Context) {
 	// web.MakeDataResp(c, "", resp)
 }
 
-func (sessionRoutes *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context) {
+func (h *SessionHandler) SessionSignInUsingAuth0Route(c *gin.Context) {
 	user, ok := c.Get(web.SessionUser)
 
 	if !ok {
@@ -326,10 +328,10 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingAuth0Route(c *gin.Context)
 		return
 	}
 
-	sessionRoutes.sessionSignInUsingOAuth2(c, authUser)
+	h.sessionSignInUsingOAuth2(c, authUser)
 }
 
-func (sessionRoutes *SessionRoutes) SessionSignInUsingCognitoRoute(c *gin.Context) {
+func (h *SessionHandler) SessionSignInUsingCognitoRoute(c *gin.Context) {
 	user, ok := c.Get(web.SessionUser)
 
 	if !ok {
@@ -364,10 +366,10 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingCognitoRoute(c *gin.Contex
 		return
 	}
 
-	sessionRoutes.sessionSignInUsingOAuth2(c, authUser)
+	h.sessionSignInUsingOAuth2(c, authUser)
 }
 
-func (sessionRoutes *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context) {
+func (h *SessionHandler) SessionSignInUsingClerkRoute(c *gin.Context) {
 	user, ok := c.Get(web.SessionUser)
 
 	if !ok {
@@ -394,10 +396,10 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingClerkRoute(c *gin.Context)
 		return
 	}
 
-	sessionRoutes.sessionSignInUsingOAuth2(c, authUser)
+	h.sessionSignInUsingOAuth2(c, authUser)
 }
 
-func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Context) {
+func (h *SessionHandler) SessionSignInUsingSupabaseRoute(c *gin.Context) {
 	user, ok := c.Get(web.SessionUser)
 
 	if !ok {
@@ -432,14 +434,14 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingSupabaseRoute(c *gin.Conte
 
 	//log.Debug().Msgf("user %v", authUser)
 
-	sessionRoutes.sessionSignInUsingOAuth2(c, authUser)
+	h.sessionSignInUsingOAuth2(c, authUser)
 }
 
-func (sessionRoutes *SessionRoutes) SessionEmailOTPRoute(c *gin.Context) {
-	sessionRoutes.OTPRoutes.Email6DigitOTPRoute(c)
+func (h *SessionHandler) SessionEmailOTPRoute(c *gin.Context) {
+	h.OTPRoutes.Email6DigitOTPRoute(c)
 }
 
-func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Context) {
+func (h *SessionHandler) SessionSignInUsingEmailAndOTPRoute(c *gin.Context) {
 
 	validator, err := middleware.NewValidator(c).CheckEmailIsWellFormed().Ok()
 
@@ -450,7 +452,7 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Co
 
 	username := validator.Address.Address
 
-	err = sessionRoutes.OTPRoutes.OTP.ValidateOTP(username, validator.UserBodyReq.OTP)
+	err = h.OTPRoutes.OTP.ValidateOTP(username, validator.UserBodyReq.OTP)
 
 	if err != nil {
 		if auth.IsRateLimitError(err) {
@@ -472,10 +474,10 @@ func (sessionRoutes *SessionRoutes) SessionSignInUsingEmailAndOTPRoute(c *gin.Co
 		return
 	}
 
-	sessionRoutes.sessionSignInUsingOAuth2(c, authUser)
+	h.sessionSignInUsingOAuth2(c, authUser)
 }
 
-func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, authUser *auth.AuthUser) {
+func (h *SessionHandler) sessionSignInUsingOAuth2(c *gin.Context, authUser *auth.AuthUser) {
 
 	log.Debug().Msgf("user login %v %v", authUser, auth.UserHasWebLoginInRole(authUser))
 
@@ -483,7 +485,7 @@ func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, aut
 		web.UserNotAllowedToSignInErrorResp(c)
 	}
 
-	err := sessionRoutes.initSession(c, authUser) // roleClaim)
+	err := h.initSession(c, authUser) // roleClaim)
 
 	if err != nil {
 		web.UnauthorizedResp(c, err)
@@ -500,7 +502,7 @@ func (sessionRoutes *SessionRoutes) sessionSignInUsingOAuth2(c *gin.Context, aut
 // Validate the passwordless token we generated and create
 // a user session. The session acts as a refresh token and
 // can be used to generate access tokens to use resources
-func (sessionRoutes *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gin.Context) {
+func (h *SessionHandler) SessionPasswordlessValidateSignInRoute(c *gin.Context) {
 
 	middleware.NewValidator(c).LoadAuthUserFromToken().CheckUserHasVerifiedEmailAddress().Success(func(validator *middleware.Validator) {
 
@@ -527,7 +529,7 @@ func (sessionRoutes *SessionRoutes) SessionPasswordlessValidateSignInRoute(c *gi
 			return
 		}
 
-		err := sessionRoutes.initSession(c, authUser) //, roleClaim)
+		err := h.initSession(c, authUser) //, roleClaim)
 
 		if err != nil {
 			web.InternalErrorResp(c, err)
@@ -567,7 +569,7 @@ func SessionSignOutRoute(c *gin.Context) {
 }
 
 // Read the user session. Can also be used to determin if session is valid
-func (sessionRoutes *SessionRoutes) SessionInfoRoute(c *gin.Context) {
+func (h *SessionHandler) SessionInfoRoute(c *gin.Context) {
 	session := sessions.Default(c)
 
 	sessionInfo, err := middleware.ReadSessionInfo(c, session)
@@ -580,11 +582,11 @@ func (sessionRoutes *SessionRoutes) SessionInfoRoute(c *gin.Context) {
 	web.MakeDataResp(c, "", sessionInfo)
 }
 
-func (sessionRoutes *SessionRoutes) SessionNewCSRFTokenRoute(c *gin.Context) {
+func (h *SessionHandler) SessionNewCSRFTokenRoute(c *gin.Context) {
 	csrfmiddleware.MakeNewCSRFTokenResp(c)
 }
 
-func (sessionRoutes *SessionRoutes) SessionRefreshRoute(c *gin.Context) {
+func (h *SessionHandler) SessionRefreshRoute(c *gin.Context) {
 	user, ok := c.Get(web.SessionUser)
 
 	if !ok {
@@ -668,19 +670,17 @@ func CreateTokenFromSessionRoute(c *gin.Context) {
 
 	var tokenStr string
 
-	roles := auth.GetRolesFromUser(authUser)
-
 	switch req.Type {
 	case "update":
 		// Generate encoded token and send it as response.
-		tokenStr, err = tokengen.Instance().UpdateToken(c, authUser.Id, req.Audience, roles)
+		tokenStr, err = tokengen.Instance().UpdateToken(c, authUser, req.Audience)
 
 		if err != nil {
 			err = token.NewTokenError(err.Error())
 		}
 	default:
 		// Generate access token and send it as response.
-		tokenStr, err = tokengen.Instance().AccessToken(c, authUser.Id, req.Audience, roles)
+		tokenStr, err = tokengen.Instance().AccessToken(c, authUser, req.Audience)
 
 		if err != nil {
 			err = token.NewTokenError(err.Error())
@@ -743,7 +743,7 @@ func SessionUpdateUserRoute(c *gin.Context) {
 			Name: authUser.Name,
 			To:   authUser.Email,
 			//Token:     passwordlessToken,
-			EmailType: edbmail.EmailQueueTypeAccountUpdated,
+			EmailType: edbmail.EmailTypeAccountUpdated,
 			//Ttl:       fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
 			//LinkUrl:   consts.URL_SIGN_IN,
 			//VisitUrl:    validator.Req.VisitUrl

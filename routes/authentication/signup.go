@@ -3,10 +3,12 @@ package authentication
 import (
 	"fmt"
 
-	edbmail "github.com/antonybholmes/go-edbmailserver/mail"
-	"github.com/antonybholmes/go-edbserver-gin/consts"
-	mailserver "github.com/antonybholmes/go-mailserver"
-	"github.com/antonybholmes/go-mailserver/mailqueue"
+	edbmailconfig "github.com/antonybholmes/go-edb-mailserver/config"
+	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
+	"github.com/antonybholmes/go-edbserver-gin/config"
+
+	mailserver "github.com/antonybholmes/go-mail"
+	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth/token/tokengen"
 	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
@@ -15,7 +17,11 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func SignupRoute(c *gin.Context) {
+type SignupHandler struct {
+	Config *config.AppConfig
+}
+
+func (h *SignupHandler) SignupRoute(c *gin.Context) {
 	middleware.NewValidator(c).CheckEmailIsWellFormed().Success(func(validator *middleware.Validator) {
 		req := validator.UserBodyReq
 
@@ -58,9 +64,9 @@ func SignupRoute(c *gin.Context) {
 			Name:      authUser.Name,
 			To:        authUser.Email,
 			Payload:   &mailserver.Payload{DataType: "jwt", Data: token},
-			EmailType: edbmail.EmailQueueTypeVerify,
-			TTL:       fmt.Sprintf("%d minutes", int(consts.ShortTtlMins.Minutes())),
-			LinkUrl:   consts.UrlVerifyEmail,
+			EmailType: edbmail.EmailTypeVerify,
+			TTL:       fmt.Sprintf("%d minutes", h.Config.Auth.ShortTtlMins),
+			LinkUrl:   edbmailconfig.UrlVerifyEmail,
 			//VisitUrl:    req.VisitUrl
 		}
 
@@ -98,7 +104,7 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 		email := mailserver.MailItem{
 			Name:      authUser.Name,
 			To:        authUser.Email,
-			EmailType: edbmail.EmailQueueTypeVerified}
+			EmailType: edbmail.EmailTypeVerified}
 		mailqueue.SendMail(&email)
 
 		web.MakeOkResp(c, "email address verified")
