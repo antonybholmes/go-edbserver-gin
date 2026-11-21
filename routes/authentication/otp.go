@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
-	mailserver "github.com/antonybholmes/go-mail"
+	email "github.com/antonybholmes/go-mail"
 	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
@@ -52,15 +51,15 @@ func (otpr *OTPRoutes) Email6DigitOTPRoute(c *gin.Context) {
 
 	mins := int(math.Round(otpr.OTP.TTL().Minutes()))
 
-	email := mailserver.MailItem{
+	email := email.MailItem{
 		Name:      address.Address,
 		To:        address.Address,
-		Payload:   &mailserver.Payload{DataType: "code", Data: code},
+		Payload:   &email.Payload{DataType: "code", Data: code},
 		TTL:       fmt.Sprintf("%d minutes", mins),
-		EmailType: edbmail.EmailTypeOTP,
+		EmailType: email.EmailTypeOTP,
 	}
 
-	err = mailqueue.SendMail(&email)
+	err = mailqueue.Instance().SendMail(c.Request.Context(), &email)
 
 	if err != nil {
 		log.Debug().Msgf("error sending email %v", err)

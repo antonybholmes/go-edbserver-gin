@@ -4,10 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
 	"github.com/antonybholmes/go-edbserver-gin/config"
+	email "github.com/antonybholmes/go-mail"
 
-	mailserver "github.com/antonybholmes/go-mail"
 	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
@@ -134,17 +133,17 @@ func PasswordlessSignInEmailRoute(c *gin.Context, validator *middleware.Validato
 
 		//log.Debug().Msgf("t %s ", passwordlessToken)
 
-		email := mailserver.MailItem{
+		email := email.MailItem{
 			Name:      authUser.Name,
 			To:        authUser.Email,
-			Payload:   &mailserver.Payload{DataType: "code", Data: passwordlessToken},
-			EmailType: edbmail.EmailTypePasswordless,
+			Payload:   &email.Payload{DataType: "code", Data: passwordlessToken},
+			EmailType: email.EmailTypePasswordless,
 			TTL:       fmt.Sprintf("%d minutes", ttl),
 			//LinkUrl:   consts.URL_SIGN_IN,
 			//VisitUrl:    validator.Req.VisitUrl
 		}
 
-		mailqueue.SendMail(&email)
+		mailqueue.Instance().SendMail(c.Request.Context(), &email)
 
 		//if err != nil {
 		//	return web.ErrorReq(err)

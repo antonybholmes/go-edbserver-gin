@@ -10,17 +10,18 @@ import (
 	"github.com/antonybholmes/go-beds/beddb"
 	"github.com/antonybholmes/go-cytobands/cytobanddb"
 	"github.com/antonybholmes/go-dna/dnadb"
-	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
-
 	"github.com/antonybholmes/go-edbserver-gin/config"
 	adminroutes "github.com/antonybholmes/go-edbserver-gin/routes/admin"
 	authenticationroutes "github.com/antonybholmes/go-edbserver-gin/routes/authentication"
 	sessionroutes "github.com/antonybholmes/go-edbserver-gin/routes/session"
+	userdbcache "github.com/antonybholmes/go-web/auth/userdb/cache"
+	awsconfig "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/sqs"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 
 	"github.com/antonybholmes/go-edbserver-gin/routes/modules"
 	"github.com/antonybholmes/go-hubs/hubdb"
-	mailserver "github.com/antonybholmes/go-mail"
+	awsmail "github.com/antonybholmes/go-mail/aws"
 	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/access"
@@ -194,7 +195,15 @@ func main() {
 		DB:       0,
 	})
 
-	mailqueue.InitMailQueue(mailserver.NewSqsEmailQueue(cfg.AWS.SQS.QueueUrl))
+	ctx := context.Background()
+	awsCfg, err := awsconfig.LoadDefaultConfig(ctx)
+	if err != nil {
+		log.Fatal().Msgf("load AWS configuration: %v", err)
+	}
+
+	sqsClient := sqs.NewFromConfig(awsCfg)
+
+	mailqueue.InitMailQueue(awsmail.NewSQSEmailQueue(sqsClient, cfg.AWS.SQS.QueueUrl))
 
 	re := access.NewRuleEngine()
 	re.LoadRules("config/access-rules.json")

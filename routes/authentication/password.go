@@ -3,10 +3,9 @@ package authentication
 import (
 	"fmt"
 
-	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
 	"github.com/antonybholmes/go-edbserver-gin/config"
+	email "github.com/antonybholmes/go-mail"
 
-	mailserver "github.com/antonybholmes/go-mail"
 	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
@@ -54,15 +53,15 @@ func (h *PasswordHandler) SendResetPasswordFromUsernameEmailRoute(c *gin.Context
 		// 	req.CallbackUrl,
 		// 	req.VisitUrl)
 
-		email := mailserver.MailItem{
+		email := email.MailItem{
 			Name:      authUser.Name,
 			To:        authUser.Email,
-			Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
-			EmailType: edbmail.EmailTypePasswordReset,
+			Payload:   &email.Payload{DataType: "jwt", Data: otpToken},
+			EmailType: email.EmailTypePasswordReset,
 			TTL:       fmt.Sprintf("%d minutes", int(h.Config.Auth.ShortTtlMins)),
 			LinkUrl:   h.Config.Account.ResetPasswordUrl}
 
-		mailqueue.SendMail(&email)
+		mailqueue.Instance().SendMail(c.Request.Context(), &email)
 
 		web.MakeOkResp(c, "check your email for a password reset link")
 	})
@@ -99,11 +98,11 @@ func UpdatePasswordRoute(c *gin.Context) {
 
 	//return SendPasswordEmail(c, validator.AuthUser, validator.Req.Password)
 
-	email := mailserver.MailItem{
+	email := email.MailItem{
 		Name:      authUser.Name,
 		To:        authUser.Email,
-		EmailType: edbmail.EmailTypePasswordUpdated}
-	mailqueue.SendMail(&email)
+		EmailType: email.EmailTypePasswordUpdated}
+	mailqueue.Instance().SendMail(c.Request.Context(), &email)
 
 	web.MakeOkResp(c, "password updated confirmation email sent")
 

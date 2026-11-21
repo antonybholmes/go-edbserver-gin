@@ -14,39 +14,6 @@ import (
 )
 
 type AppConfig struct {
-	Auth struct {
-		Keys struct {
-			JwtES256PrivateKey *ecdsa.PrivateKey `yaml:"-"`
-			JwtES256PublicKey  *ecdsa.PublicKey  `yaml:"-"`
-		} `yaml:"-"`
-		Oauth2 struct {
-			Auth0 struct {
-				Audience        string         `yaml:"-"`
-				Domain          string         `yaml:"-"`
-				EmailClaim      string         `yaml:"-"`
-				NameClaim       string         `yaml:"-"`
-				JwtRsaPublicKey *rsa.PublicKey `yaml:"-"`
-			} `yaml:"-"`
-			Clerk struct {
-				Audience        string         `yaml:"-"`
-				Domain          string         `yaml:"-"`
-				JwtRsaPublicKey *rsa.PublicKey `yaml:"-"`
-			} `yaml:"-"`
-			Supabase struct {
-				Audience     string `yaml:"-"`
-				Domain       string `yaml:"-"`
-				JwtSecretKey string `yaml:"-"`
-			} `yaml:"-"`
-			Cognito struct {
-				Audience string `yaml:"-"`
-				Domain   string `yaml:"-"`
-			} `yaml:"-"`
-		} `yaml:"-"`
-		PasswordlessTokenTtlMins int `yaml:"passwordlessTokenTtlMins"`
-		AccessTokenTtlMins       int `yaml:"accessTokenTtlMins"`
-		OtpTokenTtlMins          int `yaml:"otpTokenTtlMins"`
-		ShortTtlMins             int `yaml:"shortTtlMins"`
-	} `yaml:"auth"`
 	Databases struct {
 		Motifs       string `yaml:"motifs"`
 		WGS          string `yaml:"wgs"`
@@ -61,12 +28,6 @@ type AppConfig struct {
 		DnaDir       string `yaml:"dnaDir"`
 		HubsDir      string `yaml:"hubsDir"`
 	} `yaml:"databases"`
-	Session struct {
-		Name          string `yaml:"name"`
-		Key           string `yaml:"-"`
-		EncryptionKey string `yaml:"-"`
-		TTLHours      int    `yaml:"ttlHours"`
-	} `yaml:"session"`
 	Account struct {
 		ResetEmailUrl    string `yaml:"-"`
 		ResetPasswordUrl string `yaml:"-"`
@@ -89,6 +50,12 @@ type AppConfig struct {
 		TrustedProxies []string        `yaml:"trustedProxies"`
 		Version        sys.VersionInfo `yaml:"-"`
 	} `yaml:"app"`
+	Session struct {
+		Name          string `yaml:"name"`
+		Key           string `yaml:"-"`
+		EncryptionKey string `yaml:"-"`
+		TTLHours      int    `yaml:"ttlHours"`
+	} `yaml:"session"`
 	Cors struct {
 		AllowOrigins     []string `yaml:"allowOrigins"`
 		AllowMethods     []string `yaml:"allowMethods"`
@@ -96,6 +63,39 @@ type AppConfig struct {
 		AllowCredentials bool     `yaml:"allowCredentials"`
 		MaxAge           int      `yaml:"maxAge"`
 	} `yaml:"cors"`
+	Auth struct {
+		Keys struct {
+			JwtES256PrivateKey *ecdsa.PrivateKey `yaml:"-"`
+			JwtES256PublicKey  *ecdsa.PublicKey  `yaml:"-"`
+		} `yaml:"-"`
+		Oauth2 struct {
+			Auth0 struct {
+				JwtRsaPublicKey *rsa.PublicKey `yaml:"-"`
+				Audience        string         `yaml:"-"`
+				Domain          string         `yaml:"-"`
+				EmailClaim      string         `yaml:"-"`
+				NameClaim       string         `yaml:"-"`
+			} `yaml:"-"`
+			Clerk struct {
+				JwtRsaPublicKey *rsa.PublicKey `yaml:"-"`
+				Audience        string         `yaml:"-"`
+				Domain          string         `yaml:"-"`
+			} `yaml:"-"`
+			Supabase struct {
+				Audience     string `yaml:"-"`
+				Domain       string `yaml:"-"`
+				JwtSecretKey string `yaml:"-"`
+			} `yaml:"-"`
+			Cognito struct {
+				Audience string `yaml:"-"`
+				Domain   string `yaml:"-"`
+			} `yaml:"-"`
+		} `yaml:"-"`
+		PasswordlessTokenTtlMins int `yaml:"passwordlessTokenTtlMins"`
+		AccessTokenTtlMins       int `yaml:"accessTokenTtlMins"`
+		OtpTokenTtlMins          int `yaml:"otpTokenTtlMins"`
+		ShortTtlMins             int `yaml:"shortTtlMins"`
+	} `yaml:"auth"`
 }
 
 const (

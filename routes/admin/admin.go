@@ -1,10 +1,9 @@
 package admin
 
 import (
-	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
 	"github.com/antonybholmes/go-edbserver-gin/config"
 
-	mailserver "github.com/antonybholmes/go-mail"
+	email "github.com/antonybholmes/go-mail"
 	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth/userdb"
@@ -192,13 +191,13 @@ func (h *AdminHandlers) AddUserRoute(c *gin.Context) {
 		// tell user their account was created
 		//go SendAccountCreatedEmail(authUser, validator.Address)
 
-		email := mailserver.MailItem{
+		email := email.MailItem{
 			Name:      authUser.Name,
 			To:        authUser.Email,
-			EmailType: edbmail.EmailTypeAccountCreated,
+			EmailType: email.EmailTypeAccountCreated,
 			LinkUrl:   h.Config.App.URL}
 
-		mailqueue.SendMail(&email)
+		mailqueue.Instance().SendMail(c.Request.Context(), &email)
 
 		web.MakeOkResp(c, "account created email sent")
 	})

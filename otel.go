@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	"github.com/antonybholmes/go-edb-mailserver/config"
+	"github.com/antonybholmes/go-edb-mail-server/config"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/sdk/resource"

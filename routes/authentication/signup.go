@@ -3,11 +3,9 @@ package authentication
 import (
 	"fmt"
 
-	edbmailconfig "github.com/antonybholmes/go-edb-mailserver/config"
-	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
 	"github.com/antonybholmes/go-edbserver-gin/config"
+	email "github.com/antonybholmes/go-mail"
 
-	mailserver "github.com/antonybholmes/go-mail"
 	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth/token/tokengen"
@@ -60,17 +58,17 @@ func (h *SignupHandler) SignupRoute(c *gin.Context) {
 		//	return web.ErrorReq(err)
 		//}
 
-		email := mailserver.MailItem{
+		email := email.MailItem{
 			Name:      authUser.Name,
 			To:        authUser.Email,
-			Payload:   &mailserver.Payload{DataType: "jwt", Data: token},
-			EmailType: edbmail.EmailTypeVerify,
+			Payload:   &email.Payload{DataType: "jwt", Data: token},
+			EmailType: email.EmailTypeVerify,
 			TTL:       fmt.Sprintf("%d minutes", h.Config.Auth.ShortTtlMins),
-			LinkUrl:   edbmailconfig.UrlVerifyEmail,
+			LinkUrl:   h.Config.Account.VerifyEmailUrl,
 			//VisitUrl:    req.VisitUrl
 		}
 
-		mailqueue.SendMail(&email)
+		mailqueue.Instance().SendMail(c.Request.Context(), &email)
 
 		web.MakeOkResp(c, "check your email for a verification link")
 	})
@@ -101,11 +99,11 @@ func EmailAddressVerifiedRoute(c *gin.Context) {
 		// 	"",
 		// 	"")
 
-		email := mailserver.MailItem{
+		email := email.MailItem{
 			Name:      authUser.Name,
 			To:        authUser.Email,
-			EmailType: edbmail.EmailTypeVerified}
-		mailqueue.SendMail(&email)
+			EmailType: email.EmailTypeVerified}
+		mailqueue.Instance().SendMail(c.Request.Context(), &email)
 
 		web.MakeOkResp(c, "email address verified")
 	})

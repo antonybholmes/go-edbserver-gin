@@ -10,10 +10,9 @@ import (
 	"strings"
 	"time"
 
-	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
 	"github.com/antonybholmes/go-edbserver-gin/config"
 	"github.com/antonybholmes/go-edbserver-gin/routes/authentication"
-	mailserver "github.com/antonybholmes/go-mail"
+	email "github.com/antonybholmes/go-mail"
 	"github.com/antonybholmes/go-mail/mailqueue"
 	"github.com/antonybholmes/go-sys/log"
 	"github.com/antonybholmes/go-web"
@@ -739,17 +738,17 @@ func SessionUpdateUserRoute(c *gin.Context) {
 
 		//SendUserInfoUpdatedEmail(c, authUser)
 
-		email := mailserver.MailItem{
+		item := email.MailItem{
 			Name: authUser.Name,
 			To:   authUser.Email,
 			//Token:     passwordlessToken,
-			EmailType: edbmail.EmailTypeAccountUpdated,
+			EmailType: email.EmailTypeAccountUpdated,
 			//Ttl:       fmt.Sprintf("%d minutes", int(consts.PASSWORDLESS_TOKEN_TTL_MINS.Minutes())),
 			//LinkUrl:   consts.URL_SIGN_IN,
 			//VisitUrl:    validator.Req.VisitUrl
 		}
 
-		mailqueue.SendMail(&email)
+		mailqueue.Instance().SendMail(c.Request.Context(), &item)
 	})
 }
 

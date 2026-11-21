@@ -5,10 +5,9 @@ import (
 
 	"net/mail"
 
-	edbmail "github.com/antonybholmes/go-edb-mailserver/mail"
 	"github.com/antonybholmes/go-edbserver-gin/config"
+	email "github.com/antonybholmes/go-mail"
 
-	mailserver "github.com/antonybholmes/go-mail"
 	"github.com/antonybholmes/go-web"
 	"github.com/antonybholmes/go-web/auth"
 	"github.com/antonybholmes/go-web/auth/token"
@@ -67,16 +66,16 @@ func (h *EmailHandler) SendResetEmailEmailRoute(c *gin.Context) {
 	// 	req.CallbackUrl,
 	// 	req.VisitUrl)
 
-	email := mailserver.MailItem{
+	email := email.MailItem{
 		Name:      authUser.Name,
 		To:        authUser.Email,
-		Payload:   &mailserver.Payload{DataType: "jwt", Data: otpToken},
-		EmailType: edbmail.EmailTypeEmailReset,
+		Payload:   &email.Payload{DataType: "jwt", Data: otpToken},
+		EmailType: email.EmailTypeEmailReset,
 		TTL:       fmt.Sprintf("%d minutes", int(h.Config.Auth.ShortTtlMins)),
 		LinkUrl:   h.Config.Account.ResetEmailUrl,
 	}
 
-	mailqueue.SendMail(&email)
+	mailqueue.Instance().SendMail(c.Request.Context(), &email)
 
 	//if err != nil {
 	//	return web.ErrorReq(err)
@@ -122,12 +121,12 @@ func (h *EmailHandler) UpdateEmailRoute(c *gin.Context) {
 
 		//return SendEmailChangedEmail(c, authUser)
 
-		email := mailserver.MailItem{
+		email := email.MailItem{
 			Name:      authUser.Name,
 			To:        authUser.Email,
-			EmailType: edbmail.EmailTypeEmailUpdated}
+			EmailType: email.EmailTypeEmailUpdated}
 
-		mailqueue.SendMail(&email)
+		mailqueue.Instance().SendMail(c.Request.Context(), &email)
 
 		web.MakeOkResp(c, "email updated confirmation email sent")
 	})
